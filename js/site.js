@@ -59,6 +59,20 @@
     const t = $('#contato-t span');
     if (t) t.innerHTML = t.innerHTML.split('<br>').map((l) => [...l].map((c) => `<span class="c">${c}</span>`).join('')).join('<br>');
     gsap.from('#contato-t .c', { yPercent: 110, opacity: 0, duration: .8, stagger: .035, ease: 'power4.out', scrollTrigger: { trigger: '#contato-t', start: 'top 80%' } });
+    /* o Nacho dorme em cima do "m" do título */
+    if (G && window.medeLetra && t) document.fonts.ready.then(() => {
+      const cs = $$('#contato-t .c'), acha = (ch, n = 0) => cs.filter((c) => c.textContent === ch)[n];
+      const poe = (el, ch, gato, pose, vira) => {
+        if (!el) return; const m = medeLetra(el, ch), sp = document.createElement('span');
+        sp.style.cssText = `position:absolute;left:50%;top:${m.base - m.asc + m.fs * .012}px;translate:-50% -100%;pointer-events:none;letter-spacing:0;line-height:0`;
+        el.style.position = 'relative'; el.appendChild(sp);
+        const api = G.cena(sp, gato, pose, { s: m.fs * .52 / (window.GATOS_ATLAS[gato].sit || 180), respira: true, vira });
+        gsap.from(sp, { y: -m.fs * .5, opacity: 0, duration: .7, ease: 'bounce.out', scrollTrigger: { trigger: '#contato-t', start: 'top 60%' } });
+        return api;
+      };
+      const l = poe(acha('m'), 'm', G.NACHO, '5');
+      if (l) { const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#b9e33b'; z.textContent = 'z'; l.el.parentElement.appendChild(z); }
+    });
   }
 
   /* ================= página inicial ================= */
@@ -74,18 +88,17 @@
     gsap.set('.nome .pal', { overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.05em' });
 
     /* gatos de cena do hero */
-    const luna = G && G.cena($('#luna-tile'), G.LUNA, '5', { s: innerWidth < 900 ? .36 : Math.min(.56, innerWidth / 2600) });
+    const luna = G && G.cena($('#luna-tile'), G.LUNA, '5', { s: innerWidth < 900 ? .36 : Math.min(.56, innerWidth / 2600), respira: true });
     if (luna) { const z = document.createElement('span'); z.className = 'zzz'; z.textContent = 'z'; $('#luna-tile').appendChild(z); }
-    const zoroEl = $('#zoro-o'), zoro = G && G.cena(zoroEl, G.ZORO, '0', { s: innerWidth < 900 ? .2 : Math.min(.52, innerWidth / 3100) });
-    if (zoroEl) gsap.set(zoroEl, { opacity: 0 });
+    const zoro = window.HeroZoro ? HeroZoro({ hero, G, calmo }) : { gag() {}, voltou() {} };
 
     const conta = { v: 0 };
     const tl = gsap.timeline();
-    if (calmo) { abre.remove(); gsap.set(letras, { yPercent: 0 }); gsap.set(['.tile', '.hero-info', '.hero-topo', '.hero-pe', zoroEl], { opacity: 1 }); gsap.set('.nome .pal', { overflow: 'visible' }); }
+    if (calmo) { abre.remove(); gsap.set(letras, { yPercent: 0 }); gsap.set(['.tile', '.hero-info', '.hero-topo', '.hero-pe'], { opacity: 1 }); gsap.set('.nome .pal', { overflow: 'visible' }); }
     else {
-      tl.to(conta, { v: 100, duration: 1.15, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); } })
+      tl.to(conta, { v: 100, duration: .85, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); } })
         .to('.par i', { scaleY: .06, duration: .16, stagger: .05 }, '-=.1')
-        .to(abre, { yPercent: -100, duration: .85, ease: 'power4.inOut' })
+        .to(abre, { yPercent: -100, duration: .75, ease: 'power4.inOut' })
         .add(() => abre.remove())
         .to(letras, { yPercent: 0, duration: 1.05, stagger: .045, ease: 'power4.out' }, '-=.55')
         .to('.tile', { opacity: 1, duration: .01 }, '-=.9')
@@ -93,7 +106,7 @@
         .fromTo(['#luna-tile', '#tile-n'], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: .5, ease: 'bounce.out', stagger: .1 }, '-=.15')
         .to(['.hero-topo', '.hero-info', '.hero-pe'], { opacity: 1, duration: .7, stagger: .08 }, '-=.6')
         .add(() => { gsap.set('.nome .pal', { overflow: 'visible' }); })
-        .add(() => pingo(), '+=.5');
+        .add(() => document.fonts.ready.then(() => zoro.gag()), '-=.9');
     }
 
     /* letras do nome sobem quando o cursor passa perto */
@@ -108,39 +121,10 @@
     const fotos = $$('#tile img'), rot = $('#tile-n'); let k = 0;
     if (fotos.length > 1 && !calmo) setInterval(() => { fotos[k].classList.remove('on'); k = (k + 1) % fotos.length; fotos[k].classList.add('on'); rot.textContent = fotos[k].dataset.n; }, 3400);
 
-    /* o Zoro derruba o pingo do i */
-    const pg = $('#pingo'), dica = $('#dica'); let caido = false, vezes = 0, ocupado = false;
-    function pingo() {
-      if (!zoro || ocupado || caido || calmo) return; ocupado = true;
-      const chao = hero.getBoundingClientRect().bottom - pg.getBoundingClientRect().bottom - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--faixa')) || 90) - 6;
-      const t = gsap.timeline({ onComplete: () => { ocupado = false; } });
-      t.set(zoroEl, { opacity: 1, y: -260 })
-        .add(() => zoro.pose('4'))
-        .to(zoroEl, { y: 0, duration: .5, ease: 'power2.in' })
-        .add(() => zoro.pose('n7'))
-        .to(zoroEl, { scaleY: .9, transformOrigin: '50% 100%', duration: .09, yoyo: true, repeat: 1 })
-        .add(() => zoro.pose('0'), '+=.5')
-        .add(() => zoro.pose('n8'), '+=.7')
-        .to(zoroEl, { rotation: 5, transformOrigin: '50% 100%', duration: .12, yoyo: true, repeat: 3 })
-        .to(pg, { x: '+=18', rotation: 20, duration: .12 }, '-=.2')
-        .add(() => { caido = true; vezes++; })
-        .to(pg, { y: chao, duration: .95, ease: 'bounce.out' })
-        .to(pg, { x: () => innerWidth * (innerWidth < 900 ? .5 : .27) - pg.getBoundingClientRect().left + Math.random() * 30, duration: .95, ease: 'power1.out' }, '<')
-        .add(() => zoro.pose('n7'), '-=.6')
-        .add(() => zoro.pose('x4'), '+=.5')
-        .add(() => { if (vezes === 1) { const r = pg.getBoundingClientRect(), h = hero.getBoundingClientRect(); dica.style.left = Math.max(12, r.left - h.left - 14) + 'px'; dica.style.top = r.top - h.top - 62 + 'px'; gsap.to(dica, { opacity: 1, y: -4, duration: .4 }); gsap.to(dica, { opacity: 0, duration: .4, delay: 4.5 }); } });
-    }
-    function devolve() {
-      if (!caido || ocupado) return; ocupado = true; gsap.to(dica, { opacity: 0, duration: .2 });
-      gsap.timeline({ onComplete: () => { ocupado = false; caido = false; if (vezes < 3) gsap.delayedCall(4 + Math.random() * 3, pingo); else { zoro.pose('d5'); G.faixa.diz(G.ZORO, 'desisto', 2); } } })
-        .to(pg, { y: 0, x: 0, rotation: 0, duration: .7, ease: 'back.out(1.6)' })
-        .add(() => zoro.pose('0'), '-=.3');
-    }
-    if (pg) pg.addEventListener('click', devolve);
-    ScrollTrigger.create({ trigger: hero, start: 'bottom 40%', onEnterBack: () => { if (!caido && vezes && vezes < 3) gsap.delayedCall(1.5, pingo); } });
+    ScrollTrigger.create({ trigger: hero, start: 'bottom 40%', onEnterBack: () => zoro.voltou() });
 
     /* nome reage à rolagem */
-    if (!calmo) gsap.to('.nome', { fontStretch: '86%', letterSpacing: '-.08em', ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
+    if (!calmo) { gsap.to('.nome', { y: -70, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } }); gsap.to(['.hero-topo', '.hero-pe'], { opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '40% top', scrub: true } }); }
 
     /* manifesto: palavras acendem */
     const mt = $('#mani-t');
@@ -202,7 +186,7 @@
   /* ---------- 02 Good Green ---------- */
   function goodGreen() {
     const rolo = $('#gg-rolo'); if (!rolo) return;
-    const lj = $('#luna-janela'); if (G && lj) { G.cena(lj, G.LUNA, 'x1', { s: innerWidth < 900 ? .32 : .46 }); const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#78f624'; z.textContent = 'z'; lj.appendChild(z); }
+    const lj = $('#luna-janela'); if (G && lj) { G.cena(lj, G.LUNA, 'x1', { s: innerWidth < 900 ? .32 : .46, respira: true }); const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#78f624'; z.textContent = 'z'; lj.appendChild(z); }
     entra('.c-gg');
     const dist = () => Math.min(0, -(rolo.offsetHeight - rolo.parentElement.offsetHeight) * .62); rolo.addEventListener('load', () => ScrollTrigger.refresh());
     const mm = gsap.matchMedia();
@@ -249,7 +233,7 @@
   function sobre() {
     if (!G) return;
     const s = innerWidth < 900 ? .72 : .86;
-    const a = $('#sup-luna') && G.cena($('#sup-luna'), G.LUNA, 'x6', { s }), b = $('#sup-zoro') && G.cena($('#sup-zoro'), G.ZORO, 'x8', { s }), c = $('#sup-nacho') && G.cena($('#sup-nacho'), G.NACHO, 'x4', { s });
+    const a = $('#sup-luna') && G.cena($('#sup-luna'), G.LUNA, 'x6', { s, respira: true }), b = $('#sup-zoro') && G.cena($('#sup-zoro'), G.ZORO, 'x8', { s, respira: true }), c = $('#sup-nacho') && G.cena($('#sup-nacho'), G.NACHO, 'x4', { s, respira: true });
     const troca = (card, api, ns, f) => { if (!card || !api) return; card.addEventListener('pointerenter', () => api.ciclo(ns, f)); card.addEventListener('pointerleave', () => api.pose(ns[0])); };
     troca($('.s-luna'), a, ['x6', 'x4', 'x4', 'x6'], 2.5); troca($('.s-zoro'), b, ['x8', 'x9', 'x8', 'x9'], 4); troca($('.s-nacho'), c, ['x4', 'x8', 'x4', 'x7'], 3);
     const mm = gsap.matchMedia();

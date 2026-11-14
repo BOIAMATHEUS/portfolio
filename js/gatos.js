@@ -21,22 +21,25 @@
 
   /* gato de cena: um sprite parado ou em ciclo dentro de qualquer elemento */
   function cena(alvo, c, nomes, opc = {}) {
-    const s = opc.s || 0.4, fps = opc.fps || 8;
+    let s = opc.s || 0.4, virado = !!opc.vira, nome = [].concat(nomes)[0];
+    const fps = opc.fps || 8;
     alvo.classList.add('gato-cena');
     let i = alvo.querySelector('i');
     if (!i) { i = document.createElement('i'); alvo.appendChild(i); }
-    if (opc.vira) i.style.transform = 'scaleX(-1)';
-    const lista = [].concat(nomes);
     let k = 0, t = null;
-    quadro(i, c, lista[0], s);
+    const poe = (n) => { nome = n; quadro(i, c, n, s); const f = A[c].f[n], dx = (f && f[4] || 0) * s; i.style.transform = `translateX(${virado ? -dx : dx}px)` + (virado ? ' scaleX(-1)' : ''); };
     const api = {
       el: i,
-      pose(n) { clearInterval(t); t = null; quadro(i, c, n, s); return api; },
-      ciclo(ns, f = fps) { clearInterval(t); k = 0; quadro(i, c, ns[0], s); if (!calmo) t = setInterval(() => { k = (k + 1) % ns.length; quadro(i, c, ns[k], s); }, 1000 / f); return api; },
-      vira(v) { i.style.transform = v ? 'scaleX(-1)' : ''; return api; },
+      pose(n) { clearInterval(t); t = null; poe(n); return api; },
+      ciclo(ns, f = fps) { clearInterval(t); k = 0; poe(ns[0]); if (!calmo) t = setInterval(() => { k = (k + 1) % ns.length; poe(ns[k]); }, 1000 / f); return api; },
+      vira(v) { virado = !!v; poe(nome); return api; },
+      escala(v) { s = v; poe(nome); return api; },
       para() { clearInterval(t); t = null; return api; },
     };
+    const lista = [].concat(nomes);
+    poe(lista[0]);
     if (lista.length > 1) api.ciclo(lista);
+    if (opc.respira) alvo.classList.add('resp');
     return api;
   }
 
@@ -57,7 +60,7 @@
       this.el = document.createElement('div'); this.el.className = 'gato'; this.el.setAttribute('aria-hidden', 'true');
       this.sp = document.createElement('div'); this.sp.className = 'gato-s';
       this.bal = document.createElement('div'); this.bal.className = 'balao';
-      this.el.append(this.sp, this.bal); faixa.el.appendChild(this.el);
+      this.so = document.createElement('div'); this.so.className = 'gato-so'; this.el.append(this.so, this.sp, this.bal); faixa.el.appendChild(this.el);
       this.x = innerWidth * (0.18 + c * 0.3); this.dir = c === LUNA ? -1 : 1; this.q = 0; this.tq = 0;
       this.estado = 'senta'; this.t = 1 + c; this.nome = '0'; this.alvo = null;
       this.el.addEventListener('pointerdown', (e) => { e.preventDefault(); this.toque(); });
@@ -66,7 +69,7 @@
     }
     get s() { return this.faixa.s; }
     poe(n) { this.nome = n; quadro(this.sp, this.c, n, this.s); }
-    diz(txt, seg = 1.8) { this.bal.textContent = txt; this.bal.classList.add('on'); clearTimeout(this.tb); this.tb = setTimeout(() => this.bal.classList.remove('on'), seg * 1000); }
+    diz(txt, seg = 1.8) { this.bal.textContent = txt; const w = this.bal.offsetWidth / 2 + 8; this.bal.style.marginLeft = (Math.max(0, w - this.x) - Math.max(0, this.x + w - innerWidth)) + 'px'; this.bal.classList.add('on'); clearTimeout(this.tb); this.tb = setTimeout(() => this.bal.classList.remove('on'), seg * 1000); }
     sobe(txt, cor) { const e = document.createElement('span'); e.className = 'sobe'; e.textContent = txt; if (cor) e.style.color = cor; this.el.appendChild(e); setTimeout(() => e.remove(), 1100); }
     toque() {
       const f = this.j.toque; this.diz(f[Math.floor(Math.random() * f.length)], 1.2); this.sobe('♥', '#e8563a');
@@ -115,6 +118,7 @@
     desenha() {
       this.el.style.transform = `translate3d(${this.x}px,0,0) translateX(-50%)`;
       const f = A[this.c].f[this.nome], dx = (f && f[4] || 0) * this.s * this.dir; this.sp.style.transform = `translateX(${dx}px)` + (this.dir < 0 ? ' scaleX(-1)' : '');
+      this.sp.classList.toggle('resp', !(this.estado === 'anda' || this.estado === 'laco' || this.estado === 'vai' || this.estado === 'corre'));
       if (this.estado === 'dorme' || this.estado === 'torto') { if (!this.z) { this.z = document.createElement('span'); this.z.className = 'zzz'; this.z.textContent = 'z'; this.el.appendChild(this.z); } }
       else if (this.z) { this.z.remove(); this.z = null; }
     }

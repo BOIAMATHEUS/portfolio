@@ -67,6 +67,7 @@ def pagina(p):
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script src="js/gatos-atlas.js"></script>
 <script src="js/gatos.js"></script>
+<script src="js/hero.js"></script>
 <script src="js/site.js"></script>
 </body>
 </html>

@@ -21,6 +21,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .px { font-family: var(--pixel); letter-spacing: .02em; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
+/* grão de papel por cima de tudo, bem leve */
+body::after { content: ''; position: fixed; inset: 0; z-index: 140; pointer-events: none; opacity: .055; mix-blend-mode: multiply; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
 /* ---------- abertura (luz apagada, três pares de olhos) ---------- */
 .abre { position: fixed; inset: 0; z-index: 200; background: #0c0a08; display: grid; place-items: center; color: var(--olho); }
 .abre-olhos { display: flex; gap: clamp(28px, 6vw, 80px); align-items: center; }
@@ -53,7 +56,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero-topo .px { color: var(--tinta); font-size: 15px; }
 .nome { font-weight: 850; font-stretch: 100%; font-size: clamp(74px, 20.6vw, 345px); line-height: .8; letter-spacing: -.062em; margin-left: -.035em; user-select: none; }
 .nome .l1, .nome .l2 { display: flex; align-items: flex-end; gap: .12em; }
-.nome .l2 { margin-top: .04em; align-items: flex-end; }
+.nome .l2 { margin-top: .075em; align-items: flex-end; }
 .pal { display: inline-flex; white-space: nowrap; position: relative; }
 .pal .c { display: inline-block; position: relative; will-change: transform; }
 .tile { flex: 1; min-width: 0; height: .66em; margin-bottom: .075em; border-radius: clamp(14px, 1.8vw, 30px); position: relative; letter-spacing: 0; }
@@ -65,10 +68,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .zzz { position: absolute; right: -6px; top: -20px; font-family: var(--pixel); font-size: 17px; color: var(--tinta); letter-spacing: 0; line-height: 1; animation: zzz 2.4s infinite; }
 @keyframes zzz { 0% { opacity: 0; transform: translate(0, 6px) scale(.7); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(12px, -16px) scale(1.15); } }
 .i-zoro { position: relative; display: inline-block; }
-.pingo { position: absolute; left: 50%; top: 0; width: .178em; height: .178em; margin-left: -.089em; border-radius: 50%; background: currentColor; cursor: pointer; z-index: 3; }
-.pingo::after { content: ''; position: absolute; inset: -14px; }
-.o-zoro { position: relative; display: inline-block; }
-.o-zoro .gato-cena { position: absolute; left: 50%; bottom: .578em; margin-left: -.1em; z-index: 2; pointer-events: none; letter-spacing: 0; }
+.zoro-n { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 3; pointer-events: none; letter-spacing: 0; line-height: 0; opacity: 0; }
+.zoro-c { position: absolute; left: 0; bottom: 0; translate: -50% 0; transform-origin: 50% 100%; display: block; }
+.pingo-w { position: absolute; inset: 0; z-index: 4; pointer-events: none; will-change: transform; }
+.pingo-g { position: absolute; left: 0; top: 0; white-space: nowrap; }
+.pingo-h { position: absolute; border-radius: 50%; pointer-events: auto; cursor: pointer; }
 .hero-info { flex: 0 0 auto; width: min(31vw, 430px); margin-bottom: .1em; margin-left: auto; letter-spacing: 0; font-weight: 400; font-stretch: 100%; line-height: 1.42; font-size: clamp(15px, 1.22vw, 19px); }
 .hero-info p { color: var(--tinta); }
 .hero-info .px { display: block; margin-top: 14px; font-size: clamp(14px, 1.05vw, 16px); color: var(--tinta-2); }
@@ -89,6 +93,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .gato { position: absolute; bottom: 4px; left: 0; pointer-events: auto; cursor: grab; will-change: transform; -webkit-tap-highlight-color: transparent; }
 .gato-s, .gato-cena i { display: block; background-repeat: no-repeat; image-rendering: auto; transform-origin: 50% 100%; }
 .gato-cena { display: block; line-height: 0; }
+@keyframes resp { 50% { scale: 1.015 1.04; } }
+.gato-cena.resp i, .gato-s.resp { animation: resp 3.4s ease-in-out infinite; }
+.gato-so { position: absolute; left: 50%; bottom: -3px; width: 70%; height: 9px; margin-left: -35%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .26), rgba(0, 0, 0, 0)); pointer-events: none; }
 .balao { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%) scale(.6); transform-origin: 50% 100%; opacity: 0; transition: opacity .2s, transform .25s cubic-bezier(.3, 1.6, .5, 1); font-family: var(--pixel); font-size: 14px; line-height: 1; white-space: nowrap; background: #fffaf2; color: #2b211a; border: 2px solid #2b211a; padding: 6px 8px; border-radius: 8px; pointer-events: none; }
 .balao.on { opacity: 1; transform: translateX(-50%) scale(1); }
 .sobe { position: absolute; left: 50%; bottom: 100%; font-family: var(--pixel); font-size: 18px; pointer-events: none; animation: sobe 1.1s ease-out forwards; }
