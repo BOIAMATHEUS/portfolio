@@ -9,6 +9,12 @@
   const G = window.Gatos, grande = matchMedia('(min-width: 901px)');
   const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 
+  /* som: botão na navegação e sons de interface */
+  const som = (n, o) => { if (window.Som) Som.toca(n, o); };
+  const sb = $('#som-b');
+  if (sb && window.Som) { const pinta = () => { sb.setAttribute('aria-pressed', Som.ligado ? 'true' : 'false'); sb.lastChild.textContent = Som.ligado ? 'som' : 'mudo'; }; pinta(); sb.addEventListener('click', () => { Som.alterna(); pinta(); }); }
+  $$('a.btn, .nav-l a, .prox, .hero-lista a').forEach((el) => { el.addEventListener('pointerenter', () => som('tique')); el.addEventListener('click', () => som('clique')); });
+
   /* rolagem suave */
   let lenis = null;
   if (window.Lenis && !calmo) {
@@ -22,7 +28,7 @@
   const cortina = $('#cortina');
   $$('a[data-vai]').forEach((a) => a.addEventListener('click', (e) => {
     if (e.metaKey || e.ctrlKey || calmo) return; e.preventDefault();
-    cortina.style.background = a.dataset.vai || '#15120f';
+    cortina.style.background = a.dataset.vai || '#15120f'; som('cortina');
     gsap.fromTo(cortina, { yPercent: 101 }, { yPercent: 0, duration: .6, ease: 'power3.inOut', onComplete: () => { location.href = a.href; } });
   }));
   addEventListener('pageshow', (e) => { if (e.persisted) gsap.set(cortina, { yPercent: 101 }); });
@@ -66,8 +72,10 @@
         if (!el) return; const m = medeLetra(el, ch), sp = document.createElement('span');
         sp.style.cssText = `position:absolute;left:50%;top:${m.base - m.asc + m.fs * .012}px;translate:-50% -100%;pointer-events:none;letter-spacing:0;line-height:0`;
         el.style.position = 'relative'; el.appendChild(sp);
-        const api = G.cena(sp, gato, pose, { s: m.fs * .52 / (window.GATOS_ATLAS[gato].sit || 180), respira: true, vira });
-        gsap.from(sp, { y: -m.fs * .5, opacity: 0, duration: .7, ease: 'bounce.out', scrollTrigger: { trigger: '#contato-t', start: 'top 60%' } });
+        const api = G.cena(sp, gato, pose, { s: m.fs * .46 / (window.GATOS_ATLAS[gato].sit || 180), respira: true, vira });
+        gsap.set(sp, { autoAlpha: 0 });
+        const cn = G.palco.cria(gato, { entra: () => gsap.fromTo(sp, { autoAlpha: 0, y: -m.fs * .4 }, { autoAlpha: 1, y: 0, duration: .6, ease: 'bounce.out' }), sai: () => gsap.to(sp, { autoAlpha: 0, duration: .2 }) });
+        ScrollTrigger.create({ trigger: '#contato-t', start: 'top 62%', end: 'bottom top', onToggle: (st) => G.palco.liga(cn, st.isActive) });
         return api;
       };
       const l = poe(acha('m'), 'm', G.NACHO, '5');
@@ -84,27 +92,26 @@
     const abre = $('#abre'), n = $('#abre-n');
     const letras = $$('.nome .c');
     gsap.set(letras, { yPercent: 115 });
-    gsap.set(['.tile', '.hero-info', '.hero-topo', '.hero-pe'], { opacity: 0 });
-    gsap.set('.nome .pal', { overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.05em' });
+    gsap.set(['.hero-topo', '.hero-pe'], { opacity: 0 });
+    gsap.set('.nome .pal', { display: 'inline-flex', overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.06em' });
 
-    /* gatos de cena do hero */
-    const luna = G && G.cena($('#luna-tile'), G.LUNA, '5', { s: innerWidth < 900 ? .36 : Math.min(.56, innerWidth / 2600), respira: true });
-    if (luna) { const z = document.createElement('span'); z.className = 'zzz'; z.textContent = 'z'; $('#luna-tile').appendChild(z); }
+    /* o nome ocupa a largura toda (ou 36% da altura da janela, o que for menor) */
+    const nome = $('.nome'), l1 = $('.nome .l1 .pal');
+    function ajusta() { nome.style.fontSize = '100px'; const w = l1.getBoundingClientRect().width, cs = getComputedStyle(hero), larg = hero.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); nome.style.fontSize = Math.min(100 * larg / w * .992, innerHeight * (innerWidth < 900 ? .3 : .36)) + 'px'; }
+    ajusta(); document.fonts.ready.then(ajusta); addEventListener('resize', ajusta);
+
     const zoro = window.HeroZoro ? HeroZoro({ hero, G, calmo }) : { gag() {}, voltou() {} };
 
     const conta = { v: 0 };
     const tl = gsap.timeline();
-    if (calmo) { abre.remove(); gsap.set(letras, { yPercent: 0 }); gsap.set(['.tile', '.hero-info', '.hero-topo', '.hero-pe'], { opacity: 1 }); gsap.set('.nome .pal', { overflow: 'visible' }); }
+    if (calmo) { abre.remove(); gsap.set(letras, { yPercent: 0 }); gsap.set(['.hero-topo', '.hero-pe'], { opacity: 1 }); gsap.set('.nome .pal', { overflow: 'visible' }); }
     else {
       tl.to(conta, { v: 100, duration: .85, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); } })
         .to('.par i', { scaleY: .06, duration: .16, stagger: .05 }, '-=.1')
-        .to(abre, { yPercent: -100, duration: .75, ease: 'power4.inOut' })
+        .add(() => som('luz')).to(abre, { yPercent: -100, duration: .75, ease: 'power4.inOut' })
         .add(() => abre.remove())
         .to(letras, { yPercent: 0, duration: 1.05, stagger: .045, ease: 'power4.out' }, '-=.55')
-        .to('.tile', { opacity: 1, duration: .01 }, '-=.9')
-        .fromTo('.tile-in', { clipPath: 'inset(0 100% 0 0 round 30px)' }, { clipPath: 'inset(0 0% 0 0 round 30px)', duration: 1, ease: 'power4.inOut', clearProps: 'clipPath' }, '-=.9')
-        .fromTo(['#luna-tile', '#tile-n'], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: .5, ease: 'bounce.out', stagger: .1 }, '-=.15')
-        .to(['.hero-topo', '.hero-info', '.hero-pe'], { opacity: 1, duration: .7, stagger: .08 }, '-=.6')
+        .to(['.hero-topo', '.hero-pe'], { opacity: 1, duration: .7, stagger: .08 }, '-=.6')
         .add(() => { gsap.set('.nome .pal', { overflow: 'visible' }); })
         .add(() => document.fonts.ready.then(() => zoro.gag()), '-=.9');
     }
@@ -117,10 +124,9 @@
       hero.addEventListener('pointerleave', () => ls.forEach((l) => l.y(0)));
     }
 
-    /* vitrine dentro do nome */
-    const fotos = $$('#tile img'), rot = $('#tile-n'); let k = 0;
-    if (fotos.length > 1 && !calmo) setInterval(() => { fotos[k].classList.remove('on'); k = (k + 1) % fotos.length; fotos[k].classList.add('on'); rot.textContent = fotos[k].dataset.n; }, 3400);
-
+    /* o Zoro das letras é o mesmo do pé da janela: enquanto o nome aparece, ele fica aqui em cima */
+    const zw = $('#zoro');
+    if (G && zw && !calmo) { const cz = G.palco.cria(G.ZORO, { entra: () => { zw.style.visibility = 'visible'; }, sai: () => { zw.style.visibility = 'hidden'; } }); G.palco.liga(cz, true); ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom 45%', onToggle: (st) => G.palco.liga(cz, st.isActive) }); }
     ScrollTrigger.create({ trigger: hero, start: 'bottom 40%', onEnterBack: () => zoro.voltou() });
 
     /* nome reage à rolagem */
@@ -153,7 +159,7 @@
       moedas += q * 5 * combo; const o = { v: +nEl.textContent };
       gsap.to(o, { v: moedas, duration: .5, onUpdate: () => { nEl.textContent = Math.round(o.v); } });
       gsap.fromTo(alvo, { scale: 1 }, { scale: 1.18, duration: .15, yoyo: true, repeat: 1 });
-      msg.textContent = combo > 1 ? `Combo x${combo}!` : frases[Math.floor(Math.random() * frases.length)];
+      msg.textContent = combo > 1 ? `Combo x${combo}!` : frases[Math.floor(Math.random() * frases.length)]; som('moeda', { combo });
       const a = alvo.getBoundingClientRect();
       els.slice(0, 3).forEach((el, i) => { const r = el.getBoundingClientRect(); const c = document.createElement('img'); c.src = 'assets/renova/moeda-junior-frente.webp'; c.style.cssText = `position:fixed;z-index:90;width:26px;height:26px;left:${r.left + r.width / 2 - 13}px;top:${r.top + r.height / 2 - 13}px;pointer-events:none`; document.body.appendChild(c); gsap.to(c, { x: a.left + 14 - (r.left + r.width / 2), y: a.top + 14 - (r.top + r.height / 2), scale: .5, duration: .6, delay: i * .06, ease: 'power2.in', onComplete: () => c.remove() }); });
       if (rv) { rv.src = 'assets/renova/renovinha-nb-comemora.webp'; clearTimeout(tr); tr = setTimeout(() => { rv.src = 'assets/renova/renovinha-nb-aponta.webp'; }, 1100); gsap.fromTo(rv, { y: 0 }, { y: -18, duration: .2, yoyo: true, repeat: 1, ease: 'power2.out' }); }
@@ -162,7 +168,7 @@
       if (moedas >= META && !fim) { fim = true; gsap.delayedCall(.9, venceu); }
     } });
     function venceu() {
-      msg.textContent = 'Fase concluída!'; clearTimeout(tr); if (rv) rv.src = 'assets/renova/renovinha-nb-comemora.webp';
+      msg.textContent = 'Fase concluída!'; som('vitoria'); clearTimeout(tr); if (rv) rv.src = 'assets/renova/renovinha-nb-comemora.webp';
       const f = $('#vis-renova .fone').getBoundingClientRect();
       for (let i = 0; i < 16; i++) { const c = document.createElement('img'); c.src = 'assets/renova/moeda-junior-frente.webp'; const t = 22 + Math.random() * 26; c.style.cssText = `position:fixed;z-index:90;width:${t}px;height:${t}px;left:${f.left + f.width / 2}px;top:${f.top + f.height * .45}px;pointer-events:none`; document.body.appendChild(c); const a = Math.random() * Math.PI * 2, d = 140 + Math.random() * 240; gsap.to(c, { x: Math.cos(a) * d, y: Math.sin(a) * d - 80, rotation: Math.random() * 360, duration: .9, ease: 'power3.out' }); gsap.to(c, { y: '+=320', opacity: 0, duration: .8, delay: .85, ease: 'power2.in', onComplete: () => c.remove() }); }
       if (G) { G.faixa.corre(G.NACHO, 1); G.faixa.diz(G.NACHO, 'é tudo meu!', 2.4); }
@@ -186,7 +192,7 @@
   /* ---------- 02 Good Green ---------- */
   function goodGreen() {
     const rolo = $('#gg-rolo'); if (!rolo) return;
-    const lj = $('#luna-janela'); if (G && lj) { G.cena(lj, G.LUNA, 'x1', { s: innerWidth < 900 ? .32 : .46, respira: true }); const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#78f624'; z.textContent = 'z'; lj.appendChild(z); }
+    const lj = $('#luna-janela'); if (G && lj) { G.cena(lj, G.LUNA, 'x1', { s: innerWidth < 900 ? .32 : .46, respira: true }); gsap.set(lj, { autoAlpha: 0 }); const cl = G.palco.cria(G.LUNA, { entra: () => gsap.fromTo(lj, { autoAlpha: 0, y: -22 }, { autoAlpha: 1, y: 0, duration: .5, ease: 'bounce.out' }), sai: () => gsap.to(lj, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.c-gg', start: 'top 45%', endTrigger: '.c-nhv', end: 'top 55%', onToggle: (st) => G.palco.liga(cl, st.isActive) }); const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#78f624'; z.textContent = 'z'; lj.appendChild(z); }
     entra('.c-gg');
     const dist = () => Math.min(0, -(rolo.offsetHeight - rolo.parentElement.offsetHeight) * .62); rolo.addEventListener('load', () => ScrollTrigger.refresh());
     const mm = gsap.matchMedia();
@@ -204,25 +210,27 @@
     const cpf = $('#cpf'); if (!cpf) return;
     const TXT = '529.982.247-25', o = { n: 0 }, passos = $$('#rast-l .passo'), cz = $('#caixa-zoro'), selo = $('#selo');
     const zoro = G && G.cena(cz, G.ZORO, 'x8', { s: innerWidth < 900 ? .5 : .66 });
+    if (G) { gsap.set(cz, { autoAlpha: 0 }); const cc = G.palco.cria(G.ZORO, { entra: () => gsap.to(cz, { autoAlpha: 1, duration: .3 }), sai: () => gsap.to(cz, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.c-nhv', start: 'top 45%', endTrigger: '.sobre', end: 'top 55%', onToggle: (st) => G.palco.liga(cc, st.isActive) }); }
     entra('.c-nhv');
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
     tl.to(o, { n: TXT.length, duration: 1.2, onUpdate: () => { cpf.textContent = TXT.slice(0, Math.round(o.n)); } })
       .add(() => $('#rast-b').classList.add('ok'), '+=.15').add(() => $('#rast-b').classList.remove('ok'), '+=.25')
       .to('#rast-p', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' })
       .to('#rast-l', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' }, '-=.15');
-    passos.forEach((p, i) => { tl.add(() => { p.classList.add('on'); if (selo) selo.textContent = ['pedido recebido', 'pagamento aprovado', 'em separação', 'caixa a caminho', 'chegou!'][i]; if (zoro) zoro.pose(i === 4 ? 'x9' : 'x8'); }, `+=${i ? .55 : .2}`); });
+    let tocado = -1;
+    passos.forEach((p, i) => { tl.add(() => { if (i > tocado) { tocado = i; som(i === 4 ? 'chegou' : 'passo'); } p.classList.add('on'); if (selo) selo.textContent = ['pedido recebido', 'pagamento aprovado', 'em separação', 'caixa a caminho', 'chegou!'][i]; if (zoro) zoro.pose(i === 4 ? 'x9' : 'x8'); }, `+=${i ? .55 : .2}`); });
     tl.to({}, { duration: .5 });
     gsap.set(cz, { yPercent: -40 });
     const dur = tl.duration();
     const volta = () => { passos.forEach((p) => p.classList.remove('on')); if (zoro) zoro.pose('x8'); };
     const mm = gsap.matchMedia();
     mm.add('(min-width: 901px)', () => {
-      const st = ScrollTrigger.create({ trigger: '.c-nhv', start: 'top top', end: '+=115%', scrub: .4, onUpdate: (s) => { const t = s.progress * dur; if (t < tl.time()) volta(); tl.time(0, true); tl.time(t, false); } });
+      const st = ScrollTrigger.create({ trigger: '.c-nhv', start: 'top top', end: '+=115%', scrub: .4, onUpdate: (s) => { const t = s.progress * dur, tras = t < tl.time(); if (tras) volta(); tl.time(0, true); tl.time(t, false); if (tras) tocado = passos.filter((p) => p.classList.contains('on')).length - 1; } });
       gsap.fromTo(cz, { yPercent: -40 }, { yPercent: 190, ease: 'none', scrollTrigger: { trigger: '.c-nhv', start: 'top top', end: '+=115%', scrub: .4 } });
       return () => st.kill();
     });
     mm.add('(max-width: 900px)', () => {
-      const roda = () => { volta(); tl.restart(); gsap.fromTo(cz, { yPercent: -40 }, { yPercent: 190, duration: dur, ease: 'none' }); };
+      const roda = () => { volta(); tocado = -1; tl.restart(); gsap.fromTo(cz, { yPercent: -40 }, { yPercent: 190, duration: dur, ease: 'none' }); };
       const st = ScrollTrigger.create({ trigger: '#vis-nhv', start: 'top 65%', onEnter: roda, onEnterBack: roda });
       const iv = setInterval(() => { if (st.isActive) roda(); }, (dur + 3) * 1000);
       return () => { st.kill(); clearInterval(iv); };
@@ -234,6 +242,7 @@
     if (!G) return;
     const s = innerWidth < 900 ? .72 : .86;
     const a = $('#sup-luna') && G.cena($('#sup-luna'), G.LUNA, 'x6', { s, respira: true }), b = $('#sup-zoro') && G.cena($('#sup-zoro'), G.ZORO, 'x8', { s, respira: true }), c = $('#sup-nacho') && G.cena($('#sup-nacho'), G.NACHO, 'x4', { s, respira: true });
+    [['#sup-luna', G.LUNA], ['#sup-zoro', G.ZORO], ['#sup-nacho', G.NACHO]].forEach(([id, gato], i) => { const el = $(id); if (!el) return; gsap.set(el, { autoAlpha: 0 }); const cs = G.palco.cria(gato, { entra: () => gsap.fromTo(el, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .5, delay: i * .08, ease: 'back.out(2)' }), sai: () => gsap.to(el, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.sup', start: 'top 78%', end: 'bottom 22%', onToggle: (st) => G.palco.liga(cs, st.isActive) }); });
     const troca = (card, api, ns, f) => { if (!card || !api) return; card.addEventListener('pointerenter', () => api.ciclo(ns, f)); card.addEventListener('pointerleave', () => api.pose(ns[0])); };
     troca($('.s-luna'), a, ['x6', 'x4', 'x4', 'x6'], 2.5); troca($('.s-zoro'), b, ['x8', 'x9', 'x8', 'x9'], 4); troca($('.s-nacho'), c, ['x4', 'x8', 'x4', 'x7'], 3);
     const mm = gsap.matchMedia();

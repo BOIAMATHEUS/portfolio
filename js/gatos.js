@@ -64,7 +64,7 @@
       this.x = innerWidth * (0.18 + c * 0.3); this.dir = c === LUNA ? -1 : 1; this.q = 0; this.tq = 0;
       this.estado = 'senta'; this.t = 1 + c; this.nome = '0'; this.alvo = null;
       this.el.addEventListener('pointerdown', (e) => { e.preventDefault(); this.toque(); });
-      this.el.addEventListener('pointerenter', () => { if (c === LUNA && this.estado !== 'anda') { this.poe('x4'); this.sobe('♥', '#e8563a'); this.t = Math.max(this.t, 1.6); } });
+      this.el.addEventListener('pointerenter', () => { if (c === LUNA && !this.fora && this.estado !== 'anda') { this.poe('x4'); this.sobe('♥', '#e8563a'); this.t = Math.max(this.t, 1.6); if (window.Som) Som.toca('ronrom'); } });
       this.desenha();
     }
     get s() { return this.faixa.s; }
@@ -72,7 +72,7 @@
     diz(txt, seg = 1.8) { this.bal.textContent = txt; const w = this.bal.offsetWidth / 2 + 8; this.bal.style.marginLeft = (Math.max(0, w - this.x) - Math.max(0, this.x + w - innerWidth)) + 'px'; this.bal.classList.add('on'); clearTimeout(this.tb); this.tb = setTimeout(() => this.bal.classList.remove('on'), seg * 1000); }
     sobe(txt, cor) { const e = document.createElement('span'); e.className = 'sobe'; e.textContent = txt; if (cor) e.style.color = cor; this.el.appendChild(e); setTimeout(() => e.remove(), 1100); }
     toque() {
-      const f = this.j.toque; this.diz(f[Math.floor(Math.random() * f.length)], 1.2); this.sobe('♥', '#e8563a');
+      const f = this.j.toque; this.diz(f[Math.floor(Math.random() * f.length)], 1.2); this.sobe('♥', '#e8563a'); if (window.Som) Som.toca('miau', { gato: this.c });
       if (this.c === ZORO) { this.dir = this.x > innerWidth / 2 ? -1 : 1; this.muda('corre', 1.6); }
       else if (this.c === NACHO) this.muda('lambe', 1.4);
       else { this.poe('x4'); this.estado = 'pose'; this.t = 1.8; }
@@ -83,7 +83,7 @@
       const fix = { senta: ['0', r(2, 5)], dorme: [this.c === LUNA && Math.random() < .5 ? 'x1' : '5', r(7, 14)], pao: [this.c === LUNA ? 'x6' : 'x0', r(4, 8)],
         lambe: ['n5', r(1.6, 3)], boceja: [this.c === ZORO ? 'x1' : 'n6', 1.3], espreguica: ['7', 1.6], espirra: ['x7', .9], pose: ['x4', r(2.5, 5)],
         torto: ['d' + Math.floor(Math.random() * 10), r(6, 11)], pede: ['x4', r(2.4, 4)] };
-      if (fix[e]) { this.poe(fix[e][0]); this.t = t || fix[e][1]; if (e === 'espirra') this.diz('atchim!', .9); if (e === 'pede') this.diz(this.j.fala[Math.floor(Math.random() * this.j.fala.length)], 2); return; }
+      if (fix[e]) { this.poe(fix[e][0]); this.t = t || fix[e][1]; if (e === 'espirra') { this.diz('atchim!', .9); if (window.Som) Som.toca('espirro'); } if (e === 'pede') { this.diz(this.j.fala[Math.floor(Math.random() * this.j.fala.length)], 2); const ag = performance.now(); if (window.Som && ag - (this.tm || 0) > 9000) { this.tm = ag; Som.toca('miau', { gato: this.c }); } } return; }
       if (e === 'anda' || e === 'laco') { this.t = t || r(3, 7); if (Math.random() < .5 && !t) this.dir *= -1; }
       if (e === 'corre') { this.t = t || r(1.2, 2.6); }
       if (e === 'vai') { this.t = 6; }
@@ -95,6 +95,7 @@
       let n = Math.random() * tot; for (const k in p) { n -= p[k]; if (n <= 0) return this.muda(k); }
     }
     passo(dt) {
+      if (this.fora) return;
       this.t -= dt;
       const anda = this.estado === 'anda' || this.estado === 'laco' || this.estado === 'vai', corre = this.estado === 'corre';
       if (anda || corre) {
@@ -139,10 +140,24 @@
       return this;
     },
     mede() { this.s = innerWidth < 700 ? .28 : innerWidth < 1200 ? .34 : .4; },
-    diz(c, txt, seg) { const g = this.gatos[c]; if (g) g.diz(txt, seg); },
-    corre(c, dir) { const g = this.gatos[c]; if (g && g.estado !== 'dorme') { g.dir = dir; g.muda('corre', 1.4); } },
+    diz(c, txt, seg) { const g = this.gatos[c]; if (g && !g.fora) g.diz(txt, seg); },
+    some(c, v) { const g = this.gatos[c]; if (!g || g.fora === v) return; g.fora = v; g.el.classList.toggle('fora', v); if (!v) { g.x = Math.max(60, Math.min(innerWidth - 60, g.x)); g.muda('senta', 1.4); g.desenha(); } },
+    corre(c, dir) { const g = this.gatos[c]; if (g && !g.fora && g.estado !== 'dorme') { g.dir = dir; g.muda('corre', 1.4); } },
     acorda() { this.gatos.forEach((g) => { if (g.estado === 'dorme' || g.estado === 'torto') g.muda('boceja'); }); },
   };
 
-  window.Gatos = { cena, quadro, faixa, NACHO, LUNA, ZORO, ANDA, CORRE };
+  /* palco: só existem três gatos. Quando um deles entra numa cena da página, sai do pé da janela;
+     se duas cenas pedem o mesmo gato, vale a que foi ligada por último. */
+  const palco = {
+    cenas: [], n: 0,
+    cria(c, f) { const x = { c, ativo: false, vis: false, ordem: 0, entra: f.entra, sai: f.sai }; this.cenas.push(x); return x; },
+    liga(x, on) { if (!x || x.ativo === !!on) return; x.ativo = !!on; x.ordem = ++this.n; this.resolve(x.c); },
+    resolve(c) {
+      const dona = this.cenas.filter((x) => x.c === c && x.ativo).sort((a, b) => b.ordem - a.ordem)[0];
+      this.cenas.forEach((x) => { if (x.c !== c) return; const deve = x === dona; if (deve !== x.vis) { x.vis = deve; deve ? x.entra() : x.sai(); if (deve && window.Som) Som.toca('pop'); } });
+      faixa.some(c, !!dona);
+    },
+  };
+
+  window.Gatos = { cena, quadro, faixa, palco, NACHO, LUNA, ZORO, ANDA, CORRE };
 })();

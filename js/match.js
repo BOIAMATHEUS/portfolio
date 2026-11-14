@@ -69,9 +69,9 @@
       if (travado || !a || !b || a === b) return;
       if (Math.abs(a.l - b.l) + Math.abs(a.c - b.c) !== 1) return;
       travado = true; parado = 0; tiraDica();
-      troca(a, b); poe(a); poe(b); await esp(240);
+      troca(a, b); poe(a); poe(b); if (window.Som) Som.toca('troca'); await esp(240);
       if (grupos().length) await resolve();
-      else { troca(a, b); poe(a); poe(b); await esp(240); }
+      else { if (window.Som) Som.toca('nao'); troca(a, b); poe(a); poe(b); await esp(240); }
       travado = false;
     }
 
