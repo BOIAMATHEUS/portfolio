@@ -1,131 +1,155 @@
 /* O Zoro no nome do Matheus.
-   Mede as letras de verdade (altura do topo de cada glifo) para o gato pisar exatamente em cima delas,
-   pula de letra em letra, senta no último "a" e derruba o pingo do "i" com uma patada de lado.
-   O pingo é o glifo real do "i" recortado, então fica idêntico à letra. */
+   Mede as letras de verdade (altura do topo de cada glifo) para o gato pisar exatamente em cima delas.
+   O Zoro é o mesmo gato do pé da janela: sai correndo, sobe pelo "S", pula de letra em letra,
+   senta no último "a" e derruba o pingo do "i" com uma patada de lado.
+   O pingo é o glifo real do "i" recortado e cai como um corpo de verdade: gravidade, quique, atrito e giro. */
 (function () {
   const cv = document.createElement('canvas').getContext('2d');
   const som = (n, o) => { if (window.Som) Som.toca(n, o); };
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const GRAV = 2700;
 
   function mede(el, ch) {
     const cs = getComputedStyle(el), fs = parseFloat(cs.fontSize);
     cv.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`;
+    if ('fontStretch' in cv) { const p = parseFloat(cs.fontStretch); cv.fontStretch = p >= 124 ? 'extra-expanded' : p >= 112 ? 'expanded' : p <= 76 ? 'extra-condensed' : 'normal'; }
     const m = cv.measureText(ch);
     let p = el.querySelector(':scope > .lb');
     if (!p) { p = document.createElement('span'); p.className = 'lb'; p.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline'; el.appendChild(p); }
     const base = p.getBoundingClientRect().bottom - el.getBoundingClientRect().top;
     return { fs, base, asc: m.actualBoundingBoxAscent, esq: -m.actualBoundingBoxLeft, dir: m.actualBoundingBoxRight };
   }
-
   window.medeLetra = mede;
 
-  window.HeroZoro = function (o) {
-    const { hero, G, calmo } = o;
-    const pal = hero.querySelector('.l2 .pal'), zw = hero.querySelector('#zoro'), zc = hero.querySelector('#zoro-c');
-    const pw = hero.querySelector('#pingo'), pg = pw && pw.querySelector('.pingo-g'), ph = pw && pw.querySelector('.pingo-h'), dica = hero.querySelector('#dica');
-    const L = {}; pal.querySelectorAll('.c').forEach((c) => { L[c.dataset.l] = c; });
-    if (!G || !zw || !pw || !L.i) return { gag() {} };
-    let A = {}, fs = 100, s = .3, z = null, assento = null, caido = false, vezes = 0, ocupado = false, pronto = false, D = null;
+  /* devolve uma função que dá, em coordenadas da janela, o ponto do topo do glifo (onde o gato pisa) */
+  window.pontoLetra = function (el, ch, modo) {
+    let m = null, larg = -1;
+    return () => {
+      const r = el.getBoundingClientRect();
+      if (!m || Math.abs(r.width - larg) > .5) { m = mede(el, ch); larg = r.width; }
+      return { x: r.left + (modo === 'haste' ? m.esq + m.fs * .115 : (m.esq + m.dir) / 2), y: r.top + m.base - m.asc + m.fs * .008, fs: m.fs };
+    };
+  };
 
-    function medeTudo() {
-      const anc = (k, ch, modo) => {
-        const el = L[k], m = mede(el, ch); fs = m.fs;
-        const x = el.offsetLeft + (modo === 'haste' ? m.esq + fs * .115 : (m.esq + m.dir) / 2);
-        return { el, x, y: el.offsetTop + m.base - m.asc + fs * .006 };
-      };
-      A = { S: anc('S', 'S'), b: anc('b', 'b', 'haste'), o: anc('o', 'o'), a: anc('a2', 'a') };
-      /* pingo: glifo "i" recortado logo acima da haste */
+  window.HeroZoro = function (o) {
+    const { hero, G } = o;
+    const pal = hero.querySelector('.l2 .pal'), pw = hero.querySelector('#pingo'), dica = hero.querySelector('#dica');
+    if (!G || !pal || !pw) return null;
+    const pg = pw.querySelector('.pingo-g'), ph = pw.querySelector('.pingo-h');
+    const L = {}; pal.querySelectorAll('.c').forEach((c) => { L[c.dataset.l] = c; });
+    const P = { S: pontoLetra(L.S, 'S'), b: pontoLetra(L.b, 'b', 'haste'), o: pontoLetra(L.o, 'o'), a: pontoLetra(L.a2, 'a') };
+    const sit = (G.A[G.ZORO].sit || 182);
+    const fs = () => parseFloat(getComputedStyle(L.i).fontSize);
+    const escala = () => fs() * (innerWidth < 900 ? .42 : .29) / sit;
+    const espera = (ms, vivo) => new Promise((r) => setTimeout(() => r(vivo()), ms));
+
+    /* ---------- pingo ---------- */
+    let D = null;
+    const B = { x: 0, y: 0, vx: 0, vy: 0, a: 0, w: 0, sq: 1, sqV: 0, ox: 0, oxV: 0, solto: false, repouso: true, volta: null };
+    function medePingo() {
       const mi = mede(L.i, 'i'), mh = mede(L.i, 'ı');
       const d = mi.dir - mi.esq, topo = mi.base - mi.asc, corte = mi.base - mh.asc - Math.max(1, (mi.asc - mh.asc - d) * .5);
       pg.style.clipPath = `inset(0 0 calc(100% - ${corte}px) 0)`;
-      D = { cx: (mi.esq + mi.dir) / 2, cy: topo + d / 2, d };
+      D = { cx: (mi.esq + mi.dir) / 2, cy: topo + (corte - topo) / 2, d, h: corte - topo };
       pw.style.transformOrigin = `${D.cx}px ${D.cy}px`;
       const t = Math.max(44, d * 1.9);
       ph.style.cssText = `left:${D.cx - t / 2}px;top:${D.cy - t / 2}px;width:${t}px;height:${t}px`;
-      /* gato: sentado ocupa ~0,29 em, que é o vão entre as duas linhas do nome */
-      s = fs * (innerWidth < 900 ? .42 : .29) / (window.GATOS_ATLAS[G.ZORO].sit || 182);
-      if (!z) z = G.cena(zc, G.ZORO, 'g7', { s }); else z.escala(s);
-      if (assento) gsap.set(zw, { x: assento.x, y: assento.y });
+    }
+    function limites() { /* chão e paredes do pingo, em deslocamento a partir do lugar dele no "i" */
+      const hr = hero.getBoundingClientRect(), ir = L.i.getBoundingClientRect();
+      const cxAbs = ir.left + D.cx, baixoAbs = ir.top + D.cy + D.h / 2;
+      return { chao: hr.bottom - 6 - baixoAbs, esq: hr.left + D.d - cxAbs, dir: hr.right - D.d - cxAbs };
+    }
+    function pinta() { pw.style.transform = `translate(${(B.x + B.ox).toFixed(1)}px,${B.y.toFixed(1)}px) rotate(${B.a.toFixed(1)}deg) scale(${(2 - B.sq).toFixed(3)},${B.sq.toFixed(3)})`; }
+    function solta(vx, vy, w) { B.solto = true; B.repouso = false; B.vx = vx; B.vy = vy; B.w = w; }
+    function fisica(dt) {
+      if (!D) return;
+      /* mola do toque de teste e do amassa */
+      const fo = -B.ox * 420 - B.oxV * 14; B.oxV += fo * dt; B.ox += B.oxV * dt;
+      const fq = (1 - B.sq) * 260 - B.sqV * 17; B.sqV += fq * dt; B.sq += B.sqV * dt;
+      if (B.volta) {
+        const v = B.volta; v.t += dt; const u = Math.min(1, v.t / v.T), k = u * u * (3 - 2 * u);
+        B.x = v.x0 * (1 - k); B.y = v.y0 * (1 - k) - Math.sin(Math.PI * u) * v.alt; B.a = v.a0 * (1 - k);
+        if (u >= 1) { B.volta = null; B.x = B.y = B.a = 0; B.solto = false; B.repouso = true; B.sq = .7; B.sqV = 0; som('toque'); if (v.fim) v.fim(); }
+      } else if (B.solto && !B.repouso) {
+        const lm = limites();
+        B.vy += GRAV * dt; B.x += B.vx * dt; B.y += B.vy * dt; B.a += B.w * dt;
+        if (B.x < lm.esq) { B.x = lm.esq; B.vx = Math.abs(B.vx) * .5; B.w = -B.w * .5; } if (B.x > lm.dir) { B.x = lm.dir; B.vx = -Math.abs(B.vx) * .5; B.w = -B.w * .5; }
+        if (B.y >= lm.chao) {
+          B.y = lm.chao;
+          if (B.vy > 150) { som('quique', { v: lim(B.vy / 1500, .15, 1), f: 1 }); B.sq = lim(1 - B.vy / 3200, .6, .95); B.sqV = 0; B.vy = -B.vy * .44; B.vx *= .7; B.w = B.vx * 1.6; }
+          else { B.vy = 0; B.vx *= Math.max(0, 1 - 9 * dt); B.w = B.vx * 1.6; if (Math.abs(B.vx) < 10) { B.vx = 0; B.w = 0; B.repouso = true; B.a = Math.round(B.a / 180) * 180; if (B.aoParar) { const f = B.aoParar; B.aoParar = null; f(); } } }
+        }
+      } else if (B.solto && B.repouso) {
+        /* um gato andando chuta o pingo */
+        const r = ph.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        if (cy > 0 && cy < innerHeight) for (const g of G.faixa.gatos) if (g.modo === 'chao' && Math.abs(g.vx) > 28 && Math.abs(g.x - cx) < 30 * g.s / .4 && Math.abs(g.y - cy) < 70) { solta((g.vx > 0 ? 1 : -1) * (240 + Math.random() * 200), -(360 + Math.random() * 180), 0); som('toque'); break; }
+      }
+      pinta();
+    }
+    gsap.ticker.add((t, dms) => fisica(Math.min(.034, dms / 1000)));
+
+    /* ---------- roteiro do Zoro ---------- */
+    let pose = 'g7', virado = true, jaSubiu = false, vezes = 0, ocupado = false, ativo = false;
+    const poe = (p, v) => { pose = p; if (v != null) virado = v; };
+    const ancora = (ponto, p, v) => ({ ponto, s: escala, pose: () => p || pose, vira: () => (v != null ? v : virado) });
+
+    async function roteiro(g, vivo) {
+      await document.fonts.ready; if (!vivo()) return;
+      medePingo();
+      if (!jaSubiu) {
+        if (g.modo === 'chao') { g.quer = -1; const ok = await g.correAte(-80); if (!ok || !vivo()) return; }
+        else if (g.modo === 'ar') { await espera(700, vivo); if (!vivo()) return; }
+        const f = fs(), pS = P.S();
+        g.x = pS.x - f * .7; g.y = pS.y + f * .22; g.s = escala(); g.sAlvo = g.s; g.dir = 1;
+        for (const k of ['S', 'b', 'o', 'a']) {
+          const ok = await g.saltaPara(P[k], { s: escala(), prep: k === 'S' ? 0 : .1 }); if (!ok || !vivo()) return;
+          g.prende(ancora(P[k], 'n7', false));
+          if (!(await espera(k === 'a' ? 130 : 70, vivo))) return;
+        }
+        jaSubiu = true;
+      } else {
+        const ok = await g.saltaPara(P.a, { s: escala() }); if (!ok || !vivo()) return;
+      }
+      poe('g7', true); g.prende(ancora(P.a));
+      if (!B.solto && vezes < 3) piada(g, vivo);
     }
 
-    /* o gato acompanha a letra quando ela sobe com o cursor */
-    gsap.ticker.add(() => { if (assento) zw.style.translate = `0 ${gsap.getProperty(assento.el, 'y') || 0}px`; });
-
-    function salto(t, de, para, dur) {
-      const pico = Math.min(de.y, para.y) - Math.max(fs * .12, Math.abs(para.x - de.x) * .3);
-      t.add(() => { assento = null; z.pose('n7').vira(para.x < de.x); })
-        .to(zc, { scaleY: .8, scaleX: 1.14, duration: .11, ease: 'power2.in' })
-        .add(() => { z.pose(para.y < de.y - fs * .08 ? '4' : 'r0'); som('pulo'); })
-        .to(zc, { scaleY: 1.1, scaleX: .93, rotation: -10, duration: .1, ease: 'power2.out' })
-        .to(zw, { x: para.x, duration: dur, ease: 'none' }, '<')
-        .to(zw, { y: pico, duration: dur * .48, ease: 'power2.out' }, '<')
-        .to(zw, { y: para.y, duration: dur * .52, ease: 'power2.in' }, '>')
-        .to(zc, { rotation: 12, duration: dur * .5, ease: 'none' }, '<')
-        .add(() => { z.pose('n7'); assento = para; som('pouso'); })
-        .to(zc, { scaleY: .78, scaleX: 1.18, rotation: 0, duration: .07, ease: 'power2.out' })
-        .to(zc, { scaleY: 1, scaleX: 1, duration: .26, ease: 'elastic.out(1, .5)' });
-    }
-
-    function quica(t, alvo, chao, alturas) {
-      alturas.forEach((h, i) => {
-        t.add(() => som('quique', { v: 1 - i * .28, f: 1 - i * .1 }))
-          .to(alvo, { scaleY: .68, scaleX: 1.26, duration: .05, ease: 'power2.out' })
-          .to(alvo, { scaleY: 1, scaleX: 1, duration: .12, ease: 'power2.out' })
-          .to(alvo, { y: chao - h, duration: .16 + i * -.02, ease: 'power2.out' }, '<')
-          .to(alvo, { y: chao, duration: .16 + i * -.02, ease: 'power2.in' });
-      });
-      t.add(() => som('quique', { v: .25, f: .7 })).to(alvo, { scaleY: .82, scaleX: 1.14, duration: .05 }).to(alvo, { scaleY: 1, scaleX: 1, duration: .25, ease: 'elastic.out(1, .5)' });
-    }
-
-    function gag() {
-      if (ocupado || caido || calmo) return; ocupado = true;
-      if (!pronto) { medeTudo(); pronto = true; }
-      const hr = hero.getBoundingClientRect(), pr = pw.getBoundingClientRect();
-      const chao = hr.bottom - 7 - (pr.top + D.cy + D.d / 2);
-      const primeira = vezes === 0;
-      const t = gsap.timeline({ onComplete: () => { ocupado = false; } });
-      if (primeira) {
-        const fora = { x: -fs * .7, y: A.S.y + fs * .2 };
-        gsap.set(zw, { x: fora.x, y: fora.y, opacity: 1 }); gsap.set(zc, { transformOrigin: '50% 100%' });
-        salto(t, fora, A.S, .4); salto(t, A.S, A.b, .38); salto(t, A.b, A.o, .34); salto(t, A.o, A.a, .36);
-        t.add(() => z.pose('g7').vira(true), '+=.12');
-      } else t.add(() => z.pose('g7').vira(true));
-      t.add(() => z.pose('g0'), '+=.4')
-        .to(zc, { scaleY: .97, duration: .2, yoyo: true, repeat: 1, ease: 'sine.inOut' })
-        .add(() => z.pose('g1'), '+=.15')
-        .add(() => { z.pose('g2'); som('toque'); }, '+=.2')
-        .to(pw, { x: -fs * .028, duration: .07, ease: 'power2.out' })
-        .to(pw, { x: 0, duration: .4, ease: 'elastic.out(1.2, .35)' })
-        .add(() => z.pose('g1'), '-=.22')
-        .add(() => z.pose('g2'), '+=.28')
-        .add(() => { z.pose('g3'); caido = true; vezes++; som('patada'); }, '+=.07')
-        .to(zc, { rotation: -4, duration: .08, yoyo: true, repeat: 1 })
-        .to(pw, { x: -fs * (innerWidth < 900 ? .5 : .95), duration: 1.25, ease: 'power1.out' }, '<')
-        .to(pw, { rotation: -180, duration: 1.05, ease: 'power1.out' }, '<')
-        .to(pw, { y: -fs * .05, duration: .12, ease: 'power2.out' }, '<')
-        .to(pw, { y: chao, duration: .5, ease: 'power2.in' }, '>');
-      quica(t, pw, chao, [fs * .2, fs * .09, fs * .035]);
-      t.add(() => z.pose('g4'), '-=.9')
-        .add(() => { z.pose('g5').vira(false); som('miau', { gato: 2 }); }, '+=.7')
-        .add(() => { if (!primeira || !dica) return; const r = ph.getBoundingClientRect(); dica.style.left = Math.max(12, r.left + r.width / 2 - hr.left - 34) + 'px'; dica.style.top = r.top - hr.top - 58 + 'px'; gsap.fromTo(dica, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4 }); gsap.to(dica, { opacity: 0, duration: .4, delay: 5 }); });
+    async function piada(g, vivo) {
+      if (ocupado) return; ocupado = true;
+      const fim = (r) => { ocupado = false; return r; };
+      poe('g7', true); if (!(await espera(420, vivo))) return fim();
+      poe('g0'); if (!(await espera(480, vivo))) return fim();
+      poe('g1'); if (!(await espera(190, vivo))) return fim();
+      poe('g2'); som('toque'); B.ox = -fs() * .03; B.oxV = 0; if (!(await espera(300, vivo))) return fim();
+      poe('g1'); if (!(await espera(260, vivo))) return fim();
+      poe('g2'); if (!(await espera(60, vivo))) return fim();
+      const f = fs(), pequeno = innerWidth < 900;
+      poe('g3'); g.amassa(1.08); som('patada'); vezes++;
+      solta(-f * (pequeno ? 1.0 : 1.45), -f * 1.05, -420);
+      const primeira = vezes === 1;
+      B.aoParar = () => { if (!primeira || !dica) return; const r = ph.getBoundingClientRect(), hr = hero.getBoundingClientRect(); dica.style.left = lim(r.left + r.width / 2 - hr.left - 34, 12, hr.width - 250) + 'px'; dica.style.top = r.top - hr.top - 58 + 'px'; gsap.fromTo(dica, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4 }); gsap.to(dica, { opacity: 0, duration: .4, delay: 5 }); };
+      if (!(await espera(520, vivo))) return fim();
+      poe('g4'); if (!(await espera(1100, vivo))) return fim();
+      poe('g5', false); som('miau', { gato: G.ZORO });
+      fim();
     }
 
     function devolve() {
-      if (!caido || ocupado) return; ocupado = true; if (dica) gsap.to(dica, { opacity: 0, duration: .2 }); som('volta');
-      const t = gsap.timeline({ onComplete: () => { ocupado = false; caido = false; if (vezes < 3) gsap.delayedCall(4.5 + Math.random() * 3, gag); else { z.pose('x4').vira(true); G.faixa.diz(G.ZORO, 'desisto', 2); } } });
-      t.to(pw, { scaleY: .7, scaleX: 1.25, duration: .1 })
-        .to(pw, { scaleY: 1.15, scaleX: .9, duration: .1 })
-        .to(pw, { x: 0, rotation: 0, duration: .62, ease: 'power1.inOut' }, '<')
-        .to(pw, { y: -fs * .16, duration: .4, ease: 'power2.out' }, '<')
-        .to(pw, { y: 0, scaleY: 1, scaleX: 1, duration: .22, ease: 'power2.in' })
-        .to(pw, { scaleY: .8, scaleX: 1.18, duration: .05 }).to(pw, { scaleY: 1, scaleX: 1, duration: .3, ease: 'elastic.out(1, .4)' })
-        .add(() => { z.pose('g6').vira(true); som('susto'); }, '-=.45')
-        .to(zw, { y: '-=' + fs * .07, duration: .12, ease: 'power2.out' }, '<').to(zw, { y: () => A.a.y, duration: .14, ease: 'power2.in' })
-        .add(() => z.pose('g7').vira(true), '+=.7');
+      if (!B.solto || B.volta) return; if (dica) gsap.to(dica, { opacity: 0, duration: .2 });
+      som('volta'); B.repouso = false; B.aoParar = null;
+      B.volta = { t: 0, T: .6, x0: B.x, y0: B.y, a0: B.a, alt: fs() * .22, fim: () => {
+        const g = G.faixa.gatos[G.ZORO]; if (!ativo || g.modo !== 'preso') return;
+        const ficha = g.ficha, vivo = () => g.ficha === ficha && ativo;
+        poe('g6', true); g.amassa(1.2); som('susto');
+        setTimeout(() => { if (!vivo()) return; poe('g7', true); if (vezes < 3) setTimeout(() => { if (vivo() && !B.solto) piada(g, vivo); }, 3800 + Math.random() * 2600); else { poe('x4', true); G.faixa.diz(G.ZORO, 'desisto', 2); } }, 750);
+      } };
     }
     ph.addEventListener('click', devolve);
-    ph.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') devolve(); });
+    ph.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); devolve(); } });
+    let tr; addEventListener('resize', () => { clearTimeout(tr); tr = setTimeout(() => { if (D) { medePingo(); if (B.solto && B.repouso) { const lm = limites(); B.y = lm.chao; B.x = lim(B.x, lm.esq, lm.dir); } } }, 220); });
 
-    let tr; addEventListener('resize', () => { clearTimeout(tr); tr = setTimeout(() => { if (pronto && !ocupado) medeTudo(); }, 200); });
-    return { gag, voltou() { if (!caido && vezes && vezes < 3 && !ocupado) gsap.delayedCall(1.5, gag); }, medeTudo };
+    const cena = G.palco.cria(G.ZORO, { roteiro, ponto: P.a, s: escala, pose: () => pose, vira: () => virado, aoSair: () => { ativo = false; ocupado = false; } });
+    return { cena, liga(v) { ativo = !!v; G.palco.liga(cena, v); }, medePingo };
   };
 })();

@@ -74,6 +74,27 @@ for cat in '012':
     for nome, im in ims.items():
         at.paste(im, tuple(pos[nome][:2]))
     at.save(f'assets/gatos/gato{cat}.webp', quality=90, method=6)
-    man[cat] = {'w': W, 'h': H, 'f': pos, 'sit': round(sit)}
+    # olhos (para a abertura no escuro): manchas verdes na cabeça dos quadros de frente
+    olhos = {}
+    for nome in ('0', 'x0', 'g5', 'x6'):
+        if nome not in ims:
+            continue
+        import numpy as np
+        from scipy import ndimage
+        arr = np.asarray(ims[nome]).astype(int)
+        r_, g_, b_, a_ = arr[..., 0], arr[..., 1], arr[..., 2], arr[..., 3]
+        m = (a_ > 200) & (g_ > 120) & (g_ - r_ > 25) & (g_ - b_ > 45)
+        m[int(arr.shape[0] * .6):] = False
+        lab, n = ndimage.label(m)
+        if n < 2:
+            continue
+        tam = ndimage.sum(m, lab, range(1, n + 1))
+        dois = sorted(sorted(range(n), key=lambda i: -tam[i])[:2], key=lambda i: ndimage.center_of_mass(m, lab, i + 1)[1])
+        par = []
+        for i in dois:
+            ys, xs = np.nonzero(lab == i + 1)
+            par.append([round(float(xs.mean()), 1), round(float(ys.mean()), 1), int(xs.max() - xs.min() + 1), int(ys.max() - ys.min() + 1)])
+        olhos[nome] = par
+    man[cat] = {'w': W, 'h': H, 'f': pos, 'sit': round(sit), 'olhos': olhos}
     print(cat, len(ims), W, H, os.path.getsize(f'assets/gatos/gato{cat}.webp'))
 open('js/gatos-atlas.js', 'w').write('window.GATOS_ATLAS=' + json.dumps(man, separators=(',', ':')) + ';')

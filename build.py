@@ -1,17 +1,115 @@
-# Gera as páginas de case (renova.html, good-green.html, rastreio.html). Uso: python build.py
-import os, glob
-
+# Gera as páginas de case (renova.html, good-green.html, rastreio.html) no mesmo desenho da página inicial.
+# Uso: python build.py
 SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M8 7h9v9"/></svg>'
+BEHANCE = 'https://www.behance.net/gallery/258467439/App-Renova-Be-Rotina-recompensa-e-jogo-UXUI'
 
 
-def fig(src, alt, cls=''):
-    return f'<figure class="{cls}"><img src="{src}" alt="{alt}" loading="lazy"></figure>'
+import re
+from PIL import Image
+
+_dim = {}
+
+
+def medidas(html):
+    def um(m):
+        src = m.group(1)
+        if src not in _dim:
+            _dim[src] = Image.open(src).size
+        w, h = _dim[src]
+        return f'<img width="{w}" height="{h}" src="{src}"'
+    return re.sub(r'<img src="([^"]+)"', um, html)
+
+
+# ---------- peças ----------
+def cap(rot, titulo, textos=(), extra='', cls=''):
+    """capítulo: rótulo em pixel, título grande por linhas e texto ao lado"""
+    ps = ''.join(f'<p>{t}</p>' for t in textos)
+    lado = f'<div class="cs-p" data-sobe>{ps}</div>' if ps else ''
+    return f'''<section class="cs {cls}" data-nav="{'claro' if 'escuro' in cls else 'escuro'}">
+  <span class="rot" data-sobe>{rot}</span>
+  <div class="cs-g"><h2 data-linhas>{titulo}</h2>{lado}</div>
+  {extra}
+</section>'''
+
+
+def cards(itens):
+    h = ''
+    for i, c in enumerate(itens):
+        corpo = f'<p>{c["p"]}</p>' if 'p' in c else '<ul>' + ''.join(f'<li>{x}</li>' for x in c['li']) + '</ul>'
+        h += f'<div class="card{" dest" if c.get("dest") else ""}"><i>{c.get("n", f"{i + 1:02d}")}</i><b>{c["t"]}</b>{corpo}</div>'
+    return f'<div class="cards c{len(itens)}">{h}</div>'
+
+
+def frase(texto, cls=''):
+    return f'<section class="frase {cls}" data-nav="claro"><p data-palavras>{texto}</p></section>'
+
+
+def aparelho(src, legenda, alt=None):
+    return f'<figure class="aparelho"><div class="fone"><div class="fone-t"><img src="{src}" alt="{alt or legenda}" loading="lazy"></div></div><figcaption>{legenda}</figcaption></figure>'
+
+
+def tela_alta(src, legenda):
+    return f'<figure class="aparelho alta"><div class="tela-a" data-cur="passe<br>o mouse"><img src="{src}" alt="{legenda}" loading="lazy"></div><figcaption>{legenda}</figcaption></figure>'
+
+
+def fita(itens, cls=''):
+    return f'<section class="fita {cls}" data-nav="{"claro" if "escuro" in cls else "escuro"}"><div class="fita-t">{"".join(itens)}</div></section>'
+
+
+def regras(itens):
+    h = ''.join(f'<li><i>{n}</i><b>{t}</b><span>{p}</span></li>' for n, t, p in itens)
+    return f'<ul class="regras">{h}</ul>'
+
+
+def numeros(itens):
+    def um(v, l):
+        if str(v).isdigit():
+            return f'<div><b data-conta="{v}">{v}</b><span>{l}</span></div>'
+        return f'<div><b>{v}</b><span>{l}</span></div>'
+    return f'<div class="numeros n{len(itens)}">{"".join(um(v, l) for v, l in itens)}</div>'
+
+
+def fig(src, alt, cls='', leg=''):
+    cap_ = f'<figcaption>{leg}</figcaption>' if leg else ''
+    return f'<figure class="zoom {cls}"><img src="{src}" alt="{alt}" loading="lazy">{cap_}</figure>'
+
+
+def grade(figs, cols=2):
+    return f'<div class="grade g{cols}">{"".join(figs)}</div>'
+
+
+def banda(src, rot, titulo, texto, cls=''):
+    return f'''<section class="banda {cls}" data-nav="claro">
+  <img class="banda-i" src="{src}" alt="" loading="lazy">
+  <div class="banda-c"><span class="rot">{rot}</span><h2 data-linhas>{titulo}</h2><p data-sobe>{texto}</p></div>
+</section>'''
+
+
+def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
+    cel = f'<div class="fone vitrine-cel"><div class="fone-t"><img src="{src_m}" alt="{nome} no celular" loading="lazy"></div></div>' if src_m else ''
+    return f'''<section class="vitrine {cls}" data-nav="claro">
+  <div class="vitrine-topo"><div><span class="rot">{rot}</span><h2>{titulo}</h2></div><p>{texto}</p></div>
+  <div class="vitrine-p-l"><span class="px">role para percorrer o site</span><span class="px vitrine-p">0%</span></div>
+  <div class="vitrine-palco">
+    <div class="janela"><div class="janela-b"><i></i><i></i><i></i><span>{nome}</span></div><div class="barra-r"><i></i></div><div class="janela-v"><img src="{src_d}" alt="{nome} em desktop"></div></div>
+    {cel}
+  </div>
+</section>'''
+
+
+def tabela(cab, linhas):
+    h = '<div class="tab-l cab">' + ''.join(f'<span>{c}</span>' for c in cab) + '</div>'
+    for l in linhas:
+        h += '<div class="tab-l">' + ''.join(f'<span>{c}</span>' if i else f'<b>{c}</b>' for i, c in enumerate(l)) + '</div>'
+    return f'<div class="tabela" data-sobe>{h}</div>'
+
+
+def versoes(itens):
+    return '<div class="versoes">' + ''.join(f'<div class="ver{" dest" if i == len(itens) - 1 else ""}"><i>{v}</i><b>{t}</b><p>{p}</p></div>' for i, (v, t, p) in enumerate(itens)) + '</div>'
 
 
 def pagina(p):
-    cards = ''.join(f'<div class="card{" dest" if c.get("dest") else ""}"><i>{i + 1:02d}</i><b>{c["t"]}</b><p>{c["p"]}</p></div>' for i, c in enumerate(p['cards']))
     meta = ''.join(f'<div><small>{k}</small><b>{v}</b></div>' for k, v in p['meta'])
-    texto = ''.join(f'<p>{t}</p>' for t in p['texto'])
     return f'''<!doctype html>
 <html lang="pt-BR" class="sem-js">
 <head>
@@ -29,7 +127,7 @@ def pagina(p):
 <link rel="stylesheet" href="css/site.css">
 <script>document.documentElement.classList.remove('sem-js')</script>
 </head>
-<body class="{p['tema']}">
+<body class="caso-p {p['tema']}">
 <div class="cortina" id="cortina" style="transform:none;background:{p['cor']}"></div>
 <div class="cur" id="cur"></div><div class="cur-r" id="cur-r"></div>
 <header class="nav">
@@ -46,11 +144,6 @@ def pagina(p):
     <div class="meta">{meta}</div>
   </div>
 </header>
-
-<section class="cs" data-nav="escuro">
-  <div class="cs-g"><h2 data-sobe>{p['h2']}</h2><div class="cs-p" data-sobe>{texto}</div></div>
-  <div class="cards">{cards}</div>
-</section>
 {p['corpo']}
 <a class="prox" href="{p['prox'][0]}" data-vai="{p['prox'][2]}" style="background:{p['prox'][2]};color:{p['prox'][3]}" data-cur="próximo<br>case" data-nav="{p['prox'][4]}"><small>Próximo case</small><b>{p['prox'][1]}</b></a>
 
@@ -75,69 +168,122 @@ def pagina(p):
 '''
 
 
-def galeria(titulo, sub, figs):
-    return f'<section class="gal" data-nav="escuro"><div class="gal-t"><h2 data-sobe>{titulo}</h2><p data-sobe>{sub}</p></div>{"".join(figs)}</section>'
+RN = 'assets/renova/'
+GG = 'assets/gg/'
+NH = 'assets/rastreio/'
 
-
-# ---------- Renova ----------
-mods = sorted(glob.glob('assets/renova/m-*.webp'))
-mods = [m.replace('\\', '/') for m in mods if '00-capa' not in m]
+# ================= Renova =================
+pecas = ''.join(f'<div><img src="{RN}peca-{a}.webp" alt="" loading="lazy"><span>{n}</span></div>' for a, n in [('colageno', 'Colágeno'), ('hialuronico', 'Hialurônico'), ('vitamina-c', 'Vitamina C'), ('vitamina-e', 'Vitamina E'), ('zinco', 'Zinco'), ('biotina', 'Biotina')])
+mundos = ''.join(f'<figure class="mundo"><img src="{RN}mundo{i}.webp" alt="Mundo {i} do Renova Match" loading="lazy"><img class="chefe" src="{RN}chefe-{i}.webp" alt="" loading="lazy"><figcaption>Mundo {i}</figcaption></figure>' for i in range(1, 7))
 renova = dict(
     tema='t-renova', nav='claro', cor='#e8563a', titulo='App Renova Be', desc='Case do app Renova Be: rotina, recompensa e jogo num app de autocuidado.',
-    arte='assets/renova/key-A.webp', rot='01 · App e jogos', h1='App<br>Renova Be',
+    arte=RN + 'key-A.webp', rot='01 · App e jogos', h1='App<br>Renova Be',
     d='Rotina, recompensa e jogo num app de autocuidado. Primeiro o app, depois os dois jogos.',
     meta=[('Papel', 'Product designer, de ponta a ponta'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'iOS e Android'), ('Ferramentas', 'Figma, React e IA no processo')],
-    h2='O app era um espelho do site.',
-    texto=['Loja, sacola e conta, como no site. O pedido foi direto: o app tem outra dinâmica e não pode ser uma cópia do site.',
-           'Redesenhei para dar um motivo de abrir todo dia, sem atrapalhar a compra: uma loja mais curta, uma moeda em reais e dois jogos com a cara da marca.'],
-    cards=[dict(t='Economia antes da arte', p='Tela bonita com regra furada vira prejuízo. A moeda vale dinheiro de verdade, com teto e validade.'),
-           dict(t='O que não virou jogo', p='O registro diário da dose é a prova da garantia. Se rendesse moeda, o app incentivaria registrar sem tomar.', dest=True),
-           dict(t='Protótipo no lugar de tela', p='Entreguei um protótipo funcionando no celular, com um documento por tela. O time implementou a partir dele.')],
-    corpo='<section class="telas" data-nav="escuro">' + ''.join(fig(f'assets/renova/{n}.webp', a) for n, a in [('a01-home', 'Home do app'), ('a07-saldo', 'Saldo Renova'), ('g01-mapa', 'Mapa do Renova Match'), ('g02-partida', 'Partida do Renova Match')]) + '</section>'
-    + galeria('O case completo', f'Toque numa imagem para ampliar. O case também está no <a href="https://www.behance.net/gallery/258467439/App-Renova-Be-Rotina-recompensa-e-jogo-UXUI" target="_blank" rel="noopener" style="text-decoration:underline">Behance</a>.', [fig(m, 'Módulo do case do app Renova Be') for m in mods]),
+    corpo=''.join([
+        cap('01 · O problema', 'O app era um<br>espelho do site.',
+            ['Loja, sacola e conta, como no site. O pedido foi direto: o app tem outra dinâmica e não pode ser uma cópia do site.',
+             'Redesenhei para dar um motivo de abrir todo dia, sem atrapalhar a compra: uma loja mais curta, uma moeda em reais e dois jogos com a cara da marca.'],
+            cards([dict(n='antes', t='O que o app tinha', li=['Loja, sacola e conta, as mesmas telas do site', 'As mesmas promoções do site, sem nada exclusivo', 'Nenhum motivo para abrir sem intenção de compra']),
+                   dict(n='depois', t='O que faltava', li=['Uma rotina diária ligada ao tratamento', 'Recompensa com valor real, que chega ao checkout', 'Algo leve para fazer em um minuto, todo dia'], dest=True)])),
+        frase('A decisão mais importante foi o que <em>não</em> virou jogo.'),
+        cap('02 · Duas áreas', 'Tratamento é sério.<br>Ganhe é leve.',
+            ['O registro diário da dose é a prova da garantia. Se rendesse moeda, o app incentivaria registrar sem tomar.', 'Por isso o app tem duas áreas que não se misturam.'],
+            regras([('Sério', 'Tratamento', 'Rotina, trilha de 90 dias que nunca zera, desafio e face scan.'), ('Leve', 'Ganhe', 'Para todas as clientes: jogos, roleta, baú e missões.'), ('Regra', 'Uma não paga a outra', 'Registrar a dose nunca rende moeda.')])),
+        fita([aparelho(RN + 'a01-home.webp', 'Home'), aparelho(RN + 'a10-rotina.webp', 'Rotina'), aparelho(RN + 'a17-rotina-trilha.webp', 'Trilha de 90 dias'), aparelho(RN + 'a06-ganhe.webp', 'Ganhe'), aparelho(RN + 'a07-saldo.webp', 'Saldo Renova'), aparelho(RN + 'a08-roleta.webp', 'Roleta'), aparelho(RN + 'a13-checkin-popup.webp', 'Check-in'), aparelho(RN + 'a04-pdp.webp', 'Produto')]),
+        cap('03 · Economia', 'Uma moeda que vale<br>dinheiro de verdade.',
+            ['Pontos abstratos viraram Renova Coins em reais, com teto e validade. O desconto chega de verdade ao checkout.'],
+            numeros([('R$ 0,01', 'cada Coin, sempre em reais'), ('R$ 20', 'de teto por mês, até R$ 1 por dia'), ('60', 'dias de validade'), ('1', 'desconto por pedido')]) + fig(RN + 'key-moedas.webp', 'Renovinha comemorando com moedas e o Saldo Renova no celular', 'fig-p larga')),
+        banda(RN + 'key-B2.webp', 'Parte 2', 'Os jogos.', 'Rotina, recompensa e um pouco de bagunça boa.'),
+        cap('04 · Renova Match', '90 fases para 90 dias<br>de tratamento.',
+            ['Um match-3 em que as peças são os ativos dos produtos da marca. Cada mundo tem um chefão, que é uma dor que o produto combate.'],
+            f'<div class="pecas" data-sobe>{pecas}</div>', 'escuro'),
+        fita([aparelho(RN + 'g01-mapa.webp', 'Mapa'), aparelho(RN + 'g02-partida.webp', 'Partida'), aparelho(RN + 'g10-vitoria.webp', 'Vitória'), aparelho(RN + 'g14-ranking.webp', 'Ranking'), aparelho(RN + 'a02-home-jogue.webp', 'Entrada pela home')], 'escuro'),
+        f'<section class="cs escuro sem-topo" data-nav="claro"><div class="mundos">{mundos}</div></section>',
+        cap('05 · Toc Toc, Mini Colágeno!', '30 segundos de jogo<br>para quem tem 30.',
+            ['O segundo jogo é rápido de propósito: cabe na fila do café.', 'Ele usa a mesma linguagem do Match, para os dois jogos serem da mesma família.'],
+            cards([dict(t='Martele os monstrinhos', p='São as dores: rugas, manchas, flacidez.'), dict(t='Não bata no Mini', p='A embalagem nunca é o vilão.'), dict(t='Pegue o dourado', p='Poder do Colágeno, pontos em dobro.', dest=True)])
+            + grade([fig(RN + 'key-toctoc.webp', 'Arte do jogo Toc Toc, Mini Colágeno', 'fig-p'), fig(RN + 'g04-toctoc-partida.webp', 'Partida do Toc Toc', 'fig-p estreita'), fig(RN + 'g13-toctoc-fim.webp', 'Fim da partida do Toc Toc', 'fig-p estreita')], 3), 'escuro'),
+        cap('06 · Personagens', 'Um elenco com<br>a cara da marca.',
+            ['O Renovinha nasceu da fantasia inflável do pote que a marca usa nas ações. Os chefões e os monstrinhos são as dores que os produtos combatem.', 'Cada produto vira um personagem: a fantasia é a embalagem real, com o rótulo legível.'],
+            numeros([('6', 'chefões'), ('7', 'monstrinhos'), ('2', 'mascotes')]) + grade([fig(RN + 'key-elenco.webp', 'O elenco do jogo: Renovinha, chefões e monstrinhos', 'fig-p'), fig(RN + 'key-S.webp', 'O mascote do Sérum GHK-Cu no Lago do Ômega', 'fig-p')], 2)),
+        cap('07 · Processo', 'Protótipo no<br>lugar de tela.',
+            ['Em vez de entregar só telas, entreguei um protótipo navegável no celular. O time implementou a partir dele.'],
+            numeros([('39', 'telas no protótipo'), ('120', 'fases'), ('2', 'jogos')])
+            + f'<p class="fora" data-sobe>O case também está no <a href="{BEHANCE}" target="_blank" rel="noopener">Behance {SETA}</a></p>'),
+    ]),
     prox=('good-green.html', 'Good Green', '#0f2e2f', '#f3f7ea', 'claro'),
 )
 
-# ---------- Good Green ----------
+# ================= Good Green =================
 gg = dict(
     tema='t-gg', nav='claro', cor='#0f2e2f', titulo='Good Green', desc='Case Good Green: site completo e jornada de lançamento de uma marca nova de bebida verde.',
-    arte='assets/gg/banner-pote-inclinado.webp', rot='02 · Site e lançamento', h1='Good<br><em>Green</em>',
+    arte=GG + 'banner-pote-inclinado.webp', rot='02 · Site e lançamento', h1='Good<br><em>Green</em>',
     d='Site completo e jornada de lançamento de uma marca nova de bebida verde em pó.',
     meta=[('Papel', 'Product designer: site, jornada e direção visual'), ('Momento', '2026, pré-lançamento'), ('Entrega', 'Site, quiz, landing pages e pop-ups'), ('Ferramentas', 'Figma, HTML e CSS, IA no processo')],
-    h2='Uma categoria nova para o Brasil.',
-    texto=['Good Green é um suplemento em pó que vira bebida verde: uma medida em 300 ml de água. A categoria já é grande lá fora e pouca gente aqui conhece.',
-           'O site precisava fazer duas coisas ao mesmo tempo: explicar o produto para quem nunca ouviu falar dele e parecer gostoso antes de parecer saudável.'],
-    cards=[dict(t='Prazer antes de protocolo', p='A bebida tem que parecer gostosa antes de parecer saudável. O copo gelado vem antes da tabela.'),
-           dict(t='Dor primeiro, produto depois', p='O quiz mostra só as dores que a pessoa marcou, a causa e um dado com fonte. A Good Green entra depois, como solução.', dest=True),
-           dict(t='Figma antes do código', p='Cada tela nasce no Figma, em desktop e celular, e só depois vira página. Site e Figma andam iguais.')],
-    corpo=galeria('O site', 'Home em desktop e no celular. As imagens rolam junto com a página.', ['<div class="rolo-m"><div class="rolo"><img src="assets/gg/home-d.webp" alt="Home da Good Green em desktop" loading="lazy"></div><div class="rolo"><img src="assets/gg/home-m.webp" alt="Home da Good Green no celular" loading="lazy"></div></div>'])
-    + '<section class="cs" style="padding-top:0" data-nav="escuro"><div class="cs-g"><h2 data-sobe>O quiz monta o diagnóstico.</h2><div class="cs-p" data-sobe><p>São quatro perguntas seguidas, sem tela educativa no meio. O resultado mostra só as dores marcadas, com a causa de cada uma, e apresenta o produto no fim, como solução.</p><p>O pop-up da roleta e o carrinho seguem a mesma linguagem: vidro, foto real e pouco texto.</p></div></div></section>'
-    + '<section class="telas" data-nav="escuro">' + ''.join(fig(f'assets/gg/{n}.webp', a) for n, a in [('quiz-m', 'Quiz de diagnóstico'), ('roleta-m', 'Roleta do pop-up'), ('carrinho-m', 'Carrinho'), ('pdp-m', 'Página de produto no celular')]) + '</section>'
-    + galeria('A página de produto', 'A mesma estrutura da página de lançamento, sem a campanha.', ['<div class="rolo-m"><div class="rolo"><img src="assets/gg/pdp-d.webp" alt="Página de produto da Good Green" loading="lazy"></div><div class="rolo"><img src="assets/gg/lanc-m.webp" alt="Página de lançamento no celular" loading="lazy"></div></div>'])
-    + galeria('A jornada de lançamento', 'Antes de a loja abrir, a marca precisa de lista: captação, calculadora de fibras e páginas de apoio.',
-              ['<div class="duo">' + fig('assets/gg/capt-d.webp', 'Página de captação do lançamento') + fig('assets/gg/fibras-d.webp', 'Calculadora de fibras') + '</div>',
-               '<div class="duo">' + fig('assets/gg/quiz-d.webp', 'Quiz em desktop') + fig('assets/gg/roleta-d.webp', 'Roleta em desktop') + '</div>',
-               '<div class="duo">' + fig('assets/gg/ingr-d.webp', 'Página de ingredientes') + fig('assets/gg/loja-d.webp', 'Loja') + '</div>']),
+    corpo=''.join([
+        cap('01 · O desafio', 'Uma categoria nova<br>para o Brasil.',
+            ['Good Green é um suplemento em pó que vira bebida verde: uma medida em 300 ml de água. A categoria já é grande lá fora e pouca gente aqui conhece.',
+             'O site precisava fazer duas coisas ao mesmo tempo: explicar o produto para quem nunca ouviu falar dele e parecer gostoso antes de parecer saudável.'],
+            cards([dict(t='Prazer antes de protocolo', p='A bebida tem que parecer gostosa antes de parecer saudável. O copo gelado vem antes da tabela.'),
+                   dict(t='Dor primeiro, produto depois', p='O quiz mostra só as dores que a pessoa marcou, a causa e um dado com fonte. A Good Green entra depois, como solução.', dest=True),
+                   dict(t='Figma antes do código', p='Cada tela nasce no Figma, em desktop e celular, e só depois vira página. Site e Figma andam iguais.')])),
+        vitrine('02 · O site', 'A home, do topo ao rodapé.', 'A página fica presa aqui enquanto você rola. Ela começa no topo e desce junto com a sua rolagem.', 'Good Green · home', GG + 'home-d.webp', GG + 'home-m.webp'),
+        frase('A bebida tem que parecer <em>gostosa</em> antes de parecer saudável.', 'f-gg'),
+        cap('03 · O quiz', 'O quiz monta<br>o diagnóstico.',
+            ['São quatro perguntas seguidas, sem tela educativa no meio.', 'O pop-up da roleta e o carrinho seguem a mesma linguagem: vidro, foto real e pouco texto.'],
+            regras([('1', 'Quatro perguntas', 'Uma atrás da outra, sem interrupção.'), ('2', 'Só as dores marcadas', 'O resultado mostra o que a pessoa respondeu, com a causa de cada dor.'), ('3', 'Um dado com fonte', 'Cada dor vem com um número real, sem citar a marca.'), ('4', 'O produto no fim', 'A Good Green só aparece depois, como solução.')])),
+        fita([aparelho(GG + 'quiz-m.webp', 'Quiz'), aparelho(GG + 'roleta-m.webp', 'Roleta do pop-up'), aparelho(GG + 'carrinho-m.webp', 'Carrinho'), aparelho(GG + 'pdp-m.webp', 'Produto'), aparelho(GG + 'lanc-m.webp', 'Página de lançamento'), aparelho(GG + 'home-m.webp', 'Home')]),
+        vitrine('04 · Produto', 'A página de produto.', 'A mesma estrutura da página de lançamento, sem a campanha.', 'Good Green · produto', GG + 'pdp-d.webp', GG + 'pdp-m.webp'),
+        cap('05 · Lançamento', 'Antes de a loja abrir,<br>a marca precisa de lista.',
+            ['Desenhei as páginas de entrada do pré-lançamento: captação para o grupo, calculadora de fibras e as páginas de apoio do site.'],
+            grade([fig(GG + 'capt-d.webp', 'Página de captação do lançamento', '', 'Captação'), fig(GG + 'fibras-d.webp', 'Calculadora de fibras', '', 'Calculadora de fibras'), fig(GG + 'quiz-d.webp', 'Quiz em desktop', '', 'Quiz'), fig(GG + 'roleta-d.webp', 'Roleta em desktop', '', 'Roleta'), fig(GG + 'ingr-d.webp', 'Página de ingredientes', '', 'Ingredientes'), fig(GG + 'loja-d.webp', 'Loja', '', 'Loja')], 2)),
+    ]),
     prox=('rastreio.html', 'Rastreio', '#ecd9cb', '#2b1d15', 'escuro'),
 )
 
-# ---------- Rastreio ----------
-rm = [m.replace('\\', '/') for m in sorted(glob.glob('assets/rastreio/*.webp')) if '00-capa' not in m and '01-capa' not in m and 'hero' not in m]
+# ================= Rastreio =================
 nhv = dict(
     tema='t-nhv', nav='escuro', cor='#7d5b49', titulo='Rastreio de pedido · New Hair', desc='Case de rastreio de pedido da New Hair: achar todos os pedidos só com o CPF.',
-    arte='assets/rastreio/hero.webp', rot='03 · Pós-compra · New Hair', h1='Rastreio<br><em>de pedido</em>',
+    arte=NH + 'hero.webp', rot='03 · Pós-compra · New Hair', h1='Rastreio<br><em>de pedido</em>',
     d='Encontrar todos os pedidos só com o CPF e saber, em uma frase, onde cada um está e quando chega.',
     meta=[('Papel', 'Design e produto'), ('Marca', 'New Hair'), ('Entrega', 'Tela de rastreio, design system e protótipo em código'), ('Ferramentas', 'Figma e React')],
-    h2='“Cadê o meu pedido?”',
-    texto=['É a pergunta mais repetida no atendimento de qualquer e-commerce. Na loja nova da New Hair não existia um lugar para a cliente acompanhar a entrega sem login.',
-           'O objetivo era achar todos os pedidos só com o CPF, em segundos, e entender em uma frase onde cada um está e quando chega.'],
-    cards=[dict(t='O dado manda no desenho', p='Antes de desenhar, conferi o que a plataforma entrega de verdade. Três descobertas mudaram a tela.'),
-           dict(t='Pix pendente é oportunidade', p='O pedido traz o código copia e cola. A tela de rastreio virou também um lugar para concluir o pagamento.', dest=True),
-           dict(t='Quatro versões em um dia', p='Com protótipo em código e dados reais, cada rodada de feedback virou uma versão nova no ar.')],
-    corpo=galeria('O case completo', 'Toque numa imagem para ampliar.', [fig(m, 'Módulo do case de rastreio de pedido') for m in rm]),
+    corpo=''.join([
+        cap('01 · Descoberta', '“Cadê o meu<br>pedido?”',
+            ['É a pergunta mais repetida no atendimento de qualquer e-commerce. Na loja nova da New Hair não existia um lugar para a cliente acompanhar a entrega sem login.',
+             'O caminho era uma área de conta genérica, e o link de rastreio salvo no pedido nem sempre levava ao lugar certo.'],
+            cards([dict(t='Problema', li=['A cliente não sabe onde está o pedido e pergunta no WhatsApp.', 'Rastrear exigia login, senha e o código certo da transportadora.']),
+                   dict(t='Objetivo', p='Achar todos os pedidos só com o CPF e entender em uma frase onde cada um está e quando chega.', dest=True),
+                   dict(t='Como medir', li=['Menos contatos de “onde está meu pedido”.', 'Uso da tela de rastreio.', 'Pix pendente pago a partir da própria tela.'])])),
+        cap('02 · Pesquisa', 'Como o mercado<br>resolve.',
+            ['Olhei transportadoras e lojas que deixam rastrear sem login. O padrão: só CPF existe nas transportadoras, sempre com captcha. As lojas pedem um segundo dado e escondem dados pessoais.',
+             'O que levei: só CPF, como a cliente pediu, mas com a régua da Shopify. Mostrar o mínimo (cidade e primeiro nome), a mesma resposta para CPF com e sem pedido, e limite de buscas.'],
+            tabela(['Quem', 'O que pede', 'O que mostra', 'Proteção'], [['Correios', 'Código, ou CPF com login', 'Objetos dos últimos 180 dias', 'Captcha e login'], ['Jadlog', 'Código ou CPF', 'Todas as remessas do CPF', 'reCAPTCHA'], ['Loggi', 'Código + CPF como 2º fator', 'Mapa e quem recebeu', '2º fator'], ['Magalu', 'Pedido + 4 dígitos do CPF', 'Rastreio do pedido', 'Dado parcial'], ['Shopify', 'Pedido + e-mail ou telefone', 'Itens, total e status', 'Esconde endereço e rastreio'], ['VTEX', 'Código de 6 dígitos por e-mail', 'Pedidos e detalhe', 'Login sem senha']])),
+        cap('03 · Viabilidade', 'O dado manda<br>no desenho.',
+            ['Três descobertas sobre os dados do pedido mudaram a tela.'],
+            cards([dict(t='A busca por CPF existe', p='A plataforma de pedidos busca por documento: dá para listar todos os pedidos de uma pessoa, filtrando pelo CPF exato.'),
+                   dict(t='O rastreio detalhado ainda não chega', p='Os eventos da transportadora não vêm pela API hoje. A linha do tempo foi desenhada para recebê-los quando a integração existir.'),
+                   dict(t='O Pix pendente é uma oportunidade', p='O pedido traz o código copia e cola e a validade. A tela vira um lugar para concluir o pagamento, não só para acompanhar.', dest=True)])),
+        frase('A tela de rastreio virou também um lugar para <em>concluir o pagamento.</em>', 'f-nhv'),
+        cap('04 · Baixa fidelidade', 'Primeiro a ordem,<br>depois a cor.',
+            ['Três telas em cinza para validar a hierarquia no celular. A cliente quer saber, nessa ordem: quando chega, onde está e os detalhes.'],
+            fig(NH + 't-wireframes.webp', 'Wireframes em cinza das três telas: busca, lista e pedido aberto', 'fig-p larga')
+            + regras([('Busca', 'Um campo, um botão', 'O botão só liga com CPF válido. A nota de segurança fica colada no campo: é ali que nasce a dúvida.'), ('Lista', 'O produto é o destaque', 'Não o número de 16 dígitos. Pílula de status e barrinha de 4 etapas: dá para ler sem abrir.'), ('Pedido', 'A previsão vem em cima', 'É o que a pessoa veio ver. Depois, uma linha do tempo só, e código, endereço e itens por último.')])),
+        cap('05 · Iteração', 'Quatro versões<br>até a final.',
+            ['Cada rodada de feedback virou uma versão nova, já com os dados reais do pedido.'],
+            versoes([('v1', 'A base', 'Busca por CPF, lista de pedidos e linha do tempo.'), ('v2', 'Uma linha do tempo só', 'Os eventos da transportadora entram dentro de “Enviado”. Ícones em cada etapa e a situação no topo do pedido.'), ('v3', 'Mais New Hair, mobile first', 'Caramelo e nudes da marca, título em itálico. Produto como destaque, pílula com ícone, botões de 44 px.'), ('v4', 'A partir das referências', 'Previsão grande (“Chega amanhã”), painéis e faixa de atendimento em caramelo cheio. Ajustes finos no pé e na nota do CPF.')])),
+        fita([tela_alta(NH + 't-busca.webp', 'Busca'), tela_alta(NH + 't-lista.webp', 'Lista de pedidos'), tela_alta(NH + 't-a-caminho.webp', 'Pedido a caminho'), tela_alta(NH + 't-pix-pendente.webp', 'Pix pendente'), tela_alta(NH + 't-entregue.webp', 'Entregue'), tela_alta(NH + 't-sem-pedidos.webp', 'CPF sem pedidos')]),
+        cap('06 · Desktop e sistema', 'No desktop, o título<br>ao lado da busca.',
+            ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma e um componente no código, com as mesmas cores e nomes.'],
+            grade([fig(NH + 't-desktop.webp', 'Tela de rastreio em desktop', 'fig-p', 'Desktop'), fig(NH + 't-componentes.webp', 'Componentes do design system do rastreio', 'fig-p', 'Componentes')], '2 iguais')),
+        cap('07 · Resultado', 'No ar, com<br>dados reais.', [],
+            cards([dict(t='O que foi entregue', li=['Rastreio só com o CPF, publicado na loja nova.', 'Todos os estados: Pix pendente, separação, a caminho, entregue, cancelado, sem pedidos, erro e limite.', 'Modo demonstração para testar todos os estados sem dados reais.', 'Design system com tokens, componentes e ícones.']),
+                   dict(t='Decisões que pesaram', li=['Segurança: só cidade, a mesma resposta para CPF sem pedido, limite de buscas.', 'O Pix pendente dentro do rastreio: acompanhar vira também concluir o pagamento.', 'Uma linha do tempo só, com a transportadora dentro dela.'], dest=True),
+                   dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Teste com clientes reais e medição dos contatos de rastreio no atendimento.'])])),
+    ]),
     prox=('renova.html', 'App Renova Be', '#e8563a', '#fff', 'claro'),
 )
 
 for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
-    open(nome, 'w', encoding='utf-8').write(pagina(p))
+    open(nome, 'w', encoding='utf-8').write(medidas(pagina(p)))
     print(nome, 'ok')

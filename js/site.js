@@ -1,30 +1,37 @@
 /* Portfólio Matheus Saboia: animações e interações. */
 (function () {
-  const CONTATO = { behance: 'https://www.behance.net/matheusboia', linkedin: '', email: '' };
+  const CONTATO = { whatsapp: 'https://wa.me/5519991463731', behance: 'https://www.behance.net/matheusboia', linkedin: '', email: '' };
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const temG = !!window.gsap;
-  if (!temG) { document.documentElement.classList.add('sem-js'); $('#abre') && $('#abre').remove(); return; }
+  if (!window.gsap) { document.documentElement.classList.add('sem-js'); $('#abre') && $('#abre').remove(); return; }
   gsap.registerPlugin(ScrollTrigger);
-  const G = window.Gatos, grande = matchMedia('(min-width: 901px)');
+  const G = window.Gatos, fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
-
-  /* som: botão na navegação e sons de interface */
   const som = (n, o) => { if (window.Som) Som.toca(n, o); };
-  const sb = $('#som-b');
-  if (sb && window.Som) { const pinta = () => { sb.setAttribute('aria-pressed', Som.ligado ? 'true' : 'false'); sb.lastChild.textContent = Som.ligado ? 'som' : 'mudo'; }; pinta(); sb.addEventListener('click', () => { Som.alterna(); pinta(); }); }
-  $$('a.btn, .nav-l a, .prox, .hero-lista a').forEach((el) => { el.addEventListener('pointerenter', () => som('tique')); el.addEventListener('click', () => som('clique')); });
+  const hero = $('#hero');
 
-  /* rolagem suave */
+  /* ---------- som ---------- */
+  const sb = $('#som-b');
+  if (sb && window.Som) {
+    /* 'ligar som' enquanto o navegador ainda não liberou o áudio: o primeiro clique só libera, não desliga */
+    const pinta = () => { const on = Som.ligado; sb.setAttribute('aria-pressed', on ? 'true' : 'false'); sb.lastChild.textContent = !on ? 'sem som' : Som.pronto ? 'com som' : 'ligar som'; sb.classList.toggle('pede', on && !Som.pronto); };
+    let pedia = false; pinta(); Som.quando(pinta);
+    sb.addEventListener('pointerdown', () => { pedia = sb.classList.contains('pede'); });
+    sb.addEventListener('click', () => { if (pedia) { pedia = false; Som.quando(() => { pinta(); Som.toca('pop'); }); return; } Som.alterna(); pinta(); if (Som.ligado) Som.quando(pinta); });
+  }
+  document.addEventListener('pointerover', (e) => { const a = e.target.closest && e.target.closest('a, button, [role=button]'); if (a && a !== document.sobre) { document.sobre = a; som('tique'); } if (!a) document.sobre = null; });
+  document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a, button, [role=button]')) som('clique'); });
+
+  /* ---------- rolagem suave ---------- */
   let lenis = null;
   if (window.Lenis && !calmo) {
-    lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+    lenis = new Lenis({ duration: 1.1, smoothWheel: true, wheelMultiplier: 1 });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
   }
   $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => { const al = $(a.getAttribute('href')); if (!al) return; e.preventDefault(); lenis ? lenis.scrollTo(al, { duration: 1.4 }) : al.scrollIntoView({ behavior: 'smooth' }); }));
 
-  /* troca de página com cortina na cor do destino */
+  /* ---------- troca de página com cortina na cor do destino ---------- */
   const cortina = $('#cortina');
   $$('a[data-vai]').forEach((a) => a.addEventListener('click', (e) => {
     if (e.metaKey || e.ctrlKey || calmo) return; e.preventDefault();
@@ -33,113 +40,137 @@
   }));
   addEventListener('pageshow', (e) => { if (e.persisted) gsap.set(cortina, { yPercent: 101 }); });
 
-  /* cursor */
+  /* ---------- cursor: só a bolinha, sem a seta ---------- */
   const cur = $('#cur'), curR = $('#cur-r');
-  if (cur && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const qx = gsap.quickTo(cur, 'x', { duration: .12 }), qy = gsap.quickTo(cur, 'y', { duration: .12 });
-    const rx = gsap.quickTo(curR, 'x', { duration: .35, ease: 'power3' }), ry = gsap.quickTo(curR, 'y', { duration: .35, ease: 'power3' });
-    addEventListener('pointermove', (e) => { qx(e.clientX); qy(e.clientY); rx(e.clientX); ry(e.clientY); }, { passive: true });
-    $$('[data-cur]').forEach((el) => {
-      el.addEventListener('pointerenter', () => { curR.innerHTML = el.dataset.cur; gsap.to(curR, { scale: 1, duration: .35, ease: 'back.out(2)' }); gsap.to(cur, { scale: 0, duration: .2 }); });
-      el.addEventListener('pointerleave', () => { gsap.to(curR, { scale: 0, duration: .25 }); gsap.to(cur, { scale: 1, duration: .2 }); });
-    });
+  if (cur && fino) {
+    document.documentElement.classList.add('cur-on');
+    const qx = gsap.quickTo(cur, 'x', { duration: .1, ease: 'power3' }), qy = gsap.quickTo(cur, 'y', { duration: .1, ease: 'power3' });
+    const rx = gsap.quickTo(curR, 'x', { duration: .3, ease: 'power3' }), ry = gsap.quickTo(curR, 'y', { duration: .3, ease: 'power3' });
+    let visto = false, estado = '', aperta = false, mx = 0, my = 0;
+    const olha = () => { if (!visto) return; const el = document.elementFromPoint(mx, my); if (el) pinta(el); };
+    const pinta = (alvo) => {
+      let e = 'ponto', txt = '';
+      if (alvo) {
+        const g = alvo.closest('.gato'), c = alvo.closest('[data-cur]');
+        if (g) { e = 'rotulo'; txt = g.classList.contains('pego') ? 'soltar' : 'pegar'; }
+        else if (c) { e = 'rotulo'; txt = c.dataset.cur; }
+        else if (alvo.closest('.peca')) e = 'medio';
+        else if (alvo.closest('a, button, [role=button], figure.zoom')) e = 'grande';
+      }
+      const chave = e + txt; if (chave === estado) return; estado = chave;
+      if (e === 'rotulo') { curR.innerHTML = txt; gsap.to(curR, { scale: 1, duration: .35, ease: 'back.out(2)' }); gsap.to(cur, { scale: 0, duration: .2 }); }
+      else { gsap.to(curR, { scale: 0, duration: .22 }); gsap.to(cur, { scale: (e === 'grande' ? 3.6 : e === 'medio' ? 2 : 1) * (aperta ? .75 : 1), duration: .3, ease: 'power3.out' }); }
+    };
+    addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; if (!visto) { visto = true; gsap.set([cur, curR], { x: e.clientX, y: e.clientY }); gsap.to(cur, { opacity: 1, duration: .2 }); } mx = e.clientX; my = e.clientY; qx(mx); qy(my); rx(mx); ry(my); pinta(e.target); }, { passive: true });
+    addEventListener('pointerdown', () => { aperta = true; estado = ''; }); addEventListener('pointerup', () => { aperta = false; estado = ''; setTimeout(olha, 30); });
+    setInterval(olha, 160);
+    document.addEventListener('pointerleave', () => { gsap.to([cur, curR], { opacity: 0, duration: .2 }); visto = false; estado = ''; });
+    document.addEventListener('pointerenter', () => gsap.to(curR, { opacity: 1, duration: .2 }));
+    addEventListener('scroll', olha, { passive: true });
   }
 
-  /* cor da navegação conforme a seção que está por baixo dela */
-  const nav = $('.nav'); let navT = 0;
+  /* ---------- cor da navegação conforme a seção que está por baixo dela ---------- */
+  const nav = $('.nav'); let navT = 0, yAnt = 0;
   function corNav() { navT = 0; const els = document.elementsFromPoint(innerWidth / 2, 34); for (const el of els) { const d = el.closest && el.closest('[data-nav]'); if (d) { nav.classList.toggle('claro', d.dataset.nav === 'claro'); break; } } }
-  let yAnt = 0;
   if (nav) { addEventListener('scroll', () => { if (!navT) navT = requestAnimationFrame(corNav); const y = scrollY; nav.classList.toggle('some', y > 240 && y > yAnt + 2); if (y < yAnt - 2 || y <= 240) nav.classList.remove('some'); yAnt = y; }, { passive: true }); setTimeout(corNav, 60); setInterval(corNav, 900); }
 
-  /* gatos no pé da janela */
-  if (G) G.faixa.inicia();
+  /* ---------- gatos ---------- */
+  const abertura = !!(hero && $('#abre') && !calmo);
+  if (G) G.faixa.inicia({ abertura });
+  const cenaRolagem = (cena, cfg) => ScrollTrigger.create(Object.assign({ onToggle: (st) => G.palco.liga(cena, st.isActive) }, cfg));
 
-  /* revelar ao rolar */
+  /* ---------- revelar ao rolar e títulos por linha ---------- */
   $$('[data-sobe]').forEach((el) => gsap.to(el, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+  function linhas(h, cfg) {
+    h.innerHTML = h.innerHTML.split(/<br\s*\/?>/).map((l) => `<span class="lin-f"><span class="lin">${l}</span></span>`).join('');
+    gsap.from($$('.lin', h), Object.assign({ yPercent: 112, duration: 1.05, stagger: .09, ease: 'power4.out' }, cfg));
+  }
+  $$('[data-linhas]').forEach((h) => linhas(h, { scrollTrigger: { trigger: h, start: 'top 86%' } }));
+  function palavras(el, cfg) {
+    const anda = (no) => [...no.childNodes].map((c) => c.nodeType === 3 ? c.textContent.split(/(\s+)/).map((p) => p.trim() ? `<span class="w">${p}</span>` : p).join('') : `<em>${anda(c)}</em>`).join('');
+    el.innerHTML = anda(el);
+    gsap.to($$('.w', el), { opacity: 1, stagger: .08, ease: 'none', scrollTrigger: Object.assign({ trigger: el, start: 'top 82%', end: 'bottom 45%', scrub: .4 }, cfg) });
+  }
+  $$('[data-palavras]').forEach((el) => palavras(el));
+  $$('[data-conta]').forEach((b) => { const fim = +b.dataset.conta, o = { v: 0 }; gsap.to(o, { v: fim, duration: 1.6, ease: 'power3.out', onUpdate: () => { b.textContent = Math.round(o.v); }, scrollTrigger: { trigger: b, start: 'top 88%' } }); });
 
-  /* contato */
+  /* ---------- contato ---------- */
   const cl = $('#contato-l');
   if (cl) {
-    const itens = [['Behance', CONTATO.behance], ['LinkedIn', CONTATO.linkedin], ['E-mail', CONTATO.email && 'mailto:' + CONTATO.email]].filter((i) => i[1]);
+    const itens = [['WhatsApp', CONTATO.whatsapp], ['Behance', CONTATO.behance], ['LinkedIn', CONTATO.linkedin], ['E-mail', CONTATO.email && 'mailto:' + CONTATO.email]].filter((i) => i[1]);
     cl.innerHTML = itens.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n} ${seta}</a>`).join('');
     const t = $('#contato-t span');
     if (t) t.innerHTML = t.innerHTML.split('<br>').map((l) => [...l].map((c) => `<span class="c">${c}</span>`).join('')).join('<br>');
     gsap.from('#contato-t .c', { yPercent: 110, opacity: 0, duration: .8, stagger: .035, ease: 'power4.out', scrollTrigger: { trigger: '#contato-t', start: 'top 80%' } });
-    /* o Nacho dorme em cima do "m" do título */
-    if (G && window.medeLetra && t) document.fonts.ready.then(() => {
-      const cs = $$('#contato-t .c'), acha = (ch, n = 0) => cs.filter((c) => c.textContent === ch)[n];
-      const poe = (el, ch, gato, pose, vira) => {
-        if (!el) return; const m = medeLetra(el, ch), sp = document.createElement('span');
-        sp.style.cssText = `position:absolute;left:50%;top:${m.base - m.asc + m.fs * .012}px;translate:-50% -100%;pointer-events:none;letter-spacing:0;line-height:0`;
-        el.style.position = 'relative'; el.appendChild(sp);
-        const api = G.cena(sp, gato, pose, { s: m.fs * .46 / (window.GATOS_ATLAS[gato].sit || 180), respira: true, vira });
-        gsap.set(sp, { autoAlpha: 0 });
-        const cn = G.palco.cria(gato, { entra: () => gsap.fromTo(sp, { autoAlpha: 0, y: -m.fs * .4 }, { autoAlpha: 1, y: 0, duration: .6, ease: 'bounce.out' }), sai: () => gsap.to(sp, { autoAlpha: 0, duration: .2 }) });
-        ScrollTrigger.create({ trigger: '#contato-t', start: 'top 62%', end: 'bottom top', onToggle: (st) => G.palco.liga(cn, st.isActive) });
-        return api;
-      };
-      const l = poe(acha('m'), 'm', G.NACHO, '5');
-      if (l) { const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#b9e33b'; z.textContent = 'z'; l.el.parentElement.appendChild(z); }
+    /* o Nacho sobe para dormir em cima do "m" */
+    const m = $$('#contato-t .c').find((c) => c.textContent === 'm');
+    if (G && window.pontoLetra && m && !G.calmo) document.fonts.ready.then(() => {
+      const p = pontoLetra(m, 'm');
+      const cn = G.palco.cria(G.NACHO, { ponto: p, s: () => p().fs * .46 / (G.A[G.NACHO].sit || 200), pose: '5' });
+      cenaRolagem(cn, { trigger: '#contato-t', start: 'top 62%', end: 'bottom top' });
     });
+    ScrollTrigger.create({ trigger: '.contato', start: 'top 60%', onEnter: () => { if (G) G.faixa.acorda(); } });
   }
 
-  /* ================= página inicial ================= */
-  const hero = $('#hero');
-  if (hero) inicio();
-  else { gsap.set(cortina, { yPercent: 0, background: getComputedStyle(document.body).getPropertyValue('--cor') || '#15120f' }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) }); caso(); }
+  if (hero) inicio(); else caso();
 
+  /* ================= página inicial ================= */
   function inicio() {
-    const abre = $('#abre'), n = $('#abre-n');
-    const letras = $$('.nome .c');
-    gsap.set(letras, { yPercent: 115 });
-    gsap.set(['.hero-topo', '.hero-pe'], { opacity: 0 });
-    gsap.set('.nome .pal', { display: 'inline-flex', overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.06em' });
+    const abre = $('#abre'), n = $('#abre-n'), nome = $('.nome'), l1 = $('.nome .l1 .pal'), letras = $$('.nome .c');
 
     /* o nome ocupa a largura toda (ou 36% da altura da janela, o que for menor) */
-    const nome = $('.nome'), l1 = $('.nome .l1 .pal');
-    function ajusta() { nome.style.fontSize = '100px'; const w = l1.getBoundingClientRect().width, cs = getComputedStyle(hero), larg = hero.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); nome.style.fontSize = Math.min(100 * larg / w * .992, innerHeight * (innerWidth < 900 ? .3 : .36)) + 'px'; }
+    function ajusta() {
+      const antes = nome.style.fontStretch; nome.style.fontStretch = '125%'; nome.style.fontSize = '100px';
+      const w = l1.getBoundingClientRect().width, cs = getComputedStyle(hero), larg = hero.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      nome.style.fontSize = Math.min(100 * larg / w * .992, innerHeight * (innerWidth < 900 ? .3 : .36)) + 'px'; nome.style.fontStretch = antes;
+    }
     ajusta(); document.fonts.ready.then(ajusta); addEventListener('resize', ajusta);
 
-    const zoro = window.HeroZoro ? HeroZoro({ hero, G, calmo }) : { gag() {}, voltou() {} };
+    const zoro = window.HeroZoro && G && !G.calmo ? HeroZoro({ hero, G }) : null;
+    const acende = () => {
+      if (G) G.faixa.solta();
+      if (zoro) { zoro.liga(true); ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom 45%', onToggle: (st) => zoro.liga(st.isActive) }); }
+    };
 
-    const conta = { v: 0 };
-    const tl = gsap.timeline();
-    if (calmo) { abre.remove(); gsap.set(letras, { yPercent: 0 }); gsap.set(['.hero-topo', '.hero-pe'], { opacity: 1 }); gsap.set('.nome .pal', { overflow: 'visible' }); }
+    const miudos = $$('.hero-topo > *, .hero-pe > *');
+    if (!abertura) { if (abre) abre.remove(); acende(); }
     else {
-      tl.to(conta, { v: 100, duration: .85, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); } })
-        .to('.par i', { scaleY: .06, duration: .16, stagger: .05 }, '-=.1')
-        .add(() => som('luz')).to(abre, { yPercent: -100, duration: .75, ease: 'power4.inOut' })
-        .add(() => abre.remove())
-        .to(letras, { yPercent: 0, duration: 1.05, stagger: .045, ease: 'power4.out' }, '-=.55')
-        .to(['.hero-topo', '.hero-pe'], { opacity: 1, duration: .7, stagger: .08 }, '-=.6')
-        .add(() => { gsap.set('.nome .pal', { overflow: 'visible' }); })
-        .add(() => document.fonts.ready.then(() => zoro.gag()), '-=.9');
+      gsap.set(letras, { yPercent: 118 }); gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { fontStretch: '78%' });
+      gsap.set('.nome .pal', { display: 'inline-flex', overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.06em' });
+      lenis && lenis.stop();
+      /* no escuro só aparecem os olhos, e são os olhos dos três gatos sentados no chão */
+      const olhos = [];
+      G && G.faixa.gatos.forEach((g) => {
+        const par = (G.A[g.c].olhos || {})[g.nome]; if (!par) return;
+        par.forEach(([ex, ey, ew, eh]) => { const o = document.createElement('i'); o.className = 'olho'; const w = Math.max(11, Math.max(ew, eh) * 1.25) * g.s * 2.1, h = w * .86; o.style.cssText = `left:${g.x + (ex - g.f[2] / 2) * g.s - w / 2}px;top:${G.faixa.chao - (g.f[3] - ey) * g.s - h / 2}px;width:${w}px;height:${h}px;animation-delay:${(Math.random() * 2.4).toFixed(2)}s`; o.innerHTML = '<b></b>'; abre.appendChild(o); olhos.push(o); });
+      });
+      const segue = (e) => olhos.forEach((o) => { const r = o.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = r.width * .2; o.firstChild.style.transform = `translate(${dx / d * k}px, ${dy / d * k * .6}px)`; });
+      addEventListener('pointermove', segue, { passive: true });
+
+      const conta = { v: 0 }, chama = $('#abre-c');
+      gsap.to(conta, { v: 100, duration: 1.05, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); }, onComplete: () => {
+        let foi = false, tm = 0;
+        const vai = (e) => { if (foi) return; foi = true; clearTimeout(tm); removeEventListener('pointerdown', vai); removeEventListener('keydown', vai); if (e && window.Som) Som.quando(() => som('luz')); gsap.to(chama, { opacity: 0, duration: .12 }); acendeLuz.play(); };
+        if (chama) { chama.textContent = (fino ? 'clique' : 'toque') + ' para acender a luz'; gsap.to(chama, { opacity: 1, duration: .5 }); }
+        addEventListener('pointerdown', vai); addEventListener('keydown', vai); tm = setTimeout(vai, 6000);
+      } });
+      const acendeLuz = gsap.timeline({ paused: true })
+        .to(abre, { opacity: .2, duration: .05 }, .08).to(abre, { opacity: 1, duration: .08 }).to(abre, { opacity: .08, duration: .05 }).to(abre, { opacity: 1, duration: .1 })
+        .to(abre, { opacity: 0, duration: .32, ease: 'power2.out' })
+        .add(() => { removeEventListener('pointermove', segue); abre.remove(); lenis && lenis.start(); acende(); })
+        .to(nome, { fontStretch: '125%', duration: 1.25, ease: 'power4.out' }, '-=.25')
+        .to(letras, { yPercent: 0, duration: 1.05, stagger: .04, ease: 'power4.out' }, '<')
+        .to(miudos, { opacity: 1, y: 0, duration: .7, stagger: .07, ease: 'power3.out' }, '-=.6')
+        .add(() => { gsap.set('.nome .pal', { overflow: 'visible' }); gsap.set(nome, { clearProps: 'fontStretch' }); });
     }
 
     /* letras do nome sobem quando o cursor passa perto */
-    if (!calmo && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    if (!calmo && fino) {
       const ls = letras.map((el) => ({ el, y: gsap.quickTo(el, 'y', { duration: .5, ease: 'power3.out' }) }));
-      let livre = false; tl.add(() => { livre = true; });
-      hero.addEventListener('pointermove', (e) => { if (!livre) return; ls.forEach((l) => { const r = l.el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); l.y(-Math.max(0, 1 - d / 260) * 26); }); });
+      hero.addEventListener('pointermove', (e) => { if ($('#abre')) return; ls.forEach((l) => { const r = l.el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); l.y(-Math.max(0, 1 - d / 260) * 26); }); });
       hero.addEventListener('pointerleave', () => ls.forEach((l) => l.y(0)));
     }
-
-    /* o Zoro das letras é o mesmo do pé da janela: enquanto o nome aparece, ele fica aqui em cima */
-    const zw = $('#zoro');
-    if (G && zw && !calmo) { const cz = G.palco.cria(G.ZORO, { entra: () => { zw.style.visibility = 'visible'; }, sai: () => { zw.style.visibility = 'hidden'; } }); G.palco.liga(cz, true); ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom 45%', onToggle: (st) => G.palco.liga(cz, st.isActive) }); }
-    ScrollTrigger.create({ trigger: hero, start: 'bottom 40%', onEnterBack: () => zoro.voltou() });
-
-    /* nome reage à rolagem */
-    if (!calmo) { gsap.to('.nome', { y: -70, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } }); gsap.to(['.hero-topo', '.hero-pe'], { opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '40% top', scrub: true } }); }
-
-    /* manifesto: palavras acendem */
-    const mt = $('#mani-t');
-    if (mt) {
-      const anda = (no) => [...no.childNodes].map((c) => c.nodeType === 3 ? c.textContent.split(/(\s+)/).map((p) => p.trim() ? `<span class="w">${p}</span>` : p).join('') : `<em>${anda(c)}</em>`).join('');
-      mt.innerHTML = anda(mt);
-      gsap.to('#mani-t .w', { opacity: 1, stagger: .08, ease: 'none', scrollTrigger: { trigger: mt, start: 'top 82%', end: 'bottom 45%', scrub: .4 } });
-    }
-    $$('[data-conta]').forEach((b) => { const fim = +b.dataset.conta, o = { v: 0 }; gsap.to(o, { v: fim, duration: 1.6, ease: 'power3.out', onUpdate: () => { b.textContent = Math.round(o.v); }, scrollTrigger: { trigger: b, start: 'top 88%' } }); });
+    if (!calmo) { gsap.to(nome, { y: -70, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } }); gsap.fromTo(['.hero-topo', '.hero-pe'], { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: hero, start: '2% top', end: '40% top', scrub: true } }); }
 
     /* letreiro */
     const let_ = $('#letreiro');
@@ -148,6 +179,14 @@
     jogo(); goodGreen(); rastreio(); sobre();
     if (lenis) ScrollTrigger.create({ onUpdate: (s) => { const v = s.getVelocity(); if (Math.abs(v) > 2600 && G) G.faixa.corre(G.ZORO, v > 0 ? 1 : -1); } });
     addEventListener('load', () => ScrollTrigger.refresh());
+  }
+
+  /* entrada de um painel de case da página inicial */
+  function entra(sel) {
+    const s = $(sel); if (!s) return;
+    linhas($('h3', s), { scrollTrigger: { trigger: s, start: 'top 55%' } });
+    gsap.from([$('.caso-n', s), $('.caso-d', s), $('.tags', s), $('.btn', s)], { y: 26, opacity: 0, duration: .8, stagger: .07, ease: 'power3.out', scrollTrigger: { trigger: s, start: 'top 50%' } });
+    gsap.from($('.caso-vis', s), { y: 80, opacity: 0, scale: .94, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: s, start: 'top 50%' } });
   }
 
   /* ---------- 01 Renova: mini Match ---------- */
@@ -176,61 +215,60 @@
     }
     new Image().src = 'assets/renova/renovinha-nb-comemora.webp';
     ScrollTrigger.create({ trigger: '.c-renova', start: 'top 30%', once: true, onEnter: () => gsap.delayedCall(.9, () => m.demo()) });
-    const vis = $('#vis-renova');
-    if (!calmo) $$('.moeda-f', vis).forEach((c, i) => { gsap.to(c, { y: +c.dataset.par, ease: 'none', scrollTrigger: { trigger: '.c-renova', start: 'top bottom', end: 'bottom top', scrub: true } }); gsap.to(c, { rotation: '+=14', duration: 2.4 + i * .5, yoyo: true, repeat: -1, ease: 'sine.inOut' }); });
+    if (!calmo) $$('.moeda-f', $('#vis-renova')).forEach((c, i) => { gsap.to(c, { y: +c.dataset.par, ease: 'none', scrollTrigger: { trigger: '.c-renova', start: 'top bottom', end: 'bottom top', scrub: true } }); gsap.to(c, { rotation: '+=14', duration: 2.4 + i * .5, yoyo: true, repeat: -1, ease: 'sine.inOut' }); });
     entra('.c-renova');
   }
 
-  function entra(sel) {
-    const s = $(sel); if (!s) return;
-    const h = $('h3', s); h.innerHTML = h.innerHTML.split(/<br\s*\/?>/).map((l) => `<span style="display:block;overflow:hidden;padding:.12em 0 .06em;margin:-.12em 0 -.06em"><span class="lin" style="display:block">${l}</span></span>`).join('');
-    gsap.from($$('.lin', s), { yPercent: 110, duration: 1, stagger: .09, ease: 'power4.out', scrollTrigger: { trigger: s, start: 'top 55%' } });
-    gsap.from([$('.caso-n', s), $('.caso-d', s), $('.tags', s), $('.btn', s)], { y: 26, opacity: 0, duration: .8, stagger: .07, ease: 'power3.out', scrollTrigger: { trigger: s, start: 'top 50%' } });
-    gsap.from($('.caso-vis', s), { y: 80, opacity: 0, scale: .94, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: s, start: 'top 50%' } });
+  /* site dentro de uma janela: começa no topo e rola junto com a página */
+  function janelaSite(img, barra, cfg) {
+    const dist = () => Math.min(0, -(img.offsetHeight - img.parentElement.offsetHeight) * (cfg.ate || 1));
+    img.addEventListener('load', () => ScrollTrigger.refresh());
+    gsap.set(img, { y: 0 });
+    const tl = gsap.timeline({ scrollTrigger: Object.assign({ scrub: .35, invalidateOnRefresh: true }, cfg.gatilho) });
+    const espera = cfg.espera || 0;
+    tl.to(img, { y: dist, ease: 'none', duration: 1 - espera }, espera);
+    if (barra) tl.fromTo(barra, { scaleY: .04 }, { scaleY: cfg.ate || 1, ease: 'none', duration: 1 - espera }, espera);
+    return tl;
   }
 
   /* ---------- 02 Good Green ---------- */
   function goodGreen() {
     const rolo = $('#gg-rolo'); if (!rolo) return;
-    const lj = $('#luna-janela'); if (G && lj) { G.cena(lj, G.LUNA, 'x1', { s: innerWidth < 900 ? .32 : .46, respira: true }); gsap.set(lj, { autoAlpha: 0 }); const cl = G.palco.cria(G.LUNA, { entra: () => gsap.fromTo(lj, { autoAlpha: 0, y: -22 }, { autoAlpha: 1, y: 0, duration: .5, ease: 'bounce.out' }), sai: () => gsap.to(lj, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.c-gg', start: 'top 45%', endTrigger: '.c-nhv', end: 'top 55%', onToggle: (st) => G.palco.liga(cl, st.isActive) }); const z = document.createElement('span'); z.className = 'zzz'; z.style.color = '#78f624'; z.textContent = 'z'; lj.appendChild(z); }
+    const janela = $('#vis-gg .janela');
+    if (G && !G.calmo) { const cl = G.palco.cria(G.LUNA, { ponto: () => { const r = janela.getBoundingClientRect(); return { x: r.left + r.width * .17, y: r.top + 3 }; }, s: () => (innerWidth < 900 ? .3 : .44), pose: 'x1' }); cenaRolagem(cl, { trigger: '.c-gg', start: 'top 45%', endTrigger: '.c-nhv', end: 'top 60%' }); }
     entra('.c-gg');
-    const dist = () => Math.min(0, -(rolo.offsetHeight - rolo.parentElement.offsetHeight) * .62); rolo.addEventListener('load', () => ScrollTrigger.refresh());
     const mm = gsap.matchMedia();
     mm.add('(min-width: 901px)', () => {
-      gsap.timeline({ scrollTrigger: { trigger: '.c-gg', start: 'top top', end: '+=125%', scrub: .5, invalidateOnRefresh: true } })
-        .to(rolo, { y: dist, ease: 'none' }, 0)
-        .fromTo('#gg-fone', { yPercent: 30, rotation: 8 }, { yPercent: -8, rotation: -3, ease: 'none' }, 0)
-        .fromTo('#gg-garrafa', { yPercent: 14, rotation: -10 }, { yPercent: -6, rotation: 4, ease: 'none' }, 0);
+      const tl = janelaSite(rolo, $('#gg-barra'), { ate: .2, espera: .1, gatilho: { trigger: '.c-gg', start: 'top top', end: '+=92%' } });
+      tl.fromTo('#gg-fone', { yPercent: 26, rotation: 7 }, { yPercent: -8, rotation: -3, ease: 'none', duration: 1 }, 0).fromTo('#gg-garrafa', { yPercent: 12, rotation: -9 }, { yPercent: -6, rotation: 4, ease: 'none', duration: 1 }, 0);
     });
-    mm.add('(max-width: 900px)', () => { gsap.to(rolo, { y: dist, ease: 'none', scrollTrigger: { trigger: '#vis-gg', start: 'top 80%', end: 'bottom 20%', scrub: .5, invalidateOnRefresh: true } }); });
+    mm.add('(max-width: 900px)', () => { janelaSite(rolo, $('#gg-barra'), { ate: .16, espera: .1, gatilho: { trigger: janela, start: 'top 24%', end: '+=60%' } }); });
   }
 
   /* ---------- 03 Rastreio ---------- */
   function rastreio() {
     const cpf = $('#cpf'); if (!cpf) return;
-    const TXT = '529.982.247-25', o = { n: 0 }, passos = $$('#rast-l .passo'), cz = $('#caixa-zoro'), selo = $('#selo');
-    const zoro = G && G.cena(cz, G.ZORO, 'x8', { s: innerWidth < 900 ? .5 : .66 });
-    if (G) { gsap.set(cz, { autoAlpha: 0 }); const cc = G.palco.cria(G.ZORO, { entra: () => gsap.to(cz, { autoAlpha: 1, duration: .3 }), sai: () => gsap.to(cz, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.c-nhv', start: 'top 45%', endTrigger: '.sobre', end: 'top 55%', onToggle: (st) => G.palco.liga(cc, st.isActive) }); }
+    const TXT = '529.982.247-25', o = { n: 0 }, passos = $$('#rast-l .passo'), selo = $('#selo'), fone = $('#vis-nhv .fone');
+    let prog = 0, chegou = false, tocado = -1;
+    if (G && !G.calmo) { const cc = G.palco.cria(G.ZORO, { ponto: () => { const r = fone.getBoundingClientRect(); return { x: r.right + r.width * .1, y: r.top + r.height * (.36 + .46 * prog) }; }, s: () => (innerWidth < 900 ? .5 : .66), pose: () => (chegou ? 'x9' : 'x8') }); cenaRolagem(cc, { trigger: '.c-nhv', start: 'top 45%', endTrigger: '.sobre', end: 'top 60%' }); }
     entra('.c-nhv');
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
     tl.to(o, { n: TXT.length, duration: 1.2, onUpdate: () => { cpf.textContent = TXT.slice(0, Math.round(o.n)); } })
       .add(() => $('#rast-b').classList.add('ok'), '+=.15').add(() => $('#rast-b').classList.remove('ok'), '+=.25')
       .to('#rast-p', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' })
       .to('#rast-l', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' }, '-=.15');
-    let tocado = -1;
-    passos.forEach((p, i) => { tl.add(() => { if (i > tocado) { tocado = i; som(i === 4 ? 'chegou' : 'passo'); } p.classList.add('on'); if (selo) selo.textContent = ['pedido recebido', 'pagamento aprovado', 'em separação', 'caixa a caminho', 'chegou!'][i]; if (zoro) zoro.pose(i === 4 ? 'x9' : 'x8'); }, `+=${i ? .55 : .2}`); });
+    passos.forEach((p, i) => { tl.add(() => { if (i > tocado) { tocado = i; som(i === 4 ? 'chegou' : 'passo'); } p.classList.add('on'); chegou = i === 4; if (selo) selo.textContent = ['pedido recebido', 'pagamento aprovado', 'em separação', 'caixa a caminho', 'chegou!'][i]; }, `+=${i ? .55 : .2}`); });
     tl.to({}, { duration: .5 });
-    gsap.set(cz, { yPercent: -40 });
     const dur = tl.duration();
-    const volta = () => { passos.forEach((p) => p.classList.remove('on')); if (zoro) zoro.pose('x8'); };
+    const volta = () => { passos.forEach((p) => p.classList.remove('on')); chegou = false; };
     const mm = gsap.matchMedia();
     mm.add('(min-width: 901px)', () => {
-      const st = ScrollTrigger.create({ trigger: '.c-nhv', start: 'top top', end: '+=115%', scrub: .4, onUpdate: (s) => { const t = s.progress * dur, tras = t < tl.time(); if (tras) volta(); tl.time(0, true); tl.time(t, false); if (tras) tocado = passos.filter((p) => p.classList.contains('on')).length - 1; } });
-      gsap.fromTo(cz, { yPercent: -40 }, { yPercent: 190, ease: 'none', scrollTrigger: { trigger: '.c-nhv', start: 'top top', end: '+=115%', scrub: .4 } });
+      const st = ScrollTrigger.create({ trigger: '.c-nhv', start: 'top top', end: '+=92%', scrub: .4, onUpdate: (s) => { prog = s.progress; const t = s.progress * dur, tras = t < tl.time(); if (tras) volta(); tl.time(0, true); tl.time(t, false); if (tras) tocado = passos.filter((p) => p.classList.contains('on')).length - 1; } });
       return () => st.kill();
     });
     mm.add('(max-width: 900px)', () => {
-      const roda = () => { volta(); tocado = -1; tl.restart(); gsap.fromTo(cz, { yPercent: -40 }, { yPercent: 190, duration: dur, ease: 'none' }); };
+      const pr = { v: 0 };
+      const roda = () => { volta(); tocado = -1; tl.restart(); gsap.fromTo(pr, { v: 0 }, { v: 1, duration: dur, ease: 'none', onUpdate: () => { prog = pr.v; } }); };
       const st = ScrollTrigger.create({ trigger: '#vis-nhv', start: 'top 65%', onEnter: roda, onEnterBack: roda });
       const iv = setInterval(() => { if (st.isActive) roda(); }, (dur + 3) * 1000);
       return () => { st.kill(); clearInterval(iv); };
@@ -239,27 +277,47 @@
 
   /* ---------- sobre ---------- */
   function sobre() {
-    if (!G) return;
-    const s = innerWidth < 900 ? .72 : .86;
-    const a = $('#sup-luna') && G.cena($('#sup-luna'), G.LUNA, 'x6', { s, respira: true }), b = $('#sup-zoro') && G.cena($('#sup-zoro'), G.ZORO, 'x8', { s, respira: true }), c = $('#sup-nacho') && G.cena($('#sup-nacho'), G.NACHO, 'x4', { s, respira: true });
-    [['#sup-luna', G.LUNA], ['#sup-zoro', G.ZORO], ['#sup-nacho', G.NACHO]].forEach(([id, gato], i) => { const el = $(id); if (!el) return; gsap.set(el, { autoAlpha: 0 }); const cs = G.palco.cria(gato, { entra: () => gsap.fromTo(el, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .5, delay: i * .08, ease: 'back.out(2)' }), sai: () => gsap.to(el, { autoAlpha: 0, duration: .2 }) }); ScrollTrigger.create({ trigger: '.sup', start: 'top 78%', end: 'bottom 22%', onToggle: (st) => G.palco.liga(cs, st.isActive) }); });
-    const troca = (card, api, ns, f) => { if (!card || !api) return; card.addEventListener('pointerenter', () => api.ciclo(ns, f)); card.addEventListener('pointerleave', () => api.pose(ns[0])); };
-    troca($('.s-luna'), a, ['x6', 'x4', 'x4', 'x6'], 2.5); troca($('.s-zoro'), b, ['x8', 'x9', 'x8', 'x9'], 4); troca($('.s-nacho'), c, ['x4', 'x8', 'x4', 'x7'], 3);
     const mm = gsap.matchMedia();
     mm.add('(min-width: 901px)', () => { gsap.set('.sobre', { marginTop: '-100vh' }); return () => gsap.set('.sobre', { clearProps: 'marginTop' }); });
-    ScrollTrigger.create({ trigger: '.contato', start: 'top 60%', onEnter: () => { if (G) { G.faixa.acorda(); G.faixa.diz(G.NACHO, 'chama ele!', 2.4); } } });
+    if (!G || G.calmo) return;
+    /* os três sobem para os cartões da Supervisão */
+    [['.s-luna', G.LUNA, ['x6', 'x4']], ['.s-zoro', G.ZORO, ['x8', 'x9']], ['.s-nacho', G.NACHO, ['x4', 'x8']]].forEach(([sel, gato, poses]) => {
+      const card = $(sel), lugar = card && $('.sup-g', card); if (!lugar) return; let em = false;
+      card.addEventListener('pointerenter', () => { em = true; });
+      card.addEventListener('pointerleave', () => { em = false; card.style.setProperty('--px', 0); card.style.setProperty('--py', 0); });
+      /* o cenário tem profundidade: as camadas se deslocam conforme o mouse */
+      if (fino) card.addEventListener('pointermove', (e) => { const r = card.getBoundingClientRect(); card.style.setProperty('--px', ((e.clientX - r.left) / r.width * 2 - 1).toFixed(3)); card.style.setProperty('--py', ((e.clientY - r.top) / r.height * 2 - 1).toFixed(3)); });
+      const cs = G.palco.cria(gato, { ponto: () => { const r = lugar.getBoundingClientRect(); return { x: r.left, y: r.top }; }, s: () => card.getBoundingClientRect().width / 570 * .86, pose: () => (em && Math.floor(performance.now() / 380) % 2 ? poses[1] : poses[0]) });
+      cenaRolagem(cs, { trigger: '.sup', start: 'top 72%', end: 'bottom 24%' });
+    });
   }
 
   /* ================= páginas de case ================= */
   function caso() {
+    gsap.set(cortina, { yPercent: 0 }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) });
     const h = $('.ch h1');
-    if (h) { h.innerHTML = h.innerHTML.split(/<br\s*\/?>/).map((l) => `<span style="display:block;overflow:hidden;padding:.14em 0 .08em;margin:-.14em 0 -.08em"><span class="lin" style="display:block">${l}</span></span>`).join(''); gsap.from('.ch .lin', { yPercent: 112, duration: 1.1, stagger: .1, ease: 'power4.out', delay: .55 }); gsap.from(['.ch-volta', '.ch .rot', '.ch-d', '.meta'], { y: 24, opacity: 0, duration: .8, stagger: .08, delay: .9, ease: 'power3.out' }); }
-    const arte = $('.ch-arte img'); if (arte && !calmo) { gsap.fromTo(arte, { scale: 1.14 }, { scale: 1, duration: 2, ease: 'power3.out' }); gsap.to(arte, { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.ch', start: 'top top', end: 'bottom top', scrub: true } }); }
-    $$('.gal figure, .telas figure, .card, .rolo').forEach((f) => gsap.from(f, { y: 60, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 90%' } }));
-    $$('.rolo').forEach((r) => { const im = $('img', r); im.addEventListener('load', () => ScrollTrigger.refresh()); gsap.to(im, { y: () => Math.min(0, -(im.offsetHeight - r.offsetHeight)), ease: 'none', scrollTrigger: { trigger: r, start: 'top 70%', end: 'bottom 10%', scrub: .6, invalidateOnRefresh: true } }); });
+    if (h) { linhas(h, { delay: .55 }); gsap.from(['.ch .rot', '.ch-d', '.meta'], { y: 24, opacity: 0, duration: .8, stagger: .08, delay: .9, ease: 'power3.out' }); }
+    const arte = $('.ch-arte img'); if (arte && !calmo) { gsap.fromTo(arte, { scale: 1.14 }, { scale: 1, duration: 2, ease: 'power3.out' }); gsap.to(arte, { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.ch', start: 'top top', end: 'bottom top', scrub: true } }); }
+    /* cartões e figuras entram em escada */
+    $$('.cards, .grade, .regras, .versoes, .numeros').forEach((gr) => gsap.from(gr.children, { y: 54, opacity: 0, duration: .9, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: gr, start: 'top 84%' } }));
+    $$('.fig-p').forEach((f) => gsap.fromTo(f, { y: 70, scale: .96 }, { y: -30, scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .5 } }));
+    /* fita: os celulares passam de lado enquanto a página rola */
+    const mm = gsap.matchMedia();
+    $$('.fita').forEach((ft) => {
+      const tr = $('.fita-t', ft);
+      mm.add('(min-width: 901px)', () => { const d = () => -(tr.scrollWidth - ft.clientWidth + parseFloat(getComputedStyle(ft).paddingLeft) * 2); gsap.to(tr, { x: d, ease: 'none', scrollTrigger: { trigger: ft, start: 'center center', end: () => '+=' + Math.abs(d()) * 1.1, pin: true, scrub: .5, invalidateOnRefresh: true, anticipatePin: 1 } }); });
+      $$('.aparelho', ft).forEach((a, i) => gsap.from(a, { y: 80 + (i % 2) * 50, opacity: 0, duration: 1, delay: i * .06, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 80%' } }));
+    });
+    /* site de verdade dentro da janela, preso no meio da tela enquanto rola do topo até o fim */
+    $$('.vitrine').forEach((v) => {
+      const img = $('.janela-v img', v), barra = $('.barra-r i', v), rot = $('.vitrine-p', v);
+      mm.add('(min-width: 901px)', () => { const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, onUpdate: (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; } } }); const cel = $('.vitrine-cel img', v); if (cel) tl.to(cel, { y: () => Math.min(0, -(cel.offsetHeight - cel.parentElement.offsetHeight)), ease: 'none' }, 0); });
+      mm.add('(max-width: 900px)', () => { janelaSite(img, barra, { ate: .6, gatilho: { trigger: v, start: 'top 12%', end: '+=120%', onUpdate: (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; } } }); });
+    });
+    /* ampliar imagem */
     const luz = $('#luz');
-    if (luz) { $$('.gal figure img').forEach((im) => im.parentElement.addEventListener('click', () => { luz.innerHTML = `<img src="${im.currentSrc || im.src}" alt="">`; luz.classList.add('on'); luz.scrollTop = 0; lenis && lenis.stop(); })); luz.addEventListener('click', () => { luz.classList.remove('on'); lenis && lenis.start(); }); addEventListener('keydown', (e) => { if (e.key === 'Escape') luz.click(); }); }
-    $$('[data-gato]').forEach((el) => { const [c, q, s] = el.dataset.gato.split(','); G && G.cena(el, +c, q, { s: +s || .5 }); });
+    if (luz) { $$('figure.zoom img').forEach((im) => im.parentElement.addEventListener('click', () => { luz.innerHTML = `<img src="${im.dataset.cheia || im.currentSrc || im.src}" alt="">`; luz.classList.add('on'); luz.scrollTop = 0; lenis && lenis.stop(); })); const fecha = () => { luz.classList.remove('on'); lenis && lenis.start(); }; luz.addEventListener('click', fecha); addEventListener('keydown', (e) => { if (e.key === 'Escape') fecha(); }); }
     addEventListener('load', () => ScrollTrigger.refresh());
+    let rt = 0; $$('img[loading=lazy]').forEach((im) => { if (!im.complete) im.addEventListener('load', () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 250); }, { once: true }); });
   }
 })();
