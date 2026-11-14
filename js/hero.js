@@ -58,7 +58,8 @@
     function limites() { /* chão e paredes do pingo, em deslocamento a partir do lugar dele no "i" */
       const hr = hero.getBoundingClientRect(), ir = L.i.getBoundingClientRect();
       const cxAbs = ir.left + D.cx, baixoAbs = ir.top + D.cy + D.h / 2;
-      return { chao: hr.bottom - 6 - baixoAbs, esq: hr.left + D.d - cxAbs, dir: hr.right - D.d - cxAbs };
+      /* o chão do pingo é a borda de baixo do navegador (com a página no topo), nunca abaixo do fim do hero */
+      return { chao: Math.min(hr.bottom, hr.top + innerHeight) - baixoAbs, esq: hr.left + D.d - cxAbs, dir: hr.right - D.d - cxAbs };
     }
     function pinta() { pw.style.transform = `translate(${(B.x + B.ox).toFixed(1)}px,${B.y.toFixed(1)}px) rotate(${B.a.toFixed(1)}deg) scale(${(2 - B.sq).toFixed(3)},${B.sq.toFixed(3)})`; }
     function solta(vx, vy, w) { B.solto = true; B.repouso = false; B.vx = vx; B.vy = vy; B.w = w; }

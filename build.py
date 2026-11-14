@@ -177,7 +177,7 @@ pecas = ''.join(f'<div><img src="{RN}peca-{a}.webp" alt="" loading="lazy"><span>
 mundos = ''.join(f'<figure class="mundo"><img src="{RN}mundo{i}.webp" alt="Mundo {i} do Renova Match" loading="lazy"><img class="chefe" src="{RN}chefe-{i}.webp" alt="" loading="lazy"><figcaption>Mundo {i}</figcaption></figure>' for i in range(1, 7))
 renova = dict(
     tema='t-renova', nav='claro', cor='#e8563a', titulo='App Renova Be', desc='Case do app Renova Be: rotina, recompensa e jogo num app de autocuidado.',
-    arte=RN + 'key-A.webp', rot='01 · App e jogos', h1='App<br>Renova Be',
+    arte=RN + 'key-A.webp', rot='01 · App', h1='App<br>Renova Be',
     d='Rotina, recompensa e jogo num app de autocuidado. Primeiro o app, depois os dois jogos.',
     meta=[('Papel', 'Product designer, de ponta a ponta'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'iOS e Android'), ('Ferramentas', 'Figma, React e IA no processo')],
     corpo=''.join([

@@ -147,13 +147,8 @@
       const segue = (e) => olhos.forEach((o) => { const r = o.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = r.width * .2; o.firstChild.style.transform = `translate(${dx / d * k}px, ${dy / d * k * .6}px)`; });
       addEventListener('pointermove', segue, { passive: true });
 
-      const conta = { v: 0 }, chama = $('#abre-c');
-      gsap.to(conta, { v: 100, duration: 1.05, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); }, onComplete: () => {
-        let foi = false, tm = 0;
-        const vai = (e) => { if (foi) return; foi = true; clearTimeout(tm); removeEventListener('pointerdown', vai); removeEventListener('keydown', vai); if (e && window.Som) Som.quando(() => som('luz')); gsap.to(chama, { opacity: 0, duration: .12 }); acendeLuz.play(); };
-        if (chama) { chama.textContent = (fino ? 'clique' : 'toque') + ' para acender a luz'; gsap.to(chama, { opacity: 1, duration: .5 }); }
-        addEventListener('pointerdown', vai); addEventListener('keydown', vai); tm = setTimeout(vai, 6000);
-      } });
+      const conta = { v: 0 };
+      gsap.to(conta, { v: 100, duration: 1.05, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); }, onComplete: () => { som('luz'); acendeLuz.play(); } });
       const acendeLuz = gsap.timeline({ paused: true })
         .to(abre, { opacity: .2, duration: .05 }, .08).to(abre, { opacity: 1, duration: .08 }).to(abre, { opacity: .08, duration: .05 }).to(abre, { opacity: 1, duration: .1 })
         .to(abre, { opacity: 0, duration: .32, ease: 'power2.out' })
