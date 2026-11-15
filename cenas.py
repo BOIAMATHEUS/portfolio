@@ -738,20 +738,27 @@ def nacho():
     return 'nacho', sv, (46, 93), k
 
 
+# cargo, nome, frase principal e nota. Cada texto é uma frase curta: a hierarquia é cargo < nome > frase > nota.
 TXT = {
-    'luna': ('Diretora de sonecas', 'Luna', 'Dorme em cima de tudo que já foi aprovado. Se ela levanta, tem coisa piscando demais.'),
-    'zoro': ('Logística e caixas', 'Zoro', 'Testa toda caixa que chega e derruba o que estiver solto. Inclusive os pingos dos is.'),
-    'nacho': ('Atendimento', 'Nacho', 'Pede ração a cada vinte minutos e segue o cursor de quem parecer ter comida.'),
+    'luna': ('Diretora de sonecas', 'Luna', 'Dorme em cima de tudo que já foi aprovado.', 'Se ela levanta, tem coisa piscando demais.'),
+    'zoro': ('Logística e caixas', 'Zoro', 'Testa toda caixa que chega e derruba o que estiver solto.', 'Inclusive os pingos dos is.'),
+    'nacho': ('Atendimento', 'Nacho', 'Pede ração a cada vinte minutos.', 'Segue o cursor de quem parecer ter comida.'),
 }
+
+
+def sem_orfa(t):
+    """prende as duas últimas palavras, para nenhuma sobrar sozinha na última linha"""
+    p = t.rsplit(' ', 1)
+    return '&nbsp;'.join(p) if len(p) == 2 else t
 html = ''
 for fn in (luna, zoro, nacho):
     nome, sv, (ax, ay), k = fn()
     print(nome, 'KB', k)
-    s, b, t = TXT[nome]
+    s, b, t, nota = TXT[nome]
     cam = lambda c, extra='': f'<div class="cam {c}"><img src="assets/cenas/{nome}-{c}.webp" alt="" width="1280" height="800" loading="lazy">' + (f'<svg viewBox="0 0 160 100" shape-rendering="crispEdges" aria-hidden="true">{sv[c]}</svg>' if sv[c] else '') + extra + '</div>'
     html += f'''    <article class="sup-c s-{nome}" data-sobe>
       <div class="cena">{cam('f')}{cam('m', f'<span class="sup-g" style="left:{ax / 1.6:.2f}%;top:{ay}%"></span>')}{cam('p')}</div>
-      <div class="sup-tx"><small>{s}</small><b>{b}</b><p>{t}</p></div>
+      <div class="sup-tx"><small>{s}</small><b>{b}</b><p class="sup-f">{sem_orfa(t)}</p><p class="sup-n">{sem_orfa(nota)}</p></div>
     </article>
 '''
 t = open('index.html', encoding='utf-8').read()

@@ -16,6 +16,9 @@
     /* 'ligar som' enquanto o navegador ainda não liberou o áudio: o primeiro clique só libera, não desliga */
     const pinta = () => { const on = Som.ligado; sb.setAttribute('aria-pressed', on ? 'true' : 'false'); sb.lastChild.textContent = !on ? 'sem som' : Som.pronto ? 'com som' : 'ligar som'; sb.classList.toggle('pede', on && !Som.pronto); };
     let pedia = false; pinta(); Som.quando(pinta);
+    /* a bolinha do botão bate a cada som, e um aviso explica que o som precisa de um clique */
+    addEventListener('som', () => { const b = sb.firstElementChild; b.classList.remove('bate'); void b.offsetWidth; b.classList.add('bate'); });
+    if (Som.ligado && !Som.pronto) setTimeout(() => { if (Som.pronto || !Som.ligado) return; const d = document.createElement('div'); d.className = 'som-dica px'; d.textContent = 'O site tem som. Clique em qualquer lugar para ligar.'; document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on')); const some = () => { d.classList.remove('on'); setTimeout(() => d.remove(), 400); }; Som.quando(some); setTimeout(some, 9000); }, hero ? 3200 : 1600);
     sb.addEventListener('pointerdown', () => { pedia = sb.classList.contains('pede'); });
     sb.addEventListener('click', () => { if (pedia) { pedia = false; Som.quando(() => { pinta(); Som.toca('pop'); }); return; } Som.alterna(); pinta(); if (Som.ligado) Som.quando(pinta); });
   }

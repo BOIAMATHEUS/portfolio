@@ -15,6 +15,8 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 body { font-family: 'Zalando', system-ui, sans-serif; background: var(--papel); color: var(--tinta); font-size: 17px; line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 img { display: block; max-width: 100%; height: auto; }
+h1, h2, h3 { text-wrap: balance; }
+p, li, figcaption { text-wrap: pretty; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 ::selection { background: var(--olho); color: var(--tinta); }
@@ -45,6 +47,10 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 140; pointer-even
 .som-b[aria-pressed='false'] { opacity: .55; }
 .som-b[aria-pressed='false'] i { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
 .som-b.pede i { animation: pede 1.3s ease-out infinite; }
+.som-b i.bate { animation: bate .28s ease-out; }
+@keyframes bate { 30% { scale: 2.1; } }
+.som-dica { position: fixed; right: var(--m); top: 54px; z-index: 82; pointer-events: none; font-size: 13.5px; line-height: 1.25; padding: 9px 13px; border-radius: 12px 4px 12px 12px; background: var(--olho); color: var(--tinta); box-shadow: 0 12px 30px -14px rgba(0, 0, 0, .5); opacity: 0; translate: 0 -6px; transition: opacity .35s, translate .35s; max-width: min(260px, 70vw); }
+.som-dica.on { opacity: 1; translate: 0 0; }
 @keyframes pede { 0% { box-shadow: 0 0 0 0 currentColor; } 100% { box-shadow: 0 0 0 9px transparent; } }
 
 /* ---------- hero ---------- */
@@ -258,7 +264,7 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 140; pointer-even
 .cena .apaga { opacity: 0; animation: apaga 7s steps(1) infinite; }
 @keyframes apaga { 0%, 100% { opacity: 0; } 61% { opacity: .3; } 62% { opacity: 0; } 64% { opacity: .42; } 66% { opacity: 0; } }
 .sup-g { position: absolute; width: 0; height: 0; }
-.sup-tx { position: relative; padding: 22px 26px 28px; }
+.sup-tx { position: relative; padding: 24px 26px 30px; }
 .cena .st { animation: cintila 2.4s steps(2, jump-none) infinite; }
 @keyframes cintila { 50% { opacity: .12; } }
 .cena .brilho { transform-box: fill-box; transform-origin: center; animation: respira 4.5s ease-in-out infinite; }
@@ -280,9 +286,12 @@ body::after { content: ''; position: fixed; inset: 0; z-index: 140; pointer-even
 @keyframes torrada { 0%, 78%, 100% { transform: translateY(5px); } 82%, 96% { transform: translateY(0); } }
 .cena .po { animation: po 5.5s linear infinite; }
 @keyframes po { 0% { opacity: 0; transform: translate(0, 0); } 20%, 70% { opacity: .9; } 100% { opacity: 0; transform: translate(5px, -11px); } }
-.sup-c small { font-family: var(--pixel); font-size: 14px; opacity: .75; }
-.sup-c b { display: block; font-size: 44px; letter-spacing: -.05em; line-height: 1; font-weight: 800; margin-top: 4px; }
-.sup-c p { margin-top: 10px; font-size: 16px; line-height: 1.4; max-width: 19em; }
+/* hierarquia do texto do cartão: cargo pequeno em pixel, nome grande, frase principal forte e nota mais leve */
+.sup-c small { display: flex; align-items: center; gap: 8px; font-family: var(--pixel); font-size: 13.5px; letter-spacing: .02em; opacity: .78; }
+.sup-c small::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.sup-c b { display: block; margin-top: 10px; font-size: clamp(46px, 4.3vw, 64px); font-weight: 850; font-stretch: 112%; letter-spacing: -.055em; line-height: .92; }
+.sup-c .sup-f { margin-top: 16px; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.28; font-weight: 600; letter-spacing: -.012em; text-wrap: balance; }
+.sup-c .sup-n { margin-top: 7px; font-size: 15px; line-height: 1.4; opacity: .72; text-wrap: balance; }
 .s-luna { background: #1a1f33; color: #eef0ff; }
 .s-zoro { background: var(--tinta); color: var(--papel); }
 .s-nacho { background: #f2a03d; color: #2b1705; }
