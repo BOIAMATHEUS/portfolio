@@ -3,7 +3,7 @@
   const CONTATO = { whatsapp: 'https://wa.me/5519991463731', behance: 'https://www.behance.net/matheusboia', linkedin: '', email: '' };
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!window.gsap) { document.documentElement.classList.add('sem-js'); $('#abre') && $('#abre').remove(); return; }
+  if (!window.gsap) { document.documentElement.classList.add('sem-js'); document.documentElement.classList.remove('abrindo'); return; }
   gsap.registerPlugin(ScrollTrigger);
   const G = window.Gatos, fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
@@ -75,7 +75,8 @@
   if (nav) { addEventListener('scroll', () => { if (!navT) navT = requestAnimationFrame(corNav); const y = scrollY; nav.classList.toggle('some', y > 240 && y > yAnt + 2); if (y < yAnt - 2 || y <= 240) nav.classList.remove('some'); yAnt = y; }, { passive: true }); setTimeout(corNav, 60); setInterval(corNav, 900); }
 
   /* ---------- gatos ---------- */
-  const abertura = !!(hero && $('#abre') && !calmo);
+  const abertura = !!(hero && !calmo && window.Intros && document.documentElement.classList.contains('abrindo'));
+  window.__intro = 1; if (!abertura) document.documentElement.classList.remove('abrindo');
   if (G) G.faixa.inicia({ abertura });
   const cenaRolagem = (cena, cfg) => ScrollTrigger.create(Object.assign({ onToggle: (st) => G.palco.liga(cena, st.isActive) }, cfg));
 
@@ -116,7 +117,7 @@
 
   /* ================= página inicial ================= */
   function inicio() {
-    const abre = $('#abre'), n = $('#abre-n'), nome = $('.nome'), l1 = $('.nome .l1 .pal'), letras = $$('.nome .c');
+    const nome = $('.nome'), l1 = $('.nome .l1 .pal'), letras = $$('.nome .c');
 
     /* o nome ocupa a largura toda (ou 36% da altura da janela, o que for menor) */
     function ajusta() {
@@ -133,51 +134,24 @@
     };
 
     const miudos = $$('.hero-topo > *, .hero-pe > *');
-    /* modelos de introdução para escolher: ?intro=1 a 4 (0 = a atual) */
-    const modelo = +(new URLSearchParams(location.search).get('intro') || 0);
-    if (/[?&]intro=/.test(location.search) && window.Intros) {
-      const s = document.createElement('div'); s.className = 'intro-sel px';
-      s.innerHTML = '<span>introdução</span>' + Intros.nomes.map((n, i) => `<a href="?intro=${i}"${i === modelo ? ' class="on"' : ''}>${i ? i + ' ' : ''}${n}</a>`).join('');
-      document.body.appendChild(s);
-    }
-    if (!abertura) { if (abre) abre.remove(); acende(); }
-    else if (modelo >= 1 && window.Intros && Intros[modelo]) {
-      abre.remove(); history.scrollRestoration = 'manual'; scrollTo(0, 0); lenis && lenis.stop();
-      gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { opacity: 0 });
-      document.fonts.ready.then(() => { ajusta(); gsap.set(nome, { opacity: 1 }); const fim = () => { lenis && lenis.start(); acende(); };
-        try { Intros[modelo]({ hero, nome, letras, miudos, G, som, zoro, fino, fim }); }
-        catch (e) { console.error(e); $$('.intro-pr').forEach((x) => x.remove()); nome.classList.remove('contorno', 'enche'); gsap.set([nome, letras], { clearProps: 'all' }); ajusta(); gsap.set(miudos, { opacity: 1, y: 0 }); if (G) { G.faixa.congelado = false; gsap.set(G.faixa.el, { opacity: 1 }); } fim(); }
-      });
-    }
+    /* introdução: o hero abre em wireframe e ganha fidelidade (js/intros.js). Não roda ao voltar pelo histórico nem com âncora. */
+    if (!abertura) acende();
     else {
-      gsap.set(letras, { yPercent: 118 }); gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { fontStretch: '78%' });
-      gsap.set('.nome .pal', { display: 'inline-flex', overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.06em' });
-      lenis && lenis.stop();
-      /* no escuro só aparecem os olhos, e são os olhos dos três gatos sentados no chão */
-      const olhos = [];
-      G && G.faixa.gatos.forEach((g) => {
-        const par = (G.A[g.c].olhos || {})[g.nome]; if (!par) return;
-        par.forEach(([ex, ey, ew, eh]) => { const o = document.createElement('i'); o.className = 'olho'; const w = Math.max(11, Math.max(ew, eh) * 1.25) * g.s * 2.1, h = w * .86; o.style.cssText = `left:${g.x + (ex - g.f[2] / 2) * g.s - w / 2}px;top:${G.faixa.chao - (g.f[3] - ey) * g.s - h / 2}px;width:${w}px;height:${h}px;animation-delay:${(Math.random() * 2.4).toFixed(2)}s`; o.innerHTML = '<b></b>'; abre.appendChild(o); olhos.push(o); });
+      history.scrollRestoration = 'manual'; scrollTo(0, 0); lenis && lenis.stop();
+      gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { opacity: 0 });
+      document.fonts.ready.then(() => {
+        ajusta(); gsap.set(nome, { opacity: 1 });
+        const fim = () => { lenis && lenis.start(); acende(); };
+        try { Intros.wire({ nome, letras, miudos, G, som, fim }); }
+        catch (e) { console.error(e); $$('.intro-pr, .nome-c, .intro-filtro').forEach((x) => x.remove()); nome.classList.remove('tinge'); nome.removeAttribute('style'); ajusta(); gsap.set(miudos, { opacity: 1, y: 0 }); if (G) { G.faixa.congelado = false; gsap.set(G.faixa.el, { opacity: 1 }); } fim(); }
+        document.documentElement.classList.remove('abrindo');
       });
-      const segue = (e) => olhos.forEach((o) => { const r = o.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = r.width * .2; o.firstChild.style.transform = `translate(${dx / d * k}px, ${dy / d * k * .6}px)`; });
-      addEventListener('pointermove', segue, { passive: true });
-
-      const conta = { v: 0 };
-      gsap.to(conta, { v: 100, duration: 1.05, ease: 'power2.inOut', onUpdate: () => { n.textContent = String(Math.round(conta.v)).padStart(3, '0'); }, onComplete: () => { som('luz'); acendeLuz.play(); } });
-      const acendeLuz = gsap.timeline({ paused: true })
-        .to(abre, { opacity: .2, duration: .05 }, .08).to(abre, { opacity: 1, duration: .08 }).to(abre, { opacity: .08, duration: .05 }).to(abre, { opacity: 1, duration: .1 })
-        .to(abre, { opacity: 0, duration: .32, ease: 'power2.out' })
-        .add(() => { removeEventListener('pointermove', segue); abre.remove(); lenis && lenis.start(); acende(); })
-        .to(nome, { fontStretch: '125%', duration: 1.25, ease: 'power4.out' }, '-=.25')
-        .to(letras, { yPercent: 0, duration: 1.05, stagger: .04, ease: 'power4.out' }, '<')
-        .to(miudos, { opacity: 1, y: 0, duration: .7, stagger: .07, ease: 'power3.out' }, '-=.6')
-        .add(() => { gsap.set('.nome .pal', { overflow: 'visible' }); gsap.set(nome, { clearProps: 'fontStretch' }); });
     }
 
     /* letras do nome sobem quando o cursor passa perto */
     if (!calmo && fino) {
       const ls = letras.map((el) => ({ el, y: gsap.quickTo(el, 'y', { duration: .5, ease: 'power3.out' }) }));
-      hero.addEventListener('pointermove', (e) => { if ($('#abre')) return; ls.forEach((l) => { const r = l.el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); l.y(-Math.max(0, 1 - d / 260) * 26); }); });
+      hero.addEventListener('pointermove', (e) => { ls.forEach((l) => { const r = l.el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); l.y(-Math.max(0, 1 - d / 260) * 26); }); });
       hero.addEventListener('pointerleave', () => ls.forEach((l) => l.y(0)));
     }
     if (!calmo) { gsap.to(nome, { y: -70, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } }); gsap.fromTo(['.hero-topo', '.hero-pe'], { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: hero, start: '2% top', end: '40% top', scrub: true } }); }
@@ -307,7 +281,7 @@
     gsap.set(cortina, { yPercent: 0 }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) });
     const h = $('.ch h1');
     if (h) { linhas(h, { delay: .55 }); gsap.from(['.ch .rot', '.ch-d', '.meta'], { y: 24, opacity: 0, duration: .8, stagger: .08, delay: .9, ease: 'power3.out' }); }
-    const arte = $('.ch-arte img'); if (arte && !calmo) { gsap.fromTo(arte, { scale: 1.14 }, { scale: 1, duration: 2, ease: 'power3.out' }); gsap.to(arte, { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.ch', start: 'top top', end: 'bottom top', scrub: true } }); }
+    const arte = $('.ch-arte img'); if (arte && !calmo) { gsap.fromTo(arte, { scale: 1.1, transformOrigin: '100% 50%' }, { scale: 1, duration: 1.6, ease: 'power3.out' }); gsap.to(arte, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: '.ch', start: 'top top', end: 'bottom top', scrub: true } }); }
     /* cartões e figuras entram em escada */
     $$('.cards, .grade, .regras, .versoes, .numeros').forEach((gr) => gsap.from(gr.children, { y: 54, opacity: 0, duration: .9, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: gr, start: 'top 84%' } }));
     $$('.fig-p').forEach((f) => gsap.fromTo(f, { y: 70, scale: .96 }, { y: -30, scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .5 } }));
