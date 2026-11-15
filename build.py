@@ -183,7 +183,7 @@ renova = dict(
     tema='t-renova', nav='claro', cor='#e8563a', titulo='App Renova Be', desc='Case do app Renova Be: rotina, recompensa e jogo num app de autocuidado.',
     arte=RN + 'key-A.webp', rot='01 · App', h1='App<br>Renova Be',
     d='Rotina, recompensa e jogo num app de autocuidado. Primeiro o app, depois os dois jogos.',
-    meta=[('Papel', 'Product designer, de ponta a ponta'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'iOS e Android'), ('Ferramentas', 'Figma, React e IA no processo')],
+    meta=[('Papel', 'Product designer, de ponta a ponta'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'iOS e Android'), ('Ferramentas', 'Figma, protótipo navegável e IA no processo')],
     corpo=''.join([
         cap('01 · O problema', 'O app era um<br>espelho do site.',
             ['Loja, sacola e conta, como no site. O pedido foi direto: o app tem outra dinâmica e não pode ser uma cópia do site.',
@@ -224,7 +224,7 @@ gg = dict(
     tema='t-gg', nav='claro', cor='#0f2e2f', titulo='Good Green', desc='Case Good Green: site completo e jornada de lançamento de uma marca nova de bebida verde.',
     arte=GG + 'banner-pote-inclinado.webp', rot='02 · Site e lançamento', h1='Good<br><em>Green</em>',
     d='Site completo e jornada de lançamento de uma marca nova de bebida verde em pó.',
-    meta=[('Papel', 'Product designer: site, jornada e direção visual'), ('Momento', '2026, pré-lançamento'), ('Entrega', 'Site, quiz, landing pages e pop-ups'), ('Ferramentas', 'Figma, HTML e CSS, IA no processo')],
+    meta=[('Papel', 'Product designer: site, jornada e direção visual'), ('Momento', '2026, pré-lançamento'), ('Entrega', 'Site, quiz, landing pages e pop-ups'), ('Ferramentas', 'Figma, protótipo navegável e IA no processo')],
     corpo=''.join([
         cap('01 · O desafio', 'Uma categoria nova<br>para o Brasil.',
             ['Good Green é um suplemento em pó que vira bebida verde: uma medida em 300 ml de água. A categoria já é grande lá fora e pouca gente aqui conhece.',
@@ -251,7 +251,7 @@ nhv = dict(
     tema='t-nhv', nav='escuro', cor='#7d5b49', titulo='Rastreio de pedido · New Hair', desc='Case de rastreio de pedido da New Hair: achar todos os pedidos só com o CPF.',
     arte=NH + 'hero.webp', rot='03 · Pós-compra · New Hair', h1='Rastreio<br><em>de pedido</em>',
     d='Encontrar todos os pedidos só com o CPF e saber, em uma frase, onde cada um está e quando chega.',
-    meta=[('Papel', 'Design e produto'), ('Marca', 'New Hair'), ('Entrega', 'Tela de rastreio, design system e protótipo em código'), ('Ferramentas', 'Figma e React')],
+    meta=[('Papel', 'Design e produto'), ('Marca', 'New Hair'), ('Entrega', 'Tela de rastreio, design system e protótipo navegável'), ('Ferramentas', 'Figma e protótipo navegável')],
     corpo=''.join([
         cap('01 · Descoberta', '“Cadê o meu<br>pedido?”',
             ['É a pergunta mais repetida no atendimento de qualquer e-commerce. Na loja nova da New Hair não existia um lugar para a cliente acompanhar a entrega sem login.',
@@ -278,7 +278,7 @@ nhv = dict(
             versoes([('v1', 'A base', 'Busca por CPF, lista de pedidos e linha do tempo.'), ('v2', 'Uma linha do tempo só', 'Os eventos da transportadora entram dentro de “Enviado”. Ícones em cada etapa e a situação no topo do pedido.'), ('v3', 'Mais New Hair, mobile first', 'Caramelo e nudes da marca, título em itálico. Produto como destaque, pílula com ícone, botões de 44 px.'), ('v4', 'A partir das referências', 'Previsão grande (“Chega amanhã”), painéis e faixa de atendimento em caramelo cheio. Ajustes finos no pé e na nota do CPF.')])),
         fita([tela_alta(NH + 't-busca.webp', 'Busca'), tela_alta(NH + 't-lista.webp', 'Lista de pedidos'), tela_alta(NH + 't-a-caminho.webp', 'Pedido a caminho'), tela_alta(NH + 't-pix-pendente.webp', 'Pix pendente'), tela_alta(NH + 't-entregue.webp', 'Entregue'), tela_alta(NH + 't-sem-pedidos.webp', 'CPF sem pedidos')]),
         cap('06 · Desktop e sistema', 'No desktop, o título<br>ao lado da busca.',
-            ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma e um componente no código, com as mesmas cores e nomes.'],
+            ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma, com os mesmos nomes e cores usados no desenvolvimento.'],
             grade([fig(NH + 't-desktop.webp', 'Tela de rastreio em desktop', 'fig-p', 'Desktop'), fig(NH + 't-componentes.webp', 'Componentes do design system do rastreio', 'fig-p', 'Componentes')], '2 iguais')),
         cap('07 · Resultado', 'No ar, com<br>dados reais.', [],
             cards([dict(t='O que foi entregue', li=['Rastreio só com o CPF, publicado na loja nova.', 'Todos os estados: Pix pendente, separação, a caminho, entregue, cancelado, sem pedidos, erro e limite.', 'Modo demonstração para testar todos os estados sem dados reais.', 'Design system com tokens, componentes e ícones.']),
@@ -291,3 +291,19 @@ nhv = dict(
 for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
     open(nome, 'w', encoding='utf-8').write(medidas(pagina(p)))
     print(nome, 'ok')
+
+# ---------- carimbo de versão ----------
+# Todo css e js local sai com ?v=<resumo do conteúdo> nas quatro páginas (a inicial inclusive).
+# Sem isso o navegador mistura arquivo novo com antigo em cache e o site se comporta errado por alguns minutos.
+import glob
+import hashlib
+
+resumo = hashlib.md5()
+for f in sorted(glob.glob('css/*.css') + glob.glob('js/*.js')):
+    resumo.update(open(f, 'rb').read())
+V = resumo.hexdigest()[:8]
+for nome in ('index.html', 'renova.html', 'good-green.html', 'rastreio.html'):
+    t = open(nome, encoding='utf-8').read()
+    t = re.sub(r'((?:href|src)="(?:css|js)/[\w\-]+\.(?:css|js))(?:\?v=\w+)?"', rf'\1?v={V}"', t)
+    open(nome, 'w', encoding='utf-8').write(t)
+print('versão', V)

@@ -100,7 +100,7 @@
       medePingo();
       if (!jaSubiu) {
         const f = fs(), pS = P.S();
-        if (o.peloAlto && !chegou) { chegou = true; g.x = Math.min(-70, pS.x - f * .9); g.y = pS.y - f * .42; }
+        if (o.peloAlto && !chegou) { chegou = true; g.x = Math.min(-90, pS.x - f * .85); g.y = pS.y - f * .95; }
         else {
           if (g.modo === 'chao') { g.quer = -1; const ok = await g.correAte(-80); if (!ok || !vivo()) return; }
           else if (g.modo === 'ar') { await espera(700, vivo); if (!vivo()) return; }
