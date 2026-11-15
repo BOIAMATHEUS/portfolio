@@ -4,7 +4,8 @@
    O contorno é uma cópia do nome passada por um filtro que deixa só a borda da forma inteira
    (sem traço cruzando onde as letras se encostam). O preenchimento é a tinta se espalhando
    a partir do ponto em que o cursor clica.
-   Uso: Intros.wire({ nome, letras, miudos, G, som, fim }) e o.fim() é chamado no final. */
+   Uso: Intros.wire({ nome, letras, miudos, G, som, revela, fim }). o.revela() é chamado quando o nome ganha tinta
+   (é quando o Zoro entra pulando pelo lado) e o.fim() quando a prancheta termina de sair. */
 (function () {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const novo = (pai, tag, cls, html) => { const d = document.createElement(tag); d.className = cls; if (html) d.innerHTML = html; pai.appendChild(d); return d; };
@@ -16,7 +17,7 @@
     const rs = $$('.nome .pal').map((p) => p.getBoundingClientRect()), cs = getComputedStyle(nome), fs = parseFloat(cs.fontSize);
     const x0 = Math.min(...rs.map((r) => r.left)), yB = Math.max(...rs.map((r) => r.bottom)) + fs * .05, yT = Math.min(...rs.map((r) => r.top)) - fs * .06, embaixo = innerWidth >= 900;
     const ov = novo(document.body, 'div', 'intro-pr'), gr = novo(ov, 'div', 'pr-grade');
-    const cam = novo(ov, 'div', 'pr-cam px', `<div class="pr-cam-t"><b>portfolio.fig</b><i>M</i></div>${['nome', 'texto', '3 imagens'].map((t) => `<div class="pr-l">${QUADRO}${t}</div>`).join('')}`);
+    const cam = novo(ov, 'div', 'pr-cam px', `<div class="pr-cam-t"><b>portfolio.fig</b><i>M</i></div>${['nome', 'texto', '2 imagens'].map((t) => `<div class="pr-l">${QUADRO}${t}</div>`).join('')}`);
     const barra = novo(ov, 'div', 'pr-barra px', '<span data-f="wire">wireframe</span><span data-f="cont">contorno</span><span data-f="final">final</span>');
     barra.style.top = (embaixo ? yB + 34 : yT - 62) + 'px'; cam.style.cssText = `left:${x0}px;top:${yB + 22}px`;
     const etapa = (n) => $$('span', barra).forEach((s) => s.classList.toggle('on', s.dataset.f === n));
@@ -30,7 +31,7 @@
     const finas = o.miudos.flatMap((m) => (m.classList.contains('hero-info') ? [...m.children] : [m])).map((m) => { const r = m.getBoundingClientRect(), d = novo(ov, 'div', 'wf-b fino'), a = Math.max(8, Math.min(22, r.height * .6)); d.style.cssText = `left:${r.left}px;top:${r.top - 14 + (r.height - a) / 2}px;width:${Math.max(40, r.width * .92)}px;height:${a}px`; return d; });
     /* os gatos ainda são imagens por carregar: a caixa sai das medidas do motor (posição, escala e quadro) */
     const NOMES = ['nacho.png', 'luna.png', 'zoro.png'];
-    const caixas = G ? G.faixa.gatos.map((g, i) => { const f = g.f || [0, 0, 180, 200], s = g.s || G.faixa.s, larg = f[2] * s + 10, alt = f[3] * s + 8, d = novo(ov, 'div', 'wf-img', `<u class="px">${NOMES[i]}</u>`); d.style.cssText = `left:${g.x - larg / 2}px;top:${G.faixa.chao - alt + 2}px;width:${larg}px;height:${alt}px`; return d; }) : [];
+    const caixas = G ? G.faixa.gatos.map((g, i) => { if (g.x < 0) return null; const f = g.f || [0, 0, 180, 200], s = g.s || G.faixa.s, larg = f[2] * s + 10, alt = f[3] * s + 8, d = novo(ov, 'div', 'wf-img', `<u class="px">${NOMES[i]}</u>`); d.style.cssText = `left:${g.x - larg / 2}px;top:${G.faixa.chao - alt + 2}px;width:${larg}px;height:${alt}px`; return d; }).filter(Boolean) : [];
     if (G) { G.faixa.congelado = true; gsap.set(G.faixa.el, { opacity: 0 }); }
 
     /* contorno: cópia do nome, por cima, com o filtro de borda */
@@ -71,7 +72,7 @@
       .to(finas, { opacity: 0, duration: .22 }, 'final')
       .to(o.miudos, { opacity: 1, y: 0, duration: .5, stagger: .04, ease: 'power3.out' }, 'final+=.04')
       .to(caixas, { scale: 1.12, opacity: 0, duration: .22, stagger: .05, ease: 'power2.in' }, 'final+=.04')
-      .add(() => { if (G) { gsap.to(G.faixa.el, { opacity: 1, duration: .2 }); G.faixa.congelado = false; [0, 1, 2].forEach((c, i) => setTimeout(() => pula(G, c, 400 + Math.random() * 220), i * 80)); } som('chegou'); }, 'final+=.22')
+      .add(() => { if (G) { gsap.to(G.faixa.el, { opacity: 1, duration: .2 }); G.faixa.congelado = false; [0, 1].forEach((c, i) => setTimeout(() => pula(G, c, 400 + Math.random() * 220), i * 80)); } som('chegou'); if (o.revela) o.revela(); }, 'final+=.22')
       .add(limpa, 'final+=.64')
       /* a prancheta sai */
       .to(P, { x: innerWidth + 60, y: yB, duration: .34, ease: 'power2.in', onUpdate: poe }, 'final+=.42')

@@ -91,7 +91,7 @@
     gsap.ticker.add((t, dms) => fisica(Math.min(.034, dms / 1000)));
 
     /* ---------- roteiro do Zoro ---------- */
-    let pose = 'g7', virado = true, jaSubiu = false, vezes = 0, ocupado = false, ativo = false;
+    let pose = 'g7', virado = true, jaSubiu = false, chegou = false, vezes = 0, ocupado = false, ativo = false;
     const poe = (p, v) => { pose = p; if (v != null) virado = v; };
     const ancora = (ponto, p, v) => ({ ponto, s: escala, pose: () => p || pose, vira: () => (v != null ? v : virado) });
 
@@ -99,10 +99,14 @@
       await document.fonts.ready; if (!vivo()) return;
       medePingo();
       if (!jaSubiu) {
-        if (g.modo === 'chao') { g.quer = -1; const ok = await g.correAte(-80); if (!ok || !vivo()) return; }
-        else if (g.modo === 'ar') { await espera(700, vivo); if (!vivo()) return; }
         const f = fs(), pS = P.S();
-        g.x = pS.x - f * .7; g.y = pS.y + f * .22; g.s = escala(); g.sAlvo = g.s; g.dir = 1;
+        if (o.peloAlto && !chegou) { chegou = true; g.x = Math.min(-70, pS.x - f * .9); g.y = pS.y - f * .42; }
+        else {
+          if (g.modo === 'chao') { g.quer = -1; const ok = await g.correAte(-80); if (!ok || !vivo()) return; }
+          else if (g.modo === 'ar') { await espera(700, vivo); if (!vivo()) return; }
+          g.x = pS.x - f * .7; g.y = pS.y + f * .22;
+        }
+        g.s = escala(); g.sAlvo = g.s; g.dir = 1;
         for (const k of ['S', 'b', 'o', 'a']) {
           const ok = await g.saltaPara(P[k], { s: escala(), prep: k === 'S' ? 0 : .1 }); if (!ok || !vivo()) return;
           g.prende(ancora(P[k], 'n7', false));

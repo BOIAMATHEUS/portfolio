@@ -127,7 +127,7 @@
     }
     ajusta(); document.fonts.ready.then(ajusta); addEventListener('resize', ajusta);
 
-    const zoro = window.HeroZoro && G && !G.calmo ? HeroZoro({ hero, G }) : null;
+    const zoro = window.HeroZoro && G && !G.calmo ? HeroZoro({ hero, G, peloAlto: abertura }) : null;
     const acende = () => {
       if (G) G.faixa.solta();
       if (zoro) { zoro.liga(true); ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom 45%', onToggle: (st) => zoro.liga(st.isActive) }); }
@@ -141,9 +141,11 @@
       gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { opacity: 0 });
       document.fonts.ready.then(() => {
         ajusta(); gsap.set(nome, { opacity: 1 });
-        const fim = () => { lenis && lenis.start(); acende(); };
-        try { Intros.wire({ nome, letras, miudos, G, som, fim }); }
-        catch (e) { console.error(e); $$('.intro-pr, .nome-c, .intro-filtro').forEach((x) => x.remove()); nome.classList.remove('tinge'); nome.removeAttribute('style'); ajusta(); gsap.set(miudos, { opacity: 1, y: 0 }); if (G) { G.faixa.congelado = false; gsap.set(G.faixa.el, { opacity: 1 }); } fim(); }
+        const fim = () => { lenis && lenis.start(); };
+        /* durante a introdução o Zoro fica fora da tela; ele entra pulando quando o nome ganha tinta (revela) */
+        if (G) G.faixa.gatos[G.ZORO].x = -500;
+        try { Intros.wire({ nome, letras, miudos, G, som, revela: acende, fim }); }
+        catch (e) { console.error(e); $$('.intro-pr, .nome-c, .intro-filtro').forEach((x) => x.remove()); nome.classList.remove('tinge'); nome.removeAttribute('style'); ajusta(); acende(); gsap.set(miudos, { opacity: 1, y: 0 }); if (G) { G.faixa.congelado = false; gsap.set(G.faixa.el, { opacity: 1 }); } fim(); }
         document.documentElement.classList.remove('abrindo');
       });
     }
