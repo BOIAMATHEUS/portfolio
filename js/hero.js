@@ -5,7 +5,7 @@
    O pingo é o glifo real do "i" recortado e cai como um corpo de verdade: gravidade, quique, atrito e giro. */
 (function () {
   const cv = document.createElement('canvas').getContext('2d');
-  const som = (n, o) => { if (window.Som) Som.toca(n, o); };
+  const som = () => {}; /* o site não tem som */
   const lim = (v, a, b) => Math.max(a, Math.min(b, v));
   const GRAV = 2700;
 

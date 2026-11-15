@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css?v=1f5f20b6">
+<link rel="stylesheet" href="css/site.css?v=318fb6d8">
 <script>document.documentElement.classList.remove('sem-js')</script>
 <script>(function(){var d=document.documentElement,n=(performance.getEntriesByType('navigation')[0]||{}).type;if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!location.hash&&n!=='back_forward'){d.classList.add('abrindo');setTimeout(function(){if(!window.__intro)d.classList.remove('abrindo')},3500)}})()</script>
 </head>
@@ -37,7 +37,7 @@
 
 <header class="nav">
   <a class="nav-m" href="#topo"><b></b>Matheus Saboia</a>
-  <nav class="nav-l"><a href="#trabalhos">Trabalhos</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a><button class="som-b" id="som-b" type="button" aria-pressed="true" aria-label="Ligar ou desligar os sons"><i></i><span>som</span></button></nav>
+  <nav class="nav-l"><a href="#trabalhos">Trabalhos</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a></nav>
 </header>
 
 <main id="topo">
@@ -80,7 +80,7 @@
     <div class="caso-txt">
       <span class="caso-n">01 · App</span>
       <h3>App<br>Renova Be</h3>
-      <p class="caso-d">O app repetia o site. Redesenhei para virar hábito diário, com uma moeda em reais e dois jogos com a cara da marca. O Match está aqui ao lado: jogue.</p>
+      <p class="caso-d">O app repetia o site. Redesenhei para virar hábito diário, com uma moeda em reais e dois jogos com a cara da marca. O Match aqui é de verdade: pode jogar.</p>
       <div class="tags"><span>Product design</span><span>UX/UI</span><span>iOS e Android</span></div>
       <a class="btn" href="renova.html" data-vai="#e8563a" data-cur="abrir<br>o case">Abrir o case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
     </div>
@@ -90,13 +90,14 @@
       <img class="moeda-f" src="assets/renova/moeda-junior-frente.webp" alt="" style="right:10%;bottom:9%;transform:rotate(-8deg) scale(1.15)" data-par="-50">
       <img class="renovinha" id="renovinha" src="assets/renova/renovinha-nb-aponta.webp" alt="Renovinha, o mascote do app, apontando para o jogo">
       <div class="fone">
+        <span class="jogue px" id="jogue">dá para jogar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span>
         <div class="fone-t">
           <div class="jogo">
             <div class="jogo-topo">
               <div class="jogo-fase"><small id="fase-n">FASE 1</small>Amanhecer do Colágeno</div>
               <div class="jogo-moedas" id="jogo-moedas"><img src="assets/renova/moeda-junior-frente.webp" alt=""><span id="moedas-n">0</span></div>
             </div>
-            <div class="tab" id="tab" aria-label="Tabuleiro do Renova Match. Troque duas peças vizinhas para combinar três."></div>
+            <div class="tab" id="tab" data-cur="jogar" aria-label="Tabuleiro do Renova Match. Troque duas peças vizinhas para combinar três."></div>
             <div class="meta-j"><span>META</span><div class="barra"><i id="meta-b"></i></div><b id="meta-n">0/150</b></div>
             <div class="pecas-l"><div><img src="assets/renova/peca-colageno.webp" alt="">Colágeno</div><div><img src="assets/renova/peca-hialuronico.webp" alt="">Hialurônico</div><div><img src="assets/renova/peca-vitamina-c.webp" alt="">Vitamina C</div><div><img src="assets/renova/peca-zinco.webp" alt="">Zinco</div></div>
             <div class="jogo-pe"><b id="jogo-msg">Troque duas peças vizinhas</b>combine 3 e ganhe moedas</div>
@@ -207,12 +208,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/som.js?v=1f5f20b6"></script>
-<script src="js/gatos-atlas.js?v=1f5f20b6"></script>
-<script src="js/gatos.js?v=1f5f20b6"></script>
-<script src="js/hero.js?v=1f5f20b6"></script>
-<script src="js/intros.js?v=1f5f20b6"></script>
-<script src="js/match.js?v=1f5f20b6"></script>
-<script src="js/site.js?v=1f5f20b6"></script>
+<script src="js/gatos-atlas.js?v=318fb6d8"></script>
+<script src="js/gatos.js?v=318fb6d8"></script>
+<script src="js/hero.js?v=318fb6d8"></script>
+<script src="js/intros.js?v=318fb6d8"></script>
+<script src="js/match.js?v=318fb6d8"></script>
+<script src="js/site.js?v=318fb6d8"></script>
 </body>
 </html>

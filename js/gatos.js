@@ -12,7 +12,7 @@
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NACHO = 0, LUNA = 1, ZORO = 2;
   const GRAV = 2700;
-  const som = (n, o) => { if (window.Som) Som.toca(n, o); };
+  const som = () => {}; /* o site não tem som */
   const val = (v) => (typeof v === 'function' ? v() : v);
   const lim = (v, a, b) => Math.max(a, Math.min(b, v));
   const suave = (u) => u * u * (3 - 2 * u);

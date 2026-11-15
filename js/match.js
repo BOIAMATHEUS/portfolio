@@ -69,9 +69,9 @@
       if (travado || !a || !b || a === b) return;
       if (Math.abs(a.l - b.l) + Math.abs(a.c - b.c) !== 1) return;
       travado = true; parado = 0; tiraDica();
-      troca(a, b); poe(a); poe(b); if (window.Som) Som.toca('troca'); await esp(240);
+      troca(a, b); poe(a); poe(b); await esp(240);
       if (grupos().length) await resolve();
-      else { if (window.Som) Som.toca('nao'); troca(a, b); poe(a); poe(b); await esp(240); }
+      else { troca(a, b); poe(a); poe(b); await esp(240); }
       travado = false;
     }
 
@@ -82,7 +82,7 @@
       sel = sel === p ? null : p; if (sel) sel.el.classList.add('sel');
     }
 
-    tab.addEventListener('pointerdown', (e) => { const el = e.target.closest('.peca'); if (!el) return; arr = { p: el.p, x: e.clientX, y: e.clientY, foi: false }; parado = 0; });
+    tab.addEventListener('pointerdown', (e) => { const el = e.target.closest('.peca'); if (!el) return; if (opc.aoTocar) opc.aoTocar(); arr = { p: el.p, x: e.clientX, y: e.clientY, foi: false }; parado = 0; });
     tab.addEventListener('pointermove', (e) => {
       if (!arr || arr.foi) return; const dx = e.clientX - arr.x, dy = e.clientY - arr.y; const lim = tab.clientWidth / N * .38;
       if (Math.abs(dx) < lim && Math.abs(dy) < lim) return;
@@ -103,6 +103,8 @@
     async function demo() { if (travado) return; const j = jogadas(); if (j.length) await tenta(j[0][0], j[0][1]); }
 
     monta();
-    return { demo, monta };
+    /* uma jogada que funciona agora, para o sinal de "dá para jogar" */
+    const sugere = () => { if (travado) return null; const j = jogadas(); return j.length ? j[0] : null; };
+    return { demo, monta, sugere };
   };
 })();

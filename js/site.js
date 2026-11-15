@@ -9,23 +9,8 @@
   const curto = () => innerWidth < 700;
   const G = window.Gatos, fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
-  const som = (n, o) => { if (window.Som) Som.toca(n, o); };
+  const som = () => {}; /* o site não tem som */
   const hero = $('#hero');
-
-  /* ---------- som ---------- */
-  const sb = $('#som-b');
-  if (sb && window.Som) {
-    /* 'ligar som' enquanto o navegador ainda não liberou o áudio: o primeiro clique só libera, não desliga */
-    const pinta = () => { const on = Som.ligado; sb.setAttribute('aria-pressed', on ? 'true' : 'false'); sb.lastChild.textContent = curto() ? (!on ? 'mudo' : Som.pronto ? 'som' : 'ligar') : (!on ? 'sem som' : Som.pronto ? 'com som' : 'ligar som'); sb.classList.toggle('pede', on && !Som.pronto); };
-    let pedia = false; pinta(); Som.quando(pinta);
-    /* a bolinha do botão bate a cada som, e um aviso explica que o som precisa de um clique */
-    addEventListener('som', () => { const b = sb.firstElementChild; b.classList.remove('bate'); void b.offsetWidth; b.classList.add('bate'); });
-    if (Som.ligado && !Som.pronto) setTimeout(() => { if (Som.pronto || !Som.ligado) return; const d = document.createElement('div'); d.className = 'som-dica px'; d.textContent = fino ? 'O site tem som. Clique em qualquer lugar para ligar.' : 'Toque na tela para ligar o som'; document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on')); const some = () => { d.classList.remove('on'); setTimeout(() => d.remove(), 400); }; Som.quando(some); setTimeout(some, fino ? 9000 : 6000); }, hero ? 3200 : 1600);
-    sb.addEventListener('pointerdown', () => { pedia = sb.classList.contains('pede'); });
-    sb.addEventListener('click', () => { if (pedia) { pedia = false; Som.quando(() => { pinta(); Som.toca('pop'); }); return; } Som.alterna(); pinta(); if (Som.ligado) Som.quando(pinta); });
-  }
-  document.addEventListener('pointerover', (e) => { const a = e.target.closest && e.target.closest('a, button, [role=button]'); if (a && a !== document.sobre) { document.sobre = a; som('tique'); } if (!a) document.sobre = null; });
-  document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a, button, [role=button]')) som('clique'); });
 
   /* ---------- rolagem suave ---------- */
   let lenis = null;
@@ -186,7 +171,18 @@
     const tab = $('#tab'); if (!tab || !window.MiniMatch) return;
     const nEl = $('#moedas-n'), msg = $('#jogo-msg'), rv = $('#renovinha'), alvo = $('#jogo-moedas'), mb = $('#meta-b'), mn = $('#meta-n'), fn = $('#fase-n'); let moedas = 0, primeira = true, tr, fase = 1, META = 150, fim = false;
     const frases = ['Boa!', 'Combo!', 'Que jogada!', 'Mais uma!'];
-    const m = MiniMatch(tab, { aoCombinar(q, combo, els) {
+    /* sinal de que dá para jogar: um dedo mostra uma troca que funciona, até a pessoa tocar no tabuleiro */
+    const MAO = '<svg viewBox="0 0 24 24" fill="#fff" stroke="#2a110c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15V4a2 2 0 0 1 4 0v5.5V9a2 2 0 0 1 4 0v1a2 2 0 0 1 3 1z"/></svg>';
+    const mao = document.createElement('span'); mao.className = 'mao'; mao.innerHTML = MAO; tab.appendChild(mao);
+    const etiqueta = $('#jogue'); let jogou = false, laco = 0, naTela = false;
+    const lugar = (p) => ({ left: (p.c + .5) / 6 * 100 + '%', top: (p.l + .5) / 6 * 100 + '%' });
+    const mostra = () => {
+      if (jogou || !naTela || document.hidden) return; const j = m.sugere(); if (!j) return;
+      gsap.timeline().set(mao, Object.assign({ opacity: 0, scale: 1.2 }, lugar(j[0]))).to(mao, { opacity: 1, scale: 1, duration: .3 }).to(mao, { scale: .86, duration: .14 }, '+=.15')
+        .to(mao, Object.assign({ duration: .55, ease: 'power2.inOut' }, lugar(j[1]))).to(mao, { scale: 1, duration: .14 }).to(mao, { opacity: 0, duration: .3 }, '+=.3');
+    };
+    const tocou = () => { if (jogou) return; jogou = true; clearInterval(laco); gsap.killTweensOf(mao); gsap.to(mao, { opacity: 0, duration: .2 }); if (etiqueta) { etiqueta.classList.add('foi'); gsap.to(etiqueta, { opacity: 0, y: -8, duration: .4, delay: 1.2 }); } };
+    const m = MiniMatch(tab, { aoTocar: tocou, aoCombinar(q, combo, els) {
       moedas += q * 5 * combo; const o = { v: +nEl.textContent };
       gsap.to(o, { v: moedas, duration: .5, onUpdate: () => { nEl.textContent = Math.round(o.v); } });
       gsap.fromTo(alvo, { scale: 1 }, { scale: 1.18, duration: .15, yoyo: true, repeat: 1 });
@@ -206,7 +202,9 @@
       gsap.delayedCall(2.6, () => { fase++; moedas = 0; fim = false; META += 50; fn.textContent = 'FASE ' + fase; nEl.textContent = '0'; mb.style.width = '0%'; mn.textContent = `0/${META}`; msg.textContent = 'Troque duas peças vizinhas'; if (rv) rv.src = 'assets/renova/renovinha-nb-aponta.webp'; m.monta(); });
     }
     new Image().src = 'assets/renova/renovinha-nb-comemora.webp';
-    ScrollTrigger.create({ trigger: '.c-renova', start: 'top 30%', once: true, onEnter: () => gsap.delayedCall(.9, () => m.demo()) });
+    /* quando o tabuleiro aparece: joga uma vez sozinho e depois o dedo fica mostrando a próxima troca */
+    ScrollTrigger.create({ trigger: tab, start: 'top 82%', end: 'bottom 10%', onToggle: (st) => { naTela = st.isActive; } });
+    ScrollTrigger.create({ trigger: tab, start: 'top 72%', once: true, onEnter: () => { gsap.delayedCall(.7, () => m.demo()); gsap.delayedCall(2.6, () => { if (jogou) return; mostra(); laco = setInterval(mostra, 3000); }); } });
     if (!calmo) $$('.moeda-f', $('#vis-renova')).forEach((c, i) => { gsap.to(c, { y: +c.dataset.par, ease: 'none', scrollTrigger: { trigger: '.c-renova', start: 'top bottom', end: 'bottom top', scrub: true } }); gsap.to(c, { rotation: '+=14', duration: 2.4 + i * .5, yoyo: true, repeat: -1, ease: 'sine.inOut' }); });
     entra('.c-renova');
   }
@@ -293,18 +291,44 @@
     /* cartões e figuras entram em escada */
     $$('.cards, .grade, .regras, .versoes, .numeros').forEach((gr) => gsap.from(gr.children, { y: 54, opacity: 0, duration: .9, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: gr, start: 'top 84%' } }));
     $$('.fig-p').forEach((f) => gsap.fromTo(f, { y: 70, scale: .96 }, { y: -30, scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .5 } }));
-    /* fita: os celulares passam de lado enquanto a página rola */
+    /* fita de celulares: passam de lado com a rolagem; o do meio vem para a frente e os dos lados recuam e giram */
     const mm = gsap.matchMedia();
     $$('.fita').forEach((ft) => {
-      const tr = $('.fita-t', ft);
-      mm.add('(min-width: 901px)', () => { const d = () => -(tr.scrollWidth - ft.clientWidth + parseFloat(getComputedStyle(ft).paddingLeft) * 2); gsap.to(tr, { x: d, ease: 'none', scrollTrigger: { trigger: ft, start: 'center center', end: () => '+=' + Math.abs(d()) * 1.1, pin: true, scrub: .5, invalidateOnRefresh: true, anticipatePin: 1 } }); });
-      $$('.aparelho', ft).forEach((a, i) => gsap.from(a, { y: 80 + (i % 2) * 50, opacity: 0, duration: 1, delay: i * .06, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 80%' } }));
+      const tr = $('.fita-t', ft), aps = $$('.aparelho', ft), corpos = aps.map((a) => a.firstElementChild);
+      const info = document.createElement('div'); info.className = 'fita-i px'; info.innerHTML = `<span>01</span><i><b></b></i><span>${String(aps.length).padStart(2, '0')}</span>`; ft.insertBefore(info, tr);
+      const num = info.firstChild, barra = $('b', info);
+      const foco = (prog) => {
+        const meio = innerWidth / 2, larg = innerWidth < 900 ? innerWidth * .62 : innerWidth * .5, peq = innerWidth < 900; let perto = 0, menor = 9;
+        aps.forEach((a, i) => {
+          const r = a.getBoundingClientRect(), d = Math.max(-1.3, Math.min(1.3, (r.left + r.width / 2 - meio) / larg)), k = Math.min(1, Math.abs(d));
+          if (Math.abs(d) < menor) { menor = Math.abs(d); perto = i; }
+          gsap.set(corpos[i], { scale: 1 - k * (peq ? .1 : .13), rotation: d * (peq ? 3 : 5), y: k * k * (peq ? 14 : 44), transformOrigin: '50% 62%' });
+          a.style.setProperty('--f', (1 - k * .6).toFixed(2));
+        });
+        num.textContent = String(perto + 1).padStart(2, '0'); barra.style.transform = `scaleX(${Math.max(.04, prog).toFixed(3)})`;
+      };
+      mm.add('(min-width: 901px)', () => {
+        const d = () => -(tr.scrollWidth - ft.clientWidth + parseFloat(getComputedStyle(ft).paddingLeft) * 2);
+        gsap.to(tr, { x: d, ease: 'none', onUpdate() { foco(this.progress()); }, scrollTrigger: { trigger: ft, start: 'center center', end: () => '+=' + Math.abs(d()) * 1.15, pin: true, scrub: .9, invalidateOnRefresh: true, anticipatePin: 1, onRefresh: () => foco(0) } });
+        foco(0);
+      });
+      mm.add('(max-width: 900px)', () => {
+        const rola = () => foco(ft.scrollLeft / Math.max(1, ft.scrollWidth - ft.clientWidth));
+        ft.addEventListener('scroll', rola, { passive: true }); rola(); addEventListener('load', rola);
+        return () => ft.removeEventListener('scroll', rola);
+      });
+      aps.forEach((a, i) => gsap.from(a, { y: 90 + (i % 2) * 40, opacity: 0, duration: 1, delay: i * .07, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 82%' } }));
     });
-    /* site de verdade dentro da janela, preso no meio da tela enquanto rola do topo até o fim */
+    /* site de verdade dentro da janela: preso na tela enquanto rola do topo até o fim, com o celular ao lado */
     $$('.vitrine').forEach((v) => {
-      const img = $('.janela-v img', v), barra = $('.barra-r i', v), rot = $('.vitrine-p', v);
-      mm.add('(min-width: 901px)', () => { const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, onUpdate: (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; } } }); const cel = $('.vitrine-cel img', v); if (cel) tl.to(cel, { y: () => Math.min(0, -(cel.offsetHeight - cel.parentElement.offsetHeight)), ease: 'none' }, 0); });
-      mm.add('(max-width: 900px)', () => { janelaSite(img, barra, { ate: .6, gatilho: { trigger: v, start: 'top 12%', end: '+=120%', onUpdate: (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; } } }); });
+      const img = $('.janela-v img', v), barra = $('.barra-r i', v), rot = $('.vitrine-p', v), cel = $('.vitrine-cel img', v);
+      const pct = (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; };
+      mm.add('(min-width: 901px)', () => {
+        const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, onUpdate: pct } });
+        if (cel) tl.to(cel, { y: () => Math.min(0, -(cel.offsetHeight - cel.parentElement.offsetHeight)), ease: 'none' }, 0);
+      });
+      /* no celular quem aparece é o site no celular, rolando enquanto o aparelho atravessa a tela */
+      mm.add('(max-width: 900px)', () => { const alvo = cel || img; janelaSite(alvo, cel ? null : barra, { ate: cel ? .45 : .6, gatilho: { trigger: alvo.closest('.fone, .janela'), start: 'top 78%', end: 'bottom 30%', onUpdate: pct } }); });
     });
     /* ampliar imagem */
     const luz = $('#luz');
