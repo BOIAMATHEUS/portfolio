@@ -631,3 +631,83 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
   .pr-cam { display: none; }
   .pr-barra span { height: 32px; padding: 0 11px; font-size: 12.5px; }
 }
+
+/* ================= celular: revisão completa ================= */
+@media (max-width: 900px) {
+  /* o grão com mistura de cor pesa na rolagem do celular */
+  body::after { mix-blend-mode: normal; opacity: .03; }
+
+  /* cabeçalho: uma linha só, e com fundo quando passa por cima do conteúdo */
+  .nav { padding: 11px var(--m); }
+  .nav-m { white-space: nowrap; font-size: 15px; gap: 8px; }
+  .nav-l { gap: 15px; font-size: 13.5px; align-items: center; }
+  .som-b { min-width: 0; padding: 6px 0; }
+  .nav::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .3s; background: rgba(244, 239, 231, .86); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 1px 0 rgba(21, 18, 15, .1); }
+  .nav.claro::before { background: rgba(18, 15, 13, .66); box-shadow: 0 1px 0 rgba(244, 239, 231, .12); }
+  .nav.rolou::before { opacity: 1; }
+
+  /* aviso do som: uma pílula embaixo, acima dos gatos, sem cobrir título nenhum */
+  .som-dica { top: auto; right: auto; left: 50%; bottom: calc(var(--faixa) + 12px); translate: -50% 8px; border-radius: 99px; white-space: nowrap; max-width: none; font-size: 13px; padding: 8px 15px; }
+  .som-dica.on { translate: -50% 0; }
+
+  /* hero: o nome e a apresentação ficam juntos no meio da tela, sem o vazio em cima */
+  .hero { padding-top: 66px; justify-content: flex-start; gap: 0; }
+  .hero-topo { margin-bottom: auto; }
+  .nome { margin-top: 0; }
+  .hero-pe { margin-top: 20px; margin-bottom: auto; gap: 20px; }
+  .hero-info { font-size: 17px; }
+  .hero-info .px { margin-top: 10px; font-size: 14px; }
+
+  /* painéis dos cases: sem sobra de espaço e com o visual centralizado */
+  .caso-pin { padding: 50px var(--m) 46px; }
+  .caso-vis { min-height: 0; margin-top: 34px; }
+  .c-renova .caso-vis { justify-items: end; padding-bottom: 6px; }
+  .renovinha { height: 206px; left: -30px; bottom: -8px; }
+  .c-gg .caso-vis { padding: 6px 0 30px; }
+  .c-nhv .caso-vis { justify-items: center; padding-bottom: 6px; }
+  .caso-d { font-size: 17px; }
+  .btn { margin-top: 26px; }
+
+  /* topo dos cases: a imagem inteira em cima, o texto embaixo */
+  .ch { display: block; min-height: 0; padding: 0 0 36px; }
+  .ch-arte, .t-nhv .ch-arte { position: relative; inset: auto; left: 0; width: 100%; height: 46svh; opacity: 1; }
+  .ch-arte img, .t-gg .ch-arte img, .t-renova .ch-arte img { object-position: 84% 50%; }
+  .t-gg .ch-arte img { object-position: 76% 50%; }
+  .t-nhv .ch-arte img { object-position: 50% 8%; }
+  .t-renova .ch-arte::after { background: linear-gradient(180deg, rgba(232, 86, 58, .28) 0%, rgba(232, 86, 58, 0) 26%, rgba(232, 86, 58, 0) 62%, #e8563a 100%); }
+  .t-gg .ch-arte::after { background: linear-gradient(180deg, rgba(15, 46, 47, .3) 0%, rgba(15, 46, 47, 0) 26%, rgba(15, 46, 47, 0) 62%, #0f2e2f 100%); }
+  .t-nhv .ch-arte::after { background: linear-gradient(180deg, rgba(236, 217, 203, 0) 64%, #ecd9cb 100%); }
+  .ch-c { max-width: none; padding: 4px var(--m) 0; }
+  .ch h1, .t-renova .ch h1 { font-size: 16vw; white-space: normal; margin-top: 14px; }
+  .ch-d { font-size: 18px; margin-top: 18px; }
+  .meta { margin-top: 28px; }
+
+  /* faixas de telas: arrastar de lado, com o aviso, e encaixando no começo de cada tela */
+  .fita { padding-top: 14px; scroll-padding-left: var(--m); scrollbar-width: none; }
+  .fita::-webkit-scrollbar { display: none; }
+  .fita::before { content: 'arraste para o lado →'; position: sticky; left: 0; display: block; width: max-content; margin-bottom: 16px; font-family: var(--pixel); font-size: 13px; opacity: .6; }
+  .aparelho figcaption { margin-top: 14px; font-size: 14px; }
+  /* telas compridas do Rastreio: passam sozinhas, sem prender a rolagem do dedo */
+  .tela-a { height: 64vh; overflow: hidden; }
+  .tela-a img { transition: none; animation: desce 12s ease-in-out infinite alternate; }
+  @keyframes desce { 0%, 12% { transform: translateY(0); } 88%, 100% { transform: translateY(min(0px, calc(-100% + 64vh))); } }
+
+  /* números em três colunas quando são três */
+  .numeros.n3 { grid-template-columns: repeat(3, 1fr); }
+  .numeros.n3 div, .numeros.n3 div + div { border-bottom: 0; padding: 18px 8px 0 0; }
+  .numeros.n3 b { font-size: 12vw; }
+  .numeros.n3 span { font-size: 14px; }
+
+  .cs { padding-block: 64px; }
+  .frase { padding-block: 84px; }
+  .prox b { font-size: 15vw; }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) { .tela-a { overflow-y: auto; } .tela-a img { animation: none; } }
+/* celulares estreitos (360 px): o cabeçalho continua em uma linha */
+@media (max-width: 380px) {
+  .nav-m { font-size: 14px; gap: 7px; }
+  .nav-m b { width: 8px; height: 8px; }
+  .nav-l { gap: 11px; font-size: 12.5px; }
+  .som-b { font-size: 13px; gap: 5px; }
+  .hero-info { font-size: 16px; }
+}

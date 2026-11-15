@@ -5,6 +5,8 @@
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap) { document.documentElement.classList.add('sem-js'); document.documentElement.classList.remove('abrindo'); return; }
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  const curto = () => innerWidth < 700;
   const G = window.Gatos, fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
   const som = (n, o) => { if (window.Som) Som.toca(n, o); };
@@ -14,11 +16,11 @@
   const sb = $('#som-b');
   if (sb && window.Som) {
     /* 'ligar som' enquanto o navegador ainda não liberou o áudio: o primeiro clique só libera, não desliga */
-    const pinta = () => { const on = Som.ligado; sb.setAttribute('aria-pressed', on ? 'true' : 'false'); sb.lastChild.textContent = !on ? 'sem som' : Som.pronto ? 'com som' : 'ligar som'; sb.classList.toggle('pede', on && !Som.pronto); };
+    const pinta = () => { const on = Som.ligado; sb.setAttribute('aria-pressed', on ? 'true' : 'false'); sb.lastChild.textContent = curto() ? (!on ? 'mudo' : Som.pronto ? 'som' : 'ligar') : (!on ? 'sem som' : Som.pronto ? 'com som' : 'ligar som'); sb.classList.toggle('pede', on && !Som.pronto); };
     let pedia = false; pinta(); Som.quando(pinta);
     /* a bolinha do botão bate a cada som, e um aviso explica que o som precisa de um clique */
     addEventListener('som', () => { const b = sb.firstElementChild; b.classList.remove('bate'); void b.offsetWidth; b.classList.add('bate'); });
-    if (Som.ligado && !Som.pronto) setTimeout(() => { if (Som.pronto || !Som.ligado) return; const d = document.createElement('div'); d.className = 'som-dica px'; d.textContent = 'O site tem som. Clique em qualquer lugar para ligar.'; document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on')); const some = () => { d.classList.remove('on'); setTimeout(() => d.remove(), 400); }; Som.quando(some); setTimeout(some, 9000); }, hero ? 3200 : 1600);
+    if (Som.ligado && !Som.pronto) setTimeout(() => { if (Som.pronto || !Som.ligado) return; const d = document.createElement('div'); d.className = 'som-dica px'; d.textContent = fino ? 'O site tem som. Clique em qualquer lugar para ligar.' : 'Toque na tela para ligar o som'; document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on')); const some = () => { d.classList.remove('on'); setTimeout(() => d.remove(), 400); }; Som.quando(some); setTimeout(some, fino ? 9000 : 6000); }, hero ? 3200 : 1600);
     sb.addEventListener('pointerdown', () => { pedia = sb.classList.contains('pede'); });
     sb.addEventListener('click', () => { if (pedia) { pedia = false; Som.quando(() => { pinta(); Som.toca('pop'); }); return; } Som.alterna(); pinta(); if (Som.ligado) Som.quando(pinta); });
   }
@@ -75,7 +77,7 @@
   /* ---------- cor da navegação conforme a seção que está por baixo dela ---------- */
   const nav = $('.nav'); let navT = 0, yAnt = 0;
   function corNav() { navT = 0; const els = document.elementsFromPoint(innerWidth / 2, 34); for (const el of els) { const d = el.closest && el.closest('[data-nav]'); if (d) { nav.classList.toggle('claro', d.dataset.nav === 'claro'); break; } } }
-  if (nav) { addEventListener('scroll', () => { if (!navT) navT = requestAnimationFrame(corNav); const y = scrollY; nav.classList.toggle('some', y > 240 && y > yAnt + 2); if (y < yAnt - 2 || y <= 240) nav.classList.remove('some'); yAnt = y; }, { passive: true }); setTimeout(corNav, 60); setInterval(corNav, 900); }
+  if (nav) { addEventListener('scroll', () => { if (!navT) navT = requestAnimationFrame(corNav); const y = scrollY; nav.classList.toggle('rolou', y > 24); nav.classList.toggle('some', y > 240 && y > yAnt + 2); if (y < yAnt - 2 || y <= 240) nav.classList.remove('some'); yAnt = y; }, { passive: true }); setTimeout(corNav, 60); setInterval(corNav, 900); }
 
   /* ---------- gatos ---------- */
   const abertura = !!(hero && !calmo && window.Intros && document.documentElement.classList.contains('abrindo'));
@@ -128,7 +130,8 @@
       const w = l1.getBoundingClientRect().width, cs = getComputedStyle(hero), larg = hero.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
       nome.style.fontSize = Math.min(100 * larg / w * .992, innerHeight * (innerWidth < 900 ? .3 : .36)) + 'px'; nome.style.fontStretch = antes;
     }
-    ajusta(); document.fonts.ready.then(ajusta); addEventListener('resize', ajusta);
+    ajusta(); document.fonts.ready.then(ajusta);
+    let largAnt = innerWidth; addEventListener('resize', () => { if (innerWidth === largAnt && !fino) return; largAnt = innerWidth; ajusta(); });
 
     const zoro = window.HeroZoro && G && !G.calmo ? HeroZoro({ hero, G, peloAlto: abertura }) : null;
     const acende = () => {
