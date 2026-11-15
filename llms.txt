@@ -1,0 +1,28 @@
+# Matheus Saboia
+
+> Product designer (UX/UI) em Campinas, SP, Brasil. Desenha produtos digitais: apps, sites e jornadas de compra. Este é o portfólio pessoal dele.
+
+- Nome: Matheus Saboia (sem acento)
+- Cargo: Product Designer (UX/UI)
+- Onde trabalha: grupo Renova Be, desenhando os produtos digitais de três marcas: Renova Be, New Hair e Good Green
+- Trajetória: começou em marca e embalagem, passou por mídia e e-commerce e hoje trabalha com produto digital
+- Como trabalha: Figma, protótipo navegável, design system, pesquisa, GA4, Clarity e IA no processo
+- Local: Campinas, São Paulo, Brasil
+- Idioma do site: português do Brasil
+
+## Trabalhos
+
+- [App Renova Be](https://boiamatheus.github.io/portfolio/renova.html): redesenho do app de uma marca de autocuidado, para iOS e Android. O app repetia o site; passou a ter uma rotina diária de tratamento, uma moeda em reais (Renova Coins) que vira desconto no checkout e dois jogos com a cara da marca (Renova Match e Toc Toc, Mini Colágeno). Entregue como protótipo navegável.
+- [Good Green](https://boiamatheus.github.io/portfolio/good-green.html): site completo e jornada de lançamento de uma marca nova de bebida verde em pó. Inclui home, página de produto, quiz de diagnóstico, páginas de captação e pop-ups, em desktop e celular.
+- [Rastreio de pedido da New Hair](https://boiamatheus.github.io/portfolio/rastreio.html): tela para a cliente achar todos os pedidos só com o CPF e entender, em uma frase, onde cada um está e quando chega. Mostra o Pix pendente para concluir o pagamento na mesma tela. Inclui design system.
+
+## Contato
+
+- Portfólio: https://boiamatheus.github.io/portfolio/
+- LinkedIn: https://www.linkedin.com/in/msaboia/
+- Behance: https://www.behance.net/matheusboia
+- WhatsApp: https://wa.me/5519991463731
+
+## Sobre o site
+
+O site tem três gatos em pixel art (Nacho, Luna e Zoro) que andam pela página. Eles são os gatos do Matheus e fazem parte da identidade do portfólio.

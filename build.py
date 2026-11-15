@@ -4,8 +4,12 @@ SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=
 BEHANCE = 'https://www.behance.net/gallery/258467439/App-Renova-Be-Rotina-recompensa-e-jogo-UXUI'
 
 
+import datetime
+import json
 import re
 from PIL import Image
+
+BASE = 'https://boiamatheus.github.io/portfolio/'
 
 _dim = {}
 
@@ -113,23 +117,38 @@ def versoes(itens):
 
 
 def pagina(p):
+    url = BASE + p['arq']
+    autor = {'@type': 'Person', '@id': BASE + '#matheus', 'name': 'Matheus Saboia', 'jobTitle': 'Product Designer', 'url': BASE}
+    ld = json.dumps({'@context': 'https://schema.org', '@graph': [
+        {'@type': 'CreativeWork', '@id': url + '#case', 'name': p['titulo'], 'headline': p['seo'], 'description': p['desc'], 'url': url, 'image': BASE + p['arte'], 'inLanguage': 'pt-BR',
+         'genre': 'Case de product design', 'author': autor, 'creator': autor, 'about': p['sobre'], 'isPartOf': {'@id': BASE + '#site'}},
+        {'@type': 'BreadcrumbList', 'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'Matheus Saboia', 'item': BASE},
+            {'@type': 'ListItem', 'position': 2, 'name': 'Trabalhos', 'item': BASE + '#trabalhos'},
+            {'@type': 'ListItem', 'position': 3, 'name': p['titulo'], 'item': url}]},
+    ]}, ensure_ascii=False)
     meta = ''.join(f'<div><small>{k}</small><b>{v}</b></div>' for k, v in p['meta'])
     return f'''<!doctype html>
 <html lang="pt-BR" class="sem-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{p['titulo']} · Matheus Saboia</title>
+<title>{p['seo']} · Matheus Saboia</title>
 <meta name="description" content="{p['desc']}">
+<meta name="author" content="Matheus Saboia">
+<link rel="canonical" href="{url}">
+<meta property="og:url" content="{url}">
+<meta property="og:locale" content="pt_BR">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Matheus Saboia">
-<meta property="og:title" content="{p['titulo']} · Matheus Saboia">
+<meta property="og:title" content="{p['seo']} · Matheus Saboia">
 <meta property="og:description" content="{p['desc']}">
 <meta property="og:image" content="https://boiamatheus.github.io/portfolio/assets/img/capa.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="robots" content="noindex">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<script type="application/ld+json">{ld}</script>
 <meta name="theme-color" content="{p['cor']}">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/ZalandoSans.woff2" as="font" type="font/woff2" crossorigin>
@@ -188,7 +207,8 @@ NH = 'assets/rastreio/'
 pecas = ''.join(f'<div><img src="{RN}peca-{a}.webp" alt="" loading="lazy"><span>{n}</span></div>' for a, n in [('colageno', 'Colágeno'), ('hialuronico', 'Hialurônico'), ('vitamina-c', 'Vitamina C'), ('vitamina-e', 'Vitamina E'), ('zinco', 'Zinco'), ('biotina', 'Biotina')])
 mundos = ''.join(f'<figure class="mundo"><img src="{RN}mundo{i}.webp" alt="Mundo {i} do Renova Match" loading="lazy"><img class="chefe" src="{RN}chefe-{i}.webp" alt="" loading="lazy"><figcaption>Mundo {i}</figcaption></figure>' for i in range(1, 7))
 renova = dict(
-    tema='t-renova', nav='claro', cor='#e8563a', titulo='App Renova Be', desc='Case do app Renova Be: rotina, recompensa e jogo num app de autocuidado.',
+    tema='t-renova', nav='claro', cor='#e8563a', titulo='App Renova Be', seo='App Renova Be: case de product design', sobre=['Aplicativo móvel', 'Gamificação', 'Programa de recompensas', 'Autocuidado'],
+    desc='Case de product design do app Renova Be (iOS e Android), por Matheus Saboia: rotina de tratamento, moeda em reais e dois jogos num app de autocuidado.',
     arte=RN + 'key-A.webp', rot='01 · App', h1='App<br>Renova Be',
     d='Rotina, recompensa e jogo num app de autocuidado. Primeiro o app, depois os dois jogos.',
     meta=[('Papel', 'Product designer, de ponta a ponta'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'iOS e Android'), ('Ferramentas', 'Figma, protótipo navegável e IA no processo')],
@@ -229,7 +249,8 @@ renova = dict(
 
 # ================= Good Green =================
 gg = dict(
-    tema='t-gg', nav='claro', cor='#0f2e2f', titulo='Good Green', desc='Case Good Green: site completo e jornada de lançamento de uma marca nova de bebida verde.',
+    tema='t-gg', nav='claro', cor='#0f2e2f', titulo='Good Green', seo='Good Green: case de site e lançamento', sobre=['E-commerce', 'Site de marca', 'Quiz de diagnóstico', 'Lançamento de produto'],
+    desc='Case de UX/UI da Good Green, por Matheus Saboia: site completo, quiz de diagnóstico e jornada de lançamento de uma marca nova de bebida verde em pó.',
     arte=GG + 'banner-pote-inclinado.webp', rot='02 · Site e lançamento', h1='Good<br><em>Green</em>',
     d='Site completo e jornada de lançamento de uma marca nova de bebida verde em pó.',
     meta=[('Papel', 'Product designer: site, jornada e direção visual'), ('Momento', '2026, pré-lançamento'), ('Entrega', 'Site, quiz, landing pages e pop-ups'), ('Ferramentas', 'Figma, protótipo navegável e IA no processo')],
@@ -256,7 +277,8 @@ gg = dict(
 
 # ================= Rastreio =================
 nhv = dict(
-    tema='t-nhv', nav='escuro', cor='#7d5b49', titulo='Rastreio de pedido · New Hair', desc='Case de rastreio de pedido da New Hair: achar todos os pedidos só com o CPF.',
+    tema='t-nhv', nav='escuro', cor='#7d5b49', titulo='Rastreio de pedido · New Hair', seo='Rastreio de pedido da New Hair: case de UX', sobre=['Pós-compra', 'Rastreio de pedido', 'E-commerce', 'Design system'],
+    desc='Case de UX da tela de rastreio de pedido da New Hair, por Matheus Saboia: achar todos os pedidos só com o CPF e pagar o Pix pendente na mesma tela.',
     arte=NH + 'hero.webp', rot='03 · Pós-compra · New Hair', h1='Rastreio<br><em>de pedido</em>',
     d='Encontrar todos os pedidos só com o CPF e saber, em uma frase, onde cada um está e quando chega.',
     meta=[('Papel', 'Design e produto'), ('Marca', 'New Hair'), ('Entrega', 'Tela de rastreio, design system e protótipo navegável'), ('Ferramentas', 'Figma e protótipo navegável')],
@@ -297,6 +319,7 @@ nhv = dict(
 )
 
 for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
+    p['arq'] = nome
     open(nome, 'w', encoding='utf-8').write(medidas(pagina(p)))
     print(nome, 'ok')
 
@@ -315,3 +338,12 @@ for nome in ('index.html', 'renova.html', 'good-green.html', 'rastreio.html'):
     t = re.sub(r'((?:href|src)="(?:css|js)/[\w\-]+\.(?:css|js))(?:\?v=\w+)?"', rf'\1?v={V}"', t)
     open(nome, 'w', encoding='utf-8').write(t)
 print('versão', V)
+
+# ---------- mapa do site (a data muda sozinha a cada geração) ----------
+hoje = datetime.date.today().isoformat()
+urls = [('', '1.0'), ('renova.html', '0.8'), ('good-green.html', '0.8'), ('rastreio.html', '0.8')]
+open('sitemap.xml', 'w', encoding='utf-8', newline='\n').write(
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + ''.join(f'  <url><loc>{BASE}{u}</loc><lastmod>{hoje}</lastmod><priority>{pr}</priority></url>\n' for u, pr in urls)
+    + '</urlset>\n')
+print('sitemap', hoje)

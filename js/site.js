@@ -1,6 +1,6 @@
 /* Portfólio Matheus Saboia: animações e interações. */
 (function () {
-  const CONTATO = { whatsapp: 'https://wa.me/5519991463731', behance: 'https://www.behance.net/matheusboia', linkedin: '', email: '' };
+  const CONTATO = { whatsapp: 'https://wa.me/5519991463731', behance: 'https://www.behance.net/matheusboia', linkedin: 'https://www.linkedin.com/in/msaboia/', email: '' };
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap) { document.documentElement.classList.add('sem-js'); document.documentElement.classList.remove('abrindo'); return; }
