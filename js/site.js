@@ -144,7 +144,10 @@
     else if (modelo >= 1 && window.Intros && Intros[modelo]) {
       abre.remove(); history.scrollRestoration = 'manual'; scrollTo(0, 0); lenis && lenis.stop();
       gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { opacity: 0 });
-      document.fonts.ready.then(() => { ajusta(); gsap.set(nome, { opacity: 1 }); Intros[modelo]({ hero, nome, letras, miudos, G, som, zoro, fino, fim: () => { lenis && lenis.start(); acende(); } }); });
+      document.fonts.ready.then(() => { ajusta(); gsap.set(nome, { opacity: 1 }); const fim = () => { lenis && lenis.start(); acende(); };
+        try { Intros[modelo]({ hero, nome, letras, miudos, G, som, zoro, fino, fim }); }
+        catch (e) { console.error(e); $$('.intro-pr').forEach((x) => x.remove()); nome.classList.remove('contorno', 'enche'); gsap.set([nome, letras], { clearProps: 'all' }); ajusta(); gsap.set(miudos, { opacity: 1, y: 0 }); if (G) { G.faixa.congelado = false; gsap.set(G.faixa.el, { opacity: 1 }); } fim(); }
+      });
     }
     else {
       gsap.set(letras, { yPercent: 118 }); gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { fontStretch: '78%' });

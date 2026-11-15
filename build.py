@@ -44,8 +44,12 @@ def frase(texto, cls=''):
     return f'<section class="frase {cls}" data-nav="claro"><p data-palavras>{texto}</p></section>'
 
 
-def aparelho(src, legenda, alt=None):
-    return f'<figure class="aparelho"><div class="fone"><div class="fone-t"><img src="{src}" alt="{alt or legenda}" loading="lazy"></div></div><figcaption>{legenda}</figcaption></figure>'
+SB = '<span class="fone-sb"><b>9:41</b><i></i></span>'
+
+
+def aparelho(src, legenda, alt=None, web=False):
+    tela = f'<div class="fone-t web">{SB}<div class="fone-v"><img src="{src}" alt="{alt or legenda}" loading="lazy"></div></div>' if web else f'<div class="fone-t"><img src="{src}" alt="{alt or legenda}" loading="lazy"></div>'
+    return f'<figure class="aparelho"><div class="fone tela">{tela}</div><figcaption>{legenda}</figcaption></figure>'
 
 
 def tela_alta(src, legenda):
@@ -86,7 +90,7 @@ def banda(src, rot, titulo, texto, cls=''):
 
 
 def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
-    cel = f'<div class="fone vitrine-cel"><div class="fone-t"><img src="{src_m}" alt="{nome} no celular" loading="lazy"></div></div>' if src_m else ''
+    cel = f'<div class="fone tela vitrine-cel"><div class="fone-t web">{SB}<div class="fone-v"><img src="{src_m}" alt="{nome} no celular" loading="lazy"></div></div></div>' if src_m else ''
     return f'''<section class="vitrine {cls}" data-nav="claro">
   <div class="vitrine-topo"><div><span class="rot">{rot}</span><h2>{titulo}</h2></div><p>{texto}</p></div>
   <div class="vitrine-p-l"><span class="px">role para percorrer o site</span><span class="px vitrine-p">0%</span></div>
@@ -233,7 +237,7 @@ gg = dict(
         cap('03 · O quiz', 'O quiz monta<br>o diagnóstico.',
             ['São quatro perguntas seguidas, sem tela educativa no meio.', 'O pop-up da roleta e o carrinho seguem a mesma linguagem: vidro, foto real e pouco texto.'],
             regras([('1', 'Quatro perguntas', 'Uma atrás da outra, sem interrupção.'), ('2', 'Só as dores marcadas', 'O resultado mostra o que a pessoa respondeu, com a causa de cada dor.'), ('3', 'Um dado com fonte', 'Cada dor vem com um número real, sem citar a marca.'), ('4', 'O produto no fim', 'A Good Green só aparece depois, como solução.')])),
-        fita([aparelho(GG + 'quiz-m.webp', 'Quiz'), aparelho(GG + 'roleta-m.webp', 'Roleta do pop-up'), aparelho(GG + 'carrinho-m.webp', 'Carrinho'), aparelho(GG + 'pdp-m.webp', 'Produto'), aparelho(GG + 'lanc-m.webp', 'Página de lançamento'), aparelho(GG + 'home-m.webp', 'Home')]),
+        fita([aparelho(GG + 'quiz-m.webp', 'Quiz', web=True), aparelho(GG + 'roleta-m.webp', 'Roleta do pop-up', web=True), aparelho(GG + 'carrinho-m.webp', 'Carrinho', web=True), aparelho(GG + 'pdp-m.webp', 'Produto', web=True), aparelho(GG + 'lanc-m.webp', 'Página de lançamento', web=True), aparelho(GG + 'home-m.webp', 'Home', web=True)]),
         vitrine('04 · Produto', 'A página de produto.', 'A mesma estrutura da página de lançamento, sem a campanha.', 'Good Green · produto', GG + 'pdp-d.webp', GG + 'pdp-m.webp'),
         cap('05 · Lançamento', 'Antes de a loja abrir,<br>a marca precisa de lista.',
             ['Desenhei as páginas de entrada do pré-lançamento: captação para o grupo, calculadora de fibras e as páginas de apoio do site.'],
