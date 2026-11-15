@@ -584,3 +584,34 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
   .tab-l.cab { display: none; }
   .versoes { grid-template-columns: 1fr; }
 }
+
+/* ================= introduções para escolher ================= */
+.tem-intro .abre { display: none; }
+.intro-sel { position: fixed; left: 50%; top: 12px; translate: -50% 0; z-index: 120; display: flex; align-items: center; gap: 4px; padding: 5px 6px 5px 14px; border-radius: 99px; background: var(--tinta); color: var(--papel); font-size: 13.5px; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .5); white-space: nowrap; }
+.intro-sel span { opacity: .6; margin-right: 6px; }
+.intro-sel a { padding: 6px 11px; border-radius: 99px; }
+.intro-sel a:hover { background: rgba(244, 239, 231, .14); }
+.intro-sel a.on { background: var(--olho); color: var(--tinta); }
+.intro-cx { position: fixed; z-index: 60; pointer-events: none; transform-origin: 50% 94%; will-change: transform; }
+.intro-cx img { display: block; width: 100%; max-width: none; }
+.intro-cx img + img { position: absolute; inset: 0; }
+.intro-floco { position: fixed; left: 0; top: 0; z-index: 59; width: 11px; height: 6px; border-radius: 3px; background: #f7f2e8; box-shadow: 0 0 0 1.5px #2a1a0c; pointer-events: none; }
+.intro-pr { position: fixed; inset: 0; z-index: 65; pointer-events: none; --sel: #2f6bff; }
+.pr-grade { position: absolute; inset: 0; background-image: radial-gradient(rgba(21, 18, 15, .22) 1.1px, transparent 1.5px); background-size: 26px 26px; }
+.pr-sel { position: absolute; left: 0; top: 0; box-shadow: 0 0 0 1.5px var(--sel); background: rgba(47, 107, 255, .05); }
+.pr-sel i { position: absolute; width: 9px; height: 9px; background: #fff; box-shadow: 0 0 0 1.5px var(--sel); }
+.pr-sel i:nth-child(1) { left: -5px; top: -5px; } .pr-sel i:nth-child(2) { right: -5px; top: -5px; } .pr-sel i:nth-child(3) { left: -5px; bottom: -5px; } .pr-sel i:nth-child(4) { right: -5px; bottom: -5px; }
+.pr-sel b { position: absolute; left: 0; bottom: calc(100% + 8px); font-weight: 400; font-size: 13px; color: var(--sel); transform-origin: 0 100%; white-space: nowrap; }
+.pr-sel em { position: absolute; left: 50%; top: calc(100% + 10px); margin-left: -3.4em; width: 6.8em; text-align: center; font-style: normal; font-size: 12.5px; padding: 4px 0; border-radius: 5px; background: var(--sel); color: #fff; white-space: nowrap; }
+.pr-cur { position: absolute; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--sel); box-shadow: 0 0 0 2px #fff; }
+.pr-cur u { white-space: nowrap; position: absolute; left: 14px; top: 12px; text-decoration: none; font-size: 12px; padding: 3px 8px; border-radius: 4px 9px 9px 9px; background: var(--sel); color: #fff; }
+.nome.contorno .c { color: transparent; -webkit-text-stroke: 1.5px var(--tinta); }
+.intro-px { position: fixed; z-index: 30; pointer-events: none; image-rendering: pixelated; }
+.intro-barra { position: fixed; z-index: 30; pointer-events: none; font-size: 15px; display: flex; gap: 12px; color: var(--tinta); white-space: nowrap; }
+.intro-barra b { font-weight: 400; color: var(--tinta-2); }
+@media (max-width: 900px) {
+  .intro-sel { top: 56px; font-size: 12px; padding-left: 10px; gap: 0; }
+  .intro-sel span { display: none; }
+  .intro-sel a { padding: 6px 8px; }
+  .intro-barra { font-size: 12px; }
+}

@@ -133,7 +133,19 @@
     };
 
     const miudos = $$('.hero-topo > *, .hero-pe > *');
+    /* modelos de introdução para escolher: ?intro=1 a 4 (0 = a atual) */
+    const modelo = +(new URLSearchParams(location.search).get('intro') || 0);
+    if (/[?&]intro=/.test(location.search) && window.Intros) {
+      const s = document.createElement('div'); s.className = 'intro-sel px';
+      s.innerHTML = '<span>introdução</span>' + Intros.nomes.map((n, i) => `<a href="?intro=${i}"${i === modelo ? ' class="on"' : ''}>${i ? i + ' ' : ''}${n}</a>`).join('');
+      document.body.appendChild(s);
+    }
     if (!abertura) { if (abre) abre.remove(); acende(); }
+    else if (modelo >= 1 && window.Intros && Intros[modelo]) {
+      abre.remove(); history.scrollRestoration = 'manual'; scrollTo(0, 0); lenis && lenis.stop();
+      gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { opacity: 0 });
+      document.fonts.ready.then(() => { ajusta(); gsap.set(nome, { opacity: 1 }); Intros[modelo]({ hero, nome, letras, miudos, G, som, zoro, fino, fim: () => { lenis && lenis.start(); acende(); } }); });
+    }
     else {
       gsap.set(letras, { yPercent: 118 }); gsap.set(miudos, { opacity: 0, y: 14 }); gsap.set(nome, { fontStretch: '78%' });
       gsap.set('.nome .pal', { display: 'inline-flex', overflow: 'hidden', paddingTop: '.2em', marginTop: '-.2em', paddingRight: '.06em' });
