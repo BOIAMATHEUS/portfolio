@@ -105,6 +105,8 @@
     monta();
     /* uma jogada que funciona agora, para o sinal de "dá para jogar" */
     const sugere = () => { if (travado) return null; const j = jogadas(); return j.length ? j[0] : null; };
-    return { demo, monta, sugere };
+    /* faz uma jogada pelo código (o dedo do sinal usa isto) */
+    const joga = (par) => tenta(par[0], par[1]);
+    return { demo, monta, sugere, joga };
   };
 })();
