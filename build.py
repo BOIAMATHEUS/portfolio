@@ -121,6 +121,14 @@ def pagina(p):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{p['titulo']} · Matheus Saboia</title>
 <meta name="description" content="{p['desc']}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Matheus Saboia">
+<meta property="og:title" content="{p['titulo']} · Matheus Saboia">
+<meta property="og:description" content="{p['desc']}">
+<meta property="og:image" content="https://boiamatheus.github.io/portfolio/assets/img/capa.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="{p['cor']}">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
