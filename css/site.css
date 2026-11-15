@@ -700,28 +700,16 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 }
 
 /* ================= joguinho, janela do site e faixa de celulares (15/11) ================= */
-/* sinal de que o joguinho é de verdade: um dedo joga na frente da pessoa (4 jeitos, ?dedo=1 a 4) */
-.mao { position: absolute; left: 0; top: 0; z-index: 9; opacity: 0; pointer-events: none; transform-origin: 37.5% 8%; filter: drop-shadow(0 6px 6px rgba(60, 10, 0, .4)); }
-.mao svg { display: block; width: 100%; height: auto; }
-.mao::before { content: ''; position: absolute; left: 37.5%; top: 8%; width: 46%; aspect-ratio: 1; margin: -23% 0 0 -23%; border-radius: 50%; border: 2px solid #fff; opacity: 0; animation: toque-m 1s ease-out infinite; }
-.mao.m4 { z-index: 30; filter: drop-shadow(0 16px 14px rgba(60, 10, 0, .45)); }
-.mao.m4::before { display: none; }
-@keyframes toque-m { 0% { opacity: .9; scale: .4; } 100% { opacity: 0; scale: 1.5; } }
+/* sinal de que o joguinho é de verdade: tutorial com as duas peças acesas e um ponto de toque (sem mão) */
+.toque { position: absolute; left: 0; top: 0; z-index: 9; border-radius: 50%; background: rgba(255, 255, 255, .5); box-shadow: 0 0 0 2px #fff, 0 6px 16px rgba(60, 10, 0, .4); opacity: 0; pointer-events: none; }
 .peca.alvo { z-index: 7; }
 .peca.alvo::after { content: ''; position: absolute; inset: 5%; border-radius: 50%; box-shadow: 0 0 0 2.5px #fff, 0 0 14px 5px rgba(255, 255, 255, .85); animation: alvo-p .7s ease-in-out infinite alternate; }
 @keyframes alvo-p { to { scale: 1.12; opacity: .7; } }
-.rastro { position: absolute; z-index: 8; height: 0; border-top: 3px dashed #fff; transform-origin: 0 50%; opacity: 0; pointer-events: none; filter: drop-shadow(0 1px 1px rgba(60, 10, 0, .5)); }
-.rastro::after { content: ''; position: absolute; right: -2px; top: -8.5px; width: 12px; height: 12px; border: solid #fff; border-width: 3px 3px 0 0; rotate: 45deg; }
 .tab.tutor::before { content: ''; position: absolute; inset: 0; z-index: 6; border-radius: inherit; background: rgba(42, 17, 12, .6); pointer-events: none; }
 .tut { position: absolute; z-index: 8; left: 50%; translate: -50% 0; padding: 4px 11px 5px; border-radius: 99px; background: #fff; color: var(--renova-2); font-size: 12.5px; line-height: 1; white-space: nowrap; opacity: 0; pointer-events: none; }
-.var-sel { position: fixed; left: 50%; top: 12px; translate: -50% 0; z-index: 120; display: flex; align-items: center; gap: 4px; padding: 5px 6px 5px 14px; border-radius: 99px; background: var(--tinta); color: var(--papel); font-size: 13.5px; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .5); white-space: nowrap; }
-.var-sel span { opacity: .6; margin-right: 6px; }
-.var-sel a { padding: 6px 11px; border-radius: 99px; }
-.var-sel a.on { background: var(--olho); color: var(--tinta); }
 #vis-renova { scroll-margin-top: 96px; }
 /* painel da Good Green na home: sem a barrinha de rolagem verde, que passava por cima do celular */
 #vis-gg .barra-r { display: none; }
-@media (max-width: 900px) { .var-sel { top: auto; bottom: calc(var(--faixa) + 14px); font-size: 11.5px; gap: 0; padding-left: 6px; } .var-sel span { display: none; } .var-sel a { padding: 6px 7px; } }
 
 /* janela do site: do tamanho de uma tela de verdade, com o celular ao lado (não por cima) */
 @media (min-width: 901px) {

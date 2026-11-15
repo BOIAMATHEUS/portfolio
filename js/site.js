@@ -171,45 +171,26 @@
     const tab = $('#tab'); if (!tab || !window.MiniMatch) return;
     const nEl = $('#moedas-n'), msg = $('#jogo-msg'), rv = $('#renovinha'), alvo = $('#jogo-moedas'), mb = $('#meta-b'), mn = $('#meta-n'), fn = $('#fase-n'); let moedas = 0, primeira = true, tr, fase = 1, META = 150, fim = false;
     const frases = ['Boa!', 'Combo!', 'Que jogada!', 'Mais uma!'];
-    /* sinal de que dá para jogar: um dedo joga na frente da pessoa, até ela tocar no tabuleiro.
-       Quatro jeitos para escolher com ?dedo=1 a 4: 1 joga de verdade, 2 rastro, 3 tutorial, 4 mão grande. */
-    const qs = new URLSearchParams(location.search), modo = Math.min(4, Math.max(1, +(qs.get('dedo') || 1)));
-    if (qs.has('dedo')) { const s = document.createElement('div'); s.className = 'var-sel px'; s.innerHTML = '<span>dedo</span>' + ['joga de verdade', 'rastro', 'tutorial', 'mão grande'].map((n, i) => `<a href="?dedo=${i + 1}#vis-renova"${i + 1 === modo ? ' class="on"' : ''}>${i + 1} ${n}</a>`).join(''); document.body.appendChild(s); }
-    const MAO = '<svg viewBox="0 0 24 24" fill="#fff" stroke="#2a110c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15V4a2 2 0 0 1 4 0v5.5V9a2 2 0 0 1 4 0v1a2 2 0 0 1 3 1z"/></svg>';
-    const fone = tab.closest('.fone'), casa = modo === 4 ? fone : tab;
-    const cria = (cls, pai, html) => { const e = document.createElement('span'); e.className = cls; if (html) e.innerHTML = html; pai.appendChild(e); return e; };
-    const mao = cria('mao m' + modo, casa, MAO), rastro = cria('rastro', tab), tut = cria('tut px', tab, 'arraste');
-    let jogou = false, laco = 0, naTela = false, tlMao = null, alvos = [];
-    /* centro de uma peça, em px, dentro de quem segura a mão */
-    const pt = (p) => { const t = tab.getBoundingClientRect(), c = casa.getBoundingClientRect(), k = t.width / 6; return { x: t.left - c.left + (p.c + .5) * k, y: t.top - c.top + (p.l + .5) * k, k }; };
-    const apaga = () => { alvos.forEach((e) => e.classList.remove('alvo')); alvos = []; };
+    /* sinal de que dá para jogar, em forma de tutorial: o tabuleiro escurece, duas peças ficam acesas e trocam de lugar
+       por um instante, com um ponto de toque fazendo o gesto. Sem desenho de mão. Para no primeiro toque da pessoa. */
+    const cria = (cls, html) => { const e = document.createElement('span'); e.className = cls; if (html) e.innerHTML = html; tab.appendChild(e); return e; };
+    const toque = cria('toque'), tut = cria('tut px', 'arraste');
+    let jogou = false, laco = 0, naTela = false, tlToque = null, alvos = [], anims = [];
+    const apaga = () => { anims.forEach((x) => x.cancel()); anims = []; alvos.forEach((e) => e.classList.remove('alvo')); alvos = []; };
     const passo = () => {
       if (jogou || !naTela || document.hidden) return; const j = m.sugere(); if (!j) return;
-      const a = pt(j[0]), b = pt(j[1]), w = a.k * (modo === 4 ? 3.3 : 1.5);
-      Object.assign(mao.style, { width: w + 'px', marginLeft: -w * .375 + 'px', marginTop: -w * .08 + 'px' });
-      apaga(); const tl = tlMao = gsap.timeline();
-      const chega = () => tl.set(mao, { x: a.x, y: a.y, opacity: 0, scale: 1.2, rotation: 0 }).to(mao, { opacity: 1, scale: 1, duration: .3 }).to(mao, { scale: .86, duration: .14 }, '+=.12');
-      const some = () => tl.to(mao, { scale: 1, duration: .14 }).to(mao, { opacity: 0, duration: .3 }, '+=.25');
-      if (modo === 1) { chega(); tl.add(() => m.joga(j)).to(mao, { x: b.x, y: b.y, duration: .26, ease: 'power2.inOut' }); some(); }
-      if (modo === 2 || modo === 3) {
-        alvos = [j[0].el, j[1].el]; alvos.forEach((e) => e.classList.add('alvo'));
-        if (modo === 2) { Object.assign(rastro.style, { left: a.x + 'px', top: a.y + 'px', width: Math.hypot(b.x - a.x, b.y - a.y) + 'px', rotate: Math.atan2(b.y - a.y, b.x - a.x) + 'rad' }); }
-        if (modo === 3) { tab.classList.add('tutor'); tut.style.top = (a.y + b.y) / 2 > a.k * 3 ? '5%' : '86%'; gsap.to(tut, { opacity: 1, duration: .3 }); }
-        chega();
-        if (modo === 2) tl.fromTo(rastro, { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: .5, ease: 'power2.inOut' }, '>');
-        tl.to(mao, { x: b.x, y: b.y, duration: .5, ease: 'power2.inOut' }, modo === 2 ? '<' : '>');
-        some(); if (modo === 2) tl.to(rastro, { opacity: 0, duration: .3 }, '<');
-      }
-      if (modo === 4) {
-        const c = casa.getBoundingClientRect();
-        tl.set(mao, { x: c.width + w * .5, y: c.height * .9, opacity: 1, scale: 1, rotation: 16 })
-          .to(mao, { x: a.x, y: a.y, rotation: -6, duration: .6, ease: 'power3.out' }).to(mao, { scale: .9, duration: .12 })
-          .add(() => m.joga(j)).to(mao, { x: b.x, y: b.y, duration: .26, ease: 'power2.inOut' }).to(mao, { scale: 1, duration: .14 })
-          .to(mao, { x: c.width + w * .5, y: c.height * .78, rotation: 16, duration: .55, ease: 'power2.in' }, '+=.45').set(mao, { opacity: 0 });
-      }
+      const k = tab.clientWidth / 6, pt = (p) => ({ x: (p.c + .5) * k, y: (p.l + .5) * k }), a = pt(j[0]), b = pt(j[1]), dx = b.x - a.x, dy = b.y - a.y, w = k * .66;
+      apaga(); alvos = [j[0].el, j[1].el]; alvos.forEach((e) => e.classList.add('alvo'));
+      tab.classList.add('tutor'); tut.style.top = (a.y + b.y) / 2 > k * 3 ? '5%' : '86%'; gsap.to(tut, { opacity: 1, duration: .3 });
+      Object.assign(toque.style, { width: w + 'px', height: w + 'px', margin: `${-w / 2}px 0 0 ${-w / 2}px` });
+      /* as duas peças trocam de lugar e voltam, junto com o ponto de toque */
+      const vai = (el, x, y) => el.firstChild.animate([{ translate: '0 0', offset: 0 }, { translate: `${x}px ${y}px`, offset: .38 }, { translate: `${x}px ${y}px`, offset: .72 }, { translate: '0 0', offset: 1 }], { duration: 1500, delay: 520, easing: 'cubic-bezier(.45, 0, .2, 1)' });
+      anims = [vai(j[0].el, dx, dy), vai(j[1].el, -dx, -dy)];
+      tlToque = gsap.timeline().set(toque, { x: a.x, y: a.y, opacity: 0, scale: 1.5 }).to(toque, { opacity: 1, scale: 1, duration: .28 }).to(toque, { scale: .8, duration: .12 }, '+=.1')
+        .to(toque, { x: b.x, y: b.y, duration: .56, ease: 'power2.inOut' }).to(toque, { scale: 1.25, opacity: 0, duration: .3 }, '+=.45');
     };
-    const inicia = () => { if (modo === 2 || modo === 3) gsap.delayedCall(.7, () => m.demo()); gsap.delayedCall(modo === 2 || modo === 3 ? 2.4 : 1, () => { if (jogou) return; passo(); laco = setInterval(passo, [0, 3300, 2500, 2500, 4200][modo]); }); };
-    const tocou = () => { if (jogou) return; jogou = true; clearInterval(laco); if (tlMao) tlMao.kill(); gsap.to([mao, rastro, tut], { opacity: 0, duration: .2 }); apaga(); tab.classList.remove('tutor'); };
+    const inicia = () => { gsap.delayedCall(.7, () => m.demo()); gsap.delayedCall(2.4, () => { if (jogou) return; passo(); laco = setInterval(passo, 2800); }); };
+    const tocou = () => { if (jogou) return; jogou = true; clearInterval(laco); if (tlToque) tlToque.kill(); gsap.to([toque, tut], { opacity: 0, duration: .2 }); apaga(); tab.classList.remove('tutor'); };
     const m = MiniMatch(tab, { aoTocar: tocou, aoCombinar(q, combo, els) {
       moedas += q * 5 * combo; const o = { v: +nEl.textContent };
       gsap.to(o, { v: moedas, duration: .5, onUpdate: () => { nEl.textContent = Math.round(o.v); } });
