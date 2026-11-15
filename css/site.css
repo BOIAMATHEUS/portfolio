@@ -703,6 +703,8 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
   .prox b { font-size: 15vw; }
 }
 @media (max-width: 900px) and (prefers-reduced-motion: reduce) { .tela-a { overflow-y: auto; } .tela-a img { animation: none; } }
+/* computador: as informações do topo do case não invadem a imagem */
+@media (min-width: 901px) { .ch .meta { max-width: calc(46vw - var(--m) - 24px); } .ch .meta b { font-size: 16px; } }
 /* celulares estreitos (360 px): o cabeçalho continua em uma linha */
 @media (max-width: 380px) {
   .nav-m { font-size: 14px; gap: 7px; }
