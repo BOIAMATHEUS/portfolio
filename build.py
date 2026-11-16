@@ -105,6 +105,16 @@ def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
 </section>'''
 
 
+def prototipo(rot, titulo, textos, url, nome, cls=''):
+    """protótipo de verdade dentro de um celular: carrega só quando a pessoa toca (js/site.js, "protótipo")"""
+    ps = ''.join(f'<p>{t}</p>' for t in textos)
+    return f'''<section class="proto {cls}" data-nav="{'claro' if 'escuro' in cls else 'escuro'}">
+  <div class="proto-txt"><span class="rot" data-sobe>{rot}</span><h2 data-linhas>{titulo}</h2><div class="proto-p" data-sobe>{ps}</div>
+    <a class="proto-fora" href="{url}" target="_blank" rel="noopener">Abrir em outra aba {SETA}</a></div>
+  <div class="fone proto-fone"><div class="fone-t"><div class="proto-v" data-src="{url}" data-nome="{nome}"><button class="proto-b" type="button"><span class="px">toque para usar</span><b>Abrir o protótipo</b></button></div></div></div>
+</section>'''
+
+
 def tabela(cab, linhas):
     h = '<div class="tab-l cab">' + ''.join(f'<span>{c}</span>' for c in cab) + '</div>'
     for l in linhas:
@@ -235,6 +245,7 @@ renova = dict(
             ['O segundo jogo é rápido de propósito: cabe na fila do café.', 'Ele usa a mesma linguagem do Match, para os dois jogos serem da mesma família.'],
             cards([dict(t='Martele os monstrinhos', p='São as dores: rugas, manchas, flacidez.'), dict(t='Não bata no Mini', p='A embalagem nunca é o vilão.'), dict(t='Pegue o dourado', p='Poder do Colágeno, pontos em dobro.', dest=True)])
             + fig(RN + 'key-toctoc.webp', 'Arte do jogo Toc Toc, Mini Colágeno', 'fig-p larga'), 'escuro'),
+        prototipo('Protótipo', 'Use o app<br>aqui mesmo.', ['É o mesmo protótipo que as usuárias testaram. Jogue uma fase, marque a dose do dia ou monte um kit até o botão de pagar.', 'Nada é comprado: o botão de finalizar leva para a loja e para aí.'], 'https://renova-prototipo-rn.renova-black-preview.workers.dev/?teste=1', 'Protótipo do app Renova Be'),
         cap('06 · Teste com usuárias', 'Quatro mulheres,<br>três tarefas.',
             ['Pedi para 4 mulheres de 27 a 61 anos, que tomam ou já tomaram suplemento, usarem o protótipo sozinhas no próprio celular. Nenhuma era cliente da marca. Elas tentaram jogar uma fase, marcar a dose do dia e escolher colágeno para 3 meses até o botão de pagar, e deram uma nota de 1 (muito difícil) a 7 (muito fácil) para cada tarefa.',
              'Todas concluíram as três tarefas. As duas mais velhas concluíram com dificuldade.'],
@@ -277,6 +288,7 @@ gg = dict(
         cap('04 · Lançamento', 'Antes de a loja abrir,<br>a marca precisa de lista.',
             ['Desenhei as páginas de entrada do pré-lançamento: captação para o grupo, calculadora de fibras e as páginas de apoio do site.'],
             grade([fig(GG + 'capt-d.webp', 'Página de captação do lançamento', '', 'Captação'), fig(GG + 'fibras-d.webp', 'Calculadora de fibras', '', 'Calculadora de fibras')], 2)),
+        prototipo('O site funcionando', 'Navegue pelo<br>site inteiro.', ['A versão de celular do site, com quiz, roleta, carrinho e página de produto. É o mesmo site que aparece nos prints acima.'], 'https://good-green-br.pages.dev/', 'Site da Good Green', 'escuro'),
         cap('05 · Com as pessoas', 'Metade achou<br>que era suco.',
             ['As mesmas 4 mulheres olharam o topo do site por 5 segundos, sem rolar, e disseram o que a marca vendia. Depois navegaram por 2 minutos e explicaram o produto com as próprias palavras.'],
             numeros([('2 de 4', 'disseram “suco” no teste de 5 segundos'), ('4 de 4', 'entenderam que é suplemento depois de navegar'), ('0 de 4', 'fizeram o quiz')])
@@ -328,6 +340,7 @@ nhv = dict(
             cards([dict(t='O que foi entregue', li=['Rastreio só com o CPF, publicado na loja nova.', 'Todos os estados: Pix pendente, separação, a caminho, entregue, cancelado, sem pedidos, erro e limite.', 'Design system com tokens, componentes e ícones.']),
                    dict(t='Decisões que pesaram', li=['Segurança: só cidade, a mesma resposta para CPF sem pedido, limite de buscas.', 'O Pix pendente dentro do rastreio: acompanhar vira também concluir o pagamento.', 'Uma linha do tempo só, com a transportadora dentro dela.'], dest=True),
                    dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Medir os contatos de rastreio no atendimento antes e depois.'])])),
+        prototipo('Teste você', 'Busque um<br>pedido.', ['A tela no ar, em modo de demonstração: escolha um cenário (Pix pendente, a caminho, entregue) e busque. Os dados são fictícios, nenhum pedido real aparece.'], 'https://www.newhair.com.br/rastreio?demo=1', 'Rastreio da New Hair em demonstração'),
         cap('08 · Com as clientes', 'Entenderam<br>sem explicação.',
             ['Mostrei a tela no ar para as mesmas 4 mulheres, duas delas clientes da New Hair, e perguntei o que precisavam fazer ali, só olhando.'],
             numeros([('4 de 4', 'entenderam na hora que é para digitar o CPF'), ('6,3', 'facilidade média (de 1 a 7)'), ('4 de 4', 'já perguntaram “cadê meu pedido?” a alguma loja')])
@@ -337,7 +350,7 @@ nhv = dict(
             + tabela(['O que apareceu', 'O que vou mudar'], [['Receio com o CPF', 'Nota curta ao lado do campo: para que o CPF é usado e o que a tela mostra'], ['Não sabiam o que vem depois', 'Uma prévia do resultado embaixo da busca: previsão, etapas e transportadora'], ['Querem falar com alguém', 'Botão de WhatsApp visível também antes da busca']])),
     ]),
     volta=('good-green.html', 'Good Green', '#0f2e2f', 'Case anterior'),
-    prox=('index.html#sobre', 'Sobre mim', '#15120f', '#efe9e1', 'claro', 'Último case · agora, quem fez', 'conhecer'),
+    prox=('index.html#supervisao', 'Supervisão', '#15120f', '#efe9e1', 'claro', 'Último case · agora, quem aprova cada tela', 'conhecer'),
 )
 
 for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
