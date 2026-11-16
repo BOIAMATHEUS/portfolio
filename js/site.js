@@ -49,7 +49,7 @@
       }
       const chave = e + txt; if (chave === estado) return; estado = chave;
       if (e === 'rotulo') { curR.innerHTML = txt; gsap.to(curR, { scale: 1, duration: .35, ease: 'back.out(2)' }); gsap.to(cur, { scale: 0, duration: .2 }); }
-      else { gsap.to(curR, { scale: 0, duration: .22 }); gsap.to(cur, { scale: (e === 'grande' ? 3.6 : e === 'medio' ? 2 : 1) * (aperta ? .75 : 1), duration: .3, ease: 'power3.out' }); }
+      else { gsap.to(curR, { scale: 0, duration: .22 }); gsap.to(cur, { scale: (e === 'grande' ? 3.6 : e === 'medio' ? 1.5 : 1) * (aperta ? .75 : 1), duration: .3, ease: 'power3.out' }); }
     };
     addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; if (!visto) { visto = true; gsap.set([cur, curR], { x: e.clientX, y: e.clientY }); gsap.to(cur, { opacity: 1, duration: .2 }); } mx = e.clientX; my = e.clientY; qx(mx); qy(my); rx(mx); ry(my); pinta(e.target); }, { passive: true });
     addEventListener('pointerdown', () => { aperta = true; estado = ''; }); addEventListener('pointerup', () => { aperta = false; estado = ''; setTimeout(olha, 30); });
