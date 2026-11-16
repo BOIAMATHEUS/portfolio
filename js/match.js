@@ -82,6 +82,7 @@
       sel = sel === p ? null : p; if (sel) sel.el.classList.add('sel');
     }
 
+    tab.addEventListener('dragstart', (e) => e.preventDefault()); tab.addEventListener('selectstart', (e) => e.preventDefault());
     tab.addEventListener('pointerdown', (e) => { const el = e.target.closest('.peca'); if (!el) return; if (opc.aoTocar) opc.aoTocar(); arr = { p: el.p, x: e.clientX, y: e.clientY, foi: false }; parado = 0; });
     tab.addEventListener('pointermove', (e) => {
       if (!arr || arr.foi) return; const dx = e.clientX - arr.x, dy = e.clientY - arr.y; const lim = tab.clientWidth / N * .38;

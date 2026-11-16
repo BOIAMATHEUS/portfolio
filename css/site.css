@@ -753,3 +753,7 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .fone-v.livre, .tela-a.livre { overflow-y: auto !important; overscroll-behavior-y: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .fone-v.livre::-webkit-scrollbar, .tela-a.livre::-webkit-scrollbar { display: none; }
 .fone-v.livre img, .tela-a.livre img { transform: none !important; animation: none !important; transition: none !important; }
+
+/* tabuleiro do joguinho: arrastar troca peças, nunca seleciona nem arrasta a imagem (print dele, 16/11) */
+.tab, .tab * { -webkit-user-select: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
+.tab ::selection, .tab::selection { background: transparent; }
