@@ -103,6 +103,21 @@
     ScrollTrigger.create({ trigger: '.contato', start: 'top 60%', onEnter: () => { if (G) G.faixa.acorda(); } });
   }
 
+  /* galeria em CDs: clique abre a caixa, o disco sai girando e só então a cortina leva para o case */
+  const gal = $('.galeria.cds');
+  if (gal) {
+    const chao = () => { const p = $('.cd-palco', gal); if (!p) return; const g = gal.getBoundingClientRect(), r = p.getBoundingClientRect(); gal.style.setProperty('--chao', (r.bottom - g.top - 2) + 'px'); };
+    chao(); addEventListener('resize', chao); addEventListener('load', chao); new ResizeObserver(chao).observe(gal); new IntersectionObserver((es) => { if (es[0].isIntersecting) chao(); }).observe(gal);
+    $$('.cd', gal).forEach((cd) => cd.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey) return; e.preventDefault();
+      if (cd.classList.contains('abre')) return;
+      cd.classList.add('abre'); som('pop');
+      const vai = () => { location.href = cd.href; };
+      if (calmo) return vai();
+      gsap.delayedCall(1.05, () => { cortina.style.background = cd.dataset.cor; som('cortina'); gsap.fromTo(cortina, { yPercent: 101 }, { yPercent: 0, duration: .6, ease: 'power3.inOut', onComplete: vai }); });
+    }));
+    addEventListener('pageshow', () => $$('.cd.abre', gal).forEach((cd) => cd.classList.remove('abre')));
+  }
   if (hero) inicio(); else caso();
 
   /* ================= página inicial ================= */

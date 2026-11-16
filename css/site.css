@@ -816,3 +816,60 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .gal-tags { align-self: stretch; justify-content: flex-start; }
 .gal-tags em { background: var(--e, var(--c)); color: #15120f; }
 .gal-t p { text-align: left; }
+
+/* ---------- galeria em CDs (pedido dele, 16/11): caixa de acrílico na prateleira; passa o mouse, a tampa abre um pouco e o disco aparece;
+   clica, a tampa abre, o disco sai girando e o case abre ---------- */
+.galeria.cds { position: relative; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(26px, 3.4vw, 56px); padding-top: clamp(20px, 3vw, 40px); }
+.cd { display: flex; flex-direction: column; gap: clamp(26px, 3vw, 40px); color: inherit; text-decoration: none; position: relative; z-index: 1; }
+.cd-palco { perspective: 1400px; padding-right: 22%; }
+.cd-obj { position: relative; aspect-ratio: 1.08 / 1; transform-style: preserve-3d; transform: rotateX(4deg) rotateY(-8deg); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
+.cd:hover .cd-obj { transform: rotateX(2deg) rotateY(-2deg) translateY(-6px); }
+/* bandeja: o fundo da caixa, com o encaixe do disco */
+.cd-bandeja { position: absolute; inset: 0 0 0 7.5%; border-radius: 3px 6px 6px 3px; background: radial-gradient(circle at 54% 50%, rgba(0, 0, 0, .55) 0 7%, transparent 7.5%), radial-gradient(circle at 54% 50%, #2a2522 0 38%, #1b1715 38.5%), #1b1715; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 34px 40px -26px rgba(0, 0, 0, .9); }
+/* disco: prata furta-cor com o selo na cor da marca */
+.cd-disco { position: absolute; top: 4%; left: 11%; width: 86%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; transform: translateZ(1px); transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+  background: radial-gradient(circle, #15120f 0 6%, #d9d4cf 6.4% 7.6%, transparent 8%), radial-gradient(circle, var(--c) 0 33%, transparent 33.4%), conic-gradient(from 20deg, #e9e6e2, #c8d3dc, #f1e2ef, #d7e6d2, #f3ead2, #cdd7e6, #ecdfe9, #e9e6e2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6), 0 10px 26px -10px rgba(0, 0, 0, .7); }
+.cd-disco::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(255, 255, 255, 0) 0 3px, rgba(255, 255, 255, .18) 3.5px 4px); mix-blend-mode: overlay; }
+.cd-anel { position: absolute; inset: 31%; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .25); }
+.cd-disco b, .cd-disco span { position: absolute; color: #fff; z-index: 1; }
+.cd-disco b { top: 20%; font-size: clamp(11px, 1vw, 14px); font-weight: 800; letter-spacing: -.02em; max-width: 50%; line-height: 1.05; }
+.cd-disco span { bottom: 21%; font-size: 10px; opacity: .75; }
+/* tampa de acrílico com a capa por dentro, presa na lombada pela esquerda */
+.cd-tampa { position: absolute; inset: 0 0 0 7.5%; transform-origin: 0 50%; transform-style: preserve-3d; transform: translateZ(3px); transition: transform .9s cubic-bezier(.3, .7, .1, 1); }
+.cd-frente, .cd-verso { position: absolute; inset: 0; border-radius: 3px 6px 6px 3px; overflow: hidden; backface-visibility: hidden; }
+.cd-frente { background: var(--c); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
+.cd-frente img { width: 100%; height: 100%; object-fit: cover; }
+.cd-verso { transform: rotateY(180deg); background: linear-gradient(120deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 40%, rgba(255, 255, 255, .1)), #24201c; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+.cd-tit { position: absolute; left: 7%; top: 7%; right: 7%; font-size: clamp(26px, 2.9vw, 46px); font-weight: 850; line-height: .9; letter-spacing: -.05em; text-transform: uppercase; color: var(--tc); text-shadow: 0 2px 18px rgba(0, 0, 0, .18); }
+.cd-n { position: absolute; right: 6%; bottom: 6%; font-size: 12px; color: var(--tc); opacity: .8; }
+.cd-brilho { position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255, 255, 255, .34) 0%, rgba(255, 255, 255, .06) 22%, transparent 38%, transparent 70%, rgba(255, 255, 255, .12) 86%, transparent 100%); pointer-events: none; transition: transform .9s; }
+.cd:hover .cd-brilho { transform: translateX(6%); }
+/* lombada: a faixa da dobradiça, mais escura e com os frisos do acrílico */
+.cd-lombada { position: absolute; left: 0; top: 0; bottom: 0; width: 7.5%; border-radius: 4px 0 0 4px; transform: translateZ(4px); background: linear-gradient(90deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .08) 30%, rgba(0, 0, 0, .2) 70%, rgba(255, 255, 255, .12)), var(--c); box-shadow: inset -1px 0 0 rgba(0, 0, 0, .3); }
+.cd-lombada::before, .cd-lombada::after { content: ''; position: absolute; left: 30%; right: 30%; height: 12%; border-radius: 2px; background: rgba(0, 0, 0, .28); }
+.cd-lombada::before { top: 8%; } .cd-lombada::after { bottom: 8%; }
+/* mouse em cima: a tampa abre um pouco e o disco espia pela direita */
+.cd:hover .cd-tampa { transform: translateZ(3px) rotateY(-24deg); }
+.cd:hover .cd-disco { transform: translateZ(1px) translateX(20%) rotate(40deg); }
+/* clique: abre de vez, o disco sai girando */
+.cd.abre .cd-obj { transform: rotateX(0) rotateY(0) translateY(-10px); }
+.cd.abre .cd-tampa { transform: translateZ(3px) rotateY(-158deg); transition-duration: .8s; }
+.cd.abre .cd-disco { transform: translateZ(30px) translateX(42%) rotate(720deg); transition: transform 1.2s cubic-bezier(.25, .7, .2, 1); }
+.cd-t { display: flex; flex-direction: column; gap: 10px; }
+.cd-t b { font-size: clamp(22px, 2vw, 30px); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.cd-t p { color: #b5aca0; font-size: 15px; line-height: 1.45; max-width: 26em; }
+.cd .gal-tags { padding-top: 4px; }
+.cd .gal-tags em { background: var(--e); color: #15120f; }
+.cd:hover .gal-tags em { transform: rotate(45deg); }
+/* prateleira embaixo das caixas */
+.prateleira { position: absolute; z-index: 0; left: calc(var(--m) - 14px); right: calc(var(--m) - 14px); top: var(--chao, 60%); height: 12px; border-radius: 3px; background: linear-gradient(#3a332d, #26211d); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 26px 30px -14px rgba(0, 0, 0, .85); pointer-events: none; }
+@media (max-width: 900px) {
+  .galeria.cds { grid-template-columns: 1fr; gap: 56px; }
+  .cd-palco { padding-right: 18%; max-width: 420px; }
+  .prateleira { display: none; }
+  .cd-palco { border-bottom: 10px solid #2c2622; border-radius: 0 0 4px 4px; padding-bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .cd-obj, .cd-tampa, .cd-disco { transition: none !important; } }
+.cd-frente::before { content: ''; position: absolute; inset: 0 0 45% 0; z-index: 1; background: linear-gradient(var(--sb, transparent) 0%, transparent 100%); pointer-events: none; }
+.cd-tit, .cd-n { z-index: 2; }
