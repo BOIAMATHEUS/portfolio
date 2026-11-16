@@ -42,7 +42,7 @@
       let e = 'ponto', txt = '';
       if (alvo) {
         const g = alvo.closest('.gato'), c = alvo.closest('[data-cur]');
-        if (g) { e = 'rotulo'; txt = g.classList.contains('pego') ? 'soltar' : 'pegar'; }
+        if (g) { e = 'rotulo'; txt = g.classList.contains('pego') ? 'soltar' : 'fazer<br>carinho'; }
         else if (c) { e = 'rotulo'; txt = c.dataset.cur; }
         else if (alvo.closest('.peca')) e = 'medio';
         else if (alvo.closest('a, button, [role=button], figure.zoom')) e = 'grande';
