@@ -846,7 +846,7 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .cd-frente, .cd-verso { position: absolute; inset: 0; border-radius: 2px 3px 3px 2px; backface-visibility: hidden; }
 .cd-frente { background: rgba(225, 235, 240, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .42), inset 0 0 0 3px rgba(255, 255, 255, .06), 0 0 0 1px rgba(0, 0, 0, .35); }
 .cd-encarte { position: absolute; inset: 3.2% 3.6% 3.2% 2.4%; overflow: hidden; background: var(--c); box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); }
-.cd-encarte img { width: 100%; height: 100%; object-fit: cover; }
+.cd-encarte > img:not([class]) { width: 100%; height: 100%; object-fit: cover; }
 .cd-encarte::before { content: ''; position: absolute; inset: 0 0 45% 0; z-index: 1; background: linear-gradient(var(--sb, transparent) 0%, transparent 100%); pointer-events: none; }
 .cd-tit { position: absolute; z-index: 2; left: 7%; top: 7%; right: 7%; font-size: clamp(24px, 2.6vw, 42px); font-weight: 850; line-height: .9; letter-spacing: -.05em; text-transform: uppercase; color: var(--tc); }
 .cd-n { position: absolute; z-index: 2; right: 6%; bottom: 6%; font-size: 12px; color: var(--tc); opacity: .8; }
@@ -887,3 +887,38 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .cd-anel { display: none; }
 .cd-disco b { z-index: 3; top: 12%; font-size: clamp(12px, 1.1vw, 16px); font-weight: 850; text-transform: uppercase; letter-spacing: -.02em; color: var(--tc); max-width: 60%; text-shadow: 0 1px 8px rgba(0, 0, 0, .25); }
 .cd-disco span { z-index: 3; bottom: 13%; font-size: 8.5px; color: var(--tc); opacity: .85; white-space: nowrap; }
+
+/* ---------- capas dos CDs: desenhadas como capa de disco (arte ocupando a capa, texto pequeno nos cantos, um adesivo), não a imagem do case com título por cima ---------- */
+.cd-encarte { container-type: size; }
+.cd-encarte .capa-a, .cd-encarte .capa-f { position: absolute; top: 5.5%; z-index: 4; font-family: var(--pixel); font-size: 4.2cqw; letter-spacing: .02em; }
+.capa-a { left: 6%; } .capa-f { right: 6%; }
+.capa-t { position: absolute; left: 6%; bottom: 10.5%; z-index: 4; font-size: 8.4cqw; font-weight: 850; letter-spacing: -.045em; line-height: .95; }
+.capa-s { position: absolute; left: 6%; bottom: 5.5%; z-index: 4; font-size: 3.9cqw; opacity: .8; }
+.capa-selo { position: absolute; z-index: 5; right: 6%; bottom: 6%; width: 21cqw; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; font-family: var(--pixel); font-size: 3.6cqw; line-height: 1.05; transform: rotate(-12deg); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+/* App Renova Be */
+.capa-rn { background: radial-gradient(circle at 50% 42%, #ff8a63 0%, #e8563a 46%, #b9351f 100%); color: #fff; }
+.capa-luz { position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 50% 44%, rgba(255, 255, 255, .09) 0 10deg, transparent 10deg 20deg); }
+.cd-encarte .rn-boneco { position: absolute; left: 50%; bottom: 17%; height: 66%; width: auto; translate: -50% 0; filter: drop-shadow(0 6cqw 6cqw rgba(90, 20, 0, .45)); z-index: 2; }
+.cd-encarte .rn-m { position: absolute; width: 17cqw; height: auto; z-index: 3; filter: drop-shadow(0 2cqw 2cqw rgba(90, 20, 0, .4)); }
+.cd-encarte .m1 { left: 9%; top: 22%; rotate: -14deg; } .cd-encarte .m2 { right: 9%; top: 30%; width: 13cqw; rotate: 18deg; } .cd-encarte .m3 { left: 17%; top: 50%; width: 10cqw; rotate: 8deg; z-index: 1; }
+.cd-encarte .rn-p { position: absolute; width: 11cqw; height: auto; z-index: 1; filter: drop-shadow(0 1.5cqw 1.5cqw rgba(90, 20, 0, .35)); }
+.cd-encarte .p1 { left: 70%; top: 14%; rotate: 16deg; } .cd-encarte .p2 { left: 76%; top: 54%; rotate: -10deg; } .cd-encarte .p3 { left: 5%; top: 38%; rotate: 12deg; width: 9cqw; } .cd-encarte .p4 { left: 30%; top: 13%; rotate: -18deg; width: 8cqw; }
+.capa-rn .capa-selo { background: #ffd23f; color: #7a2410; }
+/* Good Green */
+.capa-gg { background: radial-gradient(circle at 50% 30%, #1d4a46 0%, #0f2e2f 55%, #071a1a 100%); color: #f3f7ea; }
+.gg-sol { position: absolute; left: 50%; top: 15%; width: 58cqw; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; background: radial-gradient(circle, #c9f26b 0%, #8fd14f 60%, #5ea83a 100%); box-shadow: 0 0 18cqw 2cqw rgba(143, 209, 79, .35); }
+.gg-chao { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: linear-gradient(transparent, rgba(0, 0, 0, .35)); }
+.cd-encarte .gg-garrafa { position: absolute; left: 32%; bottom: 20%; height: 58%; width: auto; z-index: 2; rotate: -6deg; filter: drop-shadow(0 4cqw 5cqw rgba(0, 0, 0, .5)); }
+.cd-encarte .gg-pote { position: absolute; left: 44%; bottom: 18%; height: 42%; width: auto; z-index: 3; filter: drop-shadow(0 4cqw 5cqw rgba(0, 0, 0, .55)); }
+.capa-gg .capa-selo { background: #f4b8c7; color: #0f2e2f; font-size: 3.4cqw; }
+/* Rastreio */
+.capa-nh { background: linear-gradient(160deg, #f6ece4 0%, #e6cdbb 100%); color: #2b1d15; }
+.nh-q { position: absolute; left: 6%; top: 15%; z-index: 2; font-weight: 300; font-size: 9.6cqw; line-height: .98; text-transform: uppercase; letter-spacing: .005em; }
+.nh-q em { color: #7d5b49; }
+.nh-l { position: absolute; left: 6%; right: 8%; top: 54%; z-index: 2; list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; align-items: center; }
+.nh-l::before { content: ''; position: absolute; left: 2cqw; right: 2cqw; top: 50%; height: .8cqw; margin-top: -.4cqw; background: #7d5b49; border-radius: 1cqw; }
+.nh-l li { position: relative; width: 4.6cqw; aspect-ratio: 1; border-radius: 50%; background: #7d5b49; }
+.nh-l li.ok { width: 9cqw; background: #4d6b4a; box-shadow: 0 0 0 1.6cqw rgba(77, 107, 74, .22); }
+.nh-l li.ok span { position: absolute; top: 140%; left: 50%; translate: -50% 0; font-family: var(--pixel); font-size: 3.8cqw; color: #4d6b4a; white-space: nowrap; }
+.capa-nh .capa-t { font-size: 7.4cqw; }
+.capa-nh .capa-selo { background: #2b1d15; color: #f6ece4; }
