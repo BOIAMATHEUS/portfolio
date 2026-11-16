@@ -817,59 +817,73 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .gal-tags em { background: var(--e, var(--c)); color: #15120f; }
 .gal-t p { text-align: left; }
 
-/* ---------- galeria em CDs (pedido dele, 16/11): caixa de acrílico na prateleira; passa o mouse, a tampa abre um pouco e o disco aparece;
-   clica, a tampa abre, o disco sai girando e o case abre ---------- */
+/* ---------- galeria em CDs (pedido dele, 16/11, com foto de caixas de verdade como referência): caixa de acrílico transparente
+   com o encarte de papel por dentro, borda de plástico em volta, dobradiça à esquerda e lombada impressa com o nome na vertical.
+   Em repouso a caixa fica girada mostrando a lombada; mouse em cima, vira de frente e a tampa abre um pouco; clique, abre e o disco sai girando. ---------- */
 .galeria.cds { position: relative; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(26px, 3.4vw, 56px); padding-top: clamp(20px, 3vw, 40px); }
-.cd { display: flex; flex-direction: column; gap: clamp(26px, 3vw, 40px); color: inherit; text-decoration: none; position: relative; z-index: 1; }
-.cd-palco { perspective: 1400px; padding-right: 22%; }
-.cd-obj { position: relative; aspect-ratio: 1.08 / 1; transform-style: preserve-3d; transform: rotateX(4deg) rotateY(-8deg); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
-.cd:hover .cd-obj { transform: rotateX(2deg) rotateY(-2deg) translateY(-6px); }
-/* bandeja: o fundo da caixa, com o encaixe do disco */
-.cd-bandeja { position: absolute; inset: 0 0 0 7.5%; border-radius: 3px 6px 6px 3px; background: radial-gradient(circle at 54% 50%, rgba(0, 0, 0, .55) 0 7%, transparent 7.5%), radial-gradient(circle at 54% 50%, #2a2522 0 38%, #1b1715 38.5%), #1b1715; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 34px 40px -26px rgba(0, 0, 0, .9); }
-/* disco: prata furta-cor com o selo na cor da marca */
-.cd-disco { position: absolute; top: 4%; left: 11%; width: 86%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; transform: translateZ(1px); transition: transform .8s cubic-bezier(.2, .8, .2, 1);
-  background: radial-gradient(circle, #15120f 0 6%, #d9d4cf 6.4% 7.6%, transparent 8%), radial-gradient(circle, var(--c) 0 33%, transparent 33.4%), conic-gradient(from 20deg, #e9e6e2, #c8d3dc, #f1e2ef, #d7e6d2, #f3ead2, #cdd7e6, #ecdfe9, #e9e6e2);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6), 0 10px 26px -10px rgba(0, 0, 0, .7); }
+.cd { --d: clamp(12px, 1.3vw, 18px); display: flex; flex-direction: column; gap: clamp(26px, 3vw, 40px); color: inherit; text-decoration: none; position: relative; z-index: 1; }
+.cd-palco { perspective: 1600px; padding: 0 18% 0 6%; }
+.cd-obj { position: relative; aspect-ratio: 142 / 125; transform-style: preserve-3d; transform: rotateY(24deg) rotateX(3deg); transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+.cd:hover .cd-obj { transform: rotateY(4deg) rotateX(2deg) translateY(-6px); }
+/* lombada: a lateral da caixa, com a tira de papel impressa por dentro do plástico */
+.cd-lado { position: absolute; left: 0; top: 0; height: 100%; width: var(--d); transform-origin: 0 50%; transform: rotateY(-90deg); display: flex; align-items: center; justify-content: space-between; flex-direction: column; padding: 8px 0; overflow: hidden;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .1) 18%, transparent 30% 70%, rgba(255, 255, 255, .12) 82%, rgba(255, 255, 255, .45)), var(--lf); color: var(--lt); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.cd-lado span { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 800; font-size: calc(var(--d) * .62); letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; flex: 1; text-align: center; }
+.cd-lado i { font-style: normal; writing-mode: vertical-rl; transform: rotate(180deg); font-size: calc(var(--d) * .5); opacity: .75; }
+/* bandeja preta no fundo, com o pino do disco */
+.cd-bandeja { position: absolute; inset: 0; border-radius: 2px; transform: translateZ(0); background: radial-gradient(circle at 56% 50%, #0d0b0a 0 5.5%, #2e2925 6% 9%, transparent 9.5%), radial-gradient(circle at 56% 50%, #1e1a17 0 41%, #141110 41.5%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), 0 40px 46px -28px rgba(0, 0, 0, .95); }
+/* disco */
+.cd-disco { position: absolute; top: 5%; left: 15.5%; width: 81%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; transform: translateZ(2px); transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+  background: radial-gradient(circle, transparent 0 5.5%, #d9d4cf 6% 7.5%, transparent 8%), radial-gradient(circle, var(--c) 0 33%, transparent 33.4%), conic-gradient(from 20deg, #e9e6e2, #c8d3dc, #f1e2ef, #d7e6d2, #f3ead2, #cdd7e6, #ecdfe9, #e9e6e2);
+  -webkit-mask: radial-gradient(circle, transparent 0 5.4%, #000 5.6%); mask: radial-gradient(circle, transparent 0 5.4%, #000 5.6%); box-shadow: 0 10px 26px -10px rgba(0, 0, 0, .7); }
 .cd-disco::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(255, 255, 255, 0) 0 3px, rgba(255, 255, 255, .18) 3.5px 4px); mix-blend-mode: overlay; }
 .cd-anel { position: absolute; inset: 31%; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .25); }
 .cd-disco b, .cd-disco span { position: absolute; color: #fff; z-index: 1; }
-.cd-disco b { top: 20%; font-size: clamp(11px, 1vw, 14px); font-weight: 800; letter-spacing: -.02em; max-width: 50%; line-height: 1.05; }
-.cd-disco span { bottom: 21%; font-size: 10px; opacity: .75; }
-/* tampa de acrílico com a capa por dentro, presa na lombada pela esquerda */
-.cd-tampa { position: absolute; inset: 0 0 0 7.5%; transform-origin: 0 50%; transform-style: preserve-3d; transform: translateZ(3px); transition: transform .9s cubic-bezier(.3, .7, .1, 1); }
-.cd-frente, .cd-verso { position: absolute; inset: 0; border-radius: 3px 6px 6px 3px; overflow: hidden; backface-visibility: hidden; }
-.cd-frente { background: var(--c); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
-.cd-frente img { width: 100%; height: 100%; object-fit: cover; }
-.cd-verso { transform: rotateY(180deg); background: linear-gradient(120deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 40%, rgba(255, 255, 255, .1)), #24201c; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
-.cd-tit { position: absolute; left: 7%; top: 7%; right: 7%; font-size: clamp(26px, 2.9vw, 46px); font-weight: 850; line-height: .9; letter-spacing: -.05em; text-transform: uppercase; color: var(--tc); text-shadow: 0 2px 18px rgba(0, 0, 0, .18); }
-.cd-n { position: absolute; right: 6%; bottom: 6%; font-size: 12px; color: var(--tc); opacity: .8; }
-.cd-brilho { position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255, 255, 255, .34) 0%, rgba(255, 255, 255, .06) 22%, transparent 38%, transparent 70%, rgba(255, 255, 255, .12) 86%, transparent 100%); pointer-events: none; transition: transform .9s; }
-.cd:hover .cd-brilho { transform: translateX(6%); }
-/* lombada: a faixa da dobradiça, mais escura e com os frisos do acrílico */
-.cd-lombada { position: absolute; left: 0; top: 0; bottom: 0; width: 7.5%; border-radius: 4px 0 0 4px; transform: translateZ(4px); background: linear-gradient(90deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .08) 30%, rgba(0, 0, 0, .2) 70%, rgba(255, 255, 255, .12)), var(--c); box-shadow: inset -1px 0 0 rgba(0, 0, 0, .3); }
-.cd-lombada::before, .cd-lombada::after { content: ''; position: absolute; left: 30%; right: 30%; height: 12%; border-radius: 2px; background: rgba(0, 0, 0, .28); }
-.cd-lombada::before { top: 8%; } .cd-lombada::after { bottom: 8%; }
-/* mouse em cima: a tampa abre um pouco e o disco espia pela direita */
-.cd:hover .cd-tampa { transform: translateZ(3px) rotateY(-24deg); }
-.cd:hover .cd-disco { transform: translateZ(1px) translateX(20%) rotate(40deg); }
-/* clique: abre de vez, o disco sai girando */
-.cd.abre .cd-obj { transform: rotateX(0) rotateY(0) translateY(-10px); }
-.cd.abre .cd-tampa { transform: translateZ(3px) rotateY(-158deg); transition-duration: .8s; }
-.cd.abre .cd-disco { transform: translateZ(30px) translateX(42%) rotate(720deg); transition: transform 1.2s cubic-bezier(.25, .7, .2, 1); }
+.cd-disco b { top: 21%; font-size: clamp(10px, .9vw, 13px); font-weight: 800; letter-spacing: -.02em; max-width: 50%; line-height: 1.05; }
+.cd-disco span { bottom: 22%; font-size: 9px; opacity: .75; }
+/* tampa: acrílico transparente com borda, o encarte de papel por dentro deixando uma margem de plástico */
+.cd-tampa { position: absolute; inset: 0 0 0 7%; transform-origin: 0 50%; transform-style: preserve-3d; transform: translateZ(var(--d)); transition: transform .9s cubic-bezier(.3, .7, .1, 1); }
+.cd-frente, .cd-verso { position: absolute; inset: 0; border-radius: 2px 3px 3px 2px; backface-visibility: hidden; }
+.cd-frente { background: rgba(225, 235, 240, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .42), inset 0 0 0 3px rgba(255, 255, 255, .06), 0 0 0 1px rgba(0, 0, 0, .35); }
+.cd-encarte { position: absolute; inset: 3.2% 3.6% 3.2% 2.4%; overflow: hidden; background: var(--c); box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); }
+.cd-encarte img { width: 100%; height: 100%; object-fit: cover; }
+.cd-encarte::before { content: ''; position: absolute; inset: 0 0 45% 0; z-index: 1; background: linear-gradient(var(--sb, transparent) 0%, transparent 100%); pointer-events: none; }
+.cd-tit { position: absolute; z-index: 2; left: 7%; top: 7%; right: 7%; font-size: clamp(24px, 2.6vw, 42px); font-weight: 850; line-height: .9; letter-spacing: -.05em; text-transform: uppercase; color: var(--tc); }
+.cd-n { position: absolute; z-index: 2; right: 6%; bottom: 6%; font-size: 12px; color: var(--tc); opacity: .8; }
+/* reflexo do plástico por cima de tudo */
+.cd-brilho { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(118deg, rgba(255, 255, 255, .38) 0%, rgba(255, 255, 255, .1) 16%, transparent 30%, transparent 62%, rgba(255, 255, 255, .14) 76%, transparent 88%); transition: transform .9s; }
+.cd:hover .cd-brilho { transform: translateX(5%); }
+.cd-verso { transform: rotateY(180deg); background: linear-gradient(120deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .04) 40%, rgba(255, 255, 255, .1)), rgba(30, 27, 24, .92); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+/* dobradiça: faixa de plástico à esquerda da frente, com os encaixes */
+.cd-dobra { position: absolute; left: 0; top: 0; bottom: 0; width: 7%; transform: translateZ(var(--d)); background: linear-gradient(90deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .08) 35%, rgba(0, 0, 0, .15) 75%, rgba(255, 255, 255, .22)), rgba(30, 27, 24, .5); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); border-radius: 2px 0 0 2px; }
+.cd-dobra::before, .cd-dobra::after { content: ''; position: absolute; left: 26%; right: 26%; height: 14%; border-radius: 2px; background: rgba(255, 255, 255, .22); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.cd-dobra::before { top: 7%; } .cd-dobra::after { bottom: 7%; }
+/* mouse em cima: a tampa abre um pouco e o disco espia */
+.cd:hover .cd-tampa { transform: translateZ(var(--d)) rotateY(-22deg); }
+.cd:hover .cd-disco { transform: translateZ(2px) translateX(16%) rotate(40deg); }
+/* clique: abre de vez e o disco sai girando */
+.cd.abre .cd-obj { transform: rotateY(0) rotateX(0) translateY(-10px); }
+.cd.abre .cd-tampa { transform: translateZ(var(--d)) rotateY(-160deg); transition-duration: .8s; }
+.cd.abre .cd-disco { transform: translateZ(40px) translateX(40%) rotate(720deg); transition: transform 1.2s cubic-bezier(.25, .7, .2, 1); }
 .cd-t { display: flex; flex-direction: column; gap: 10px; }
 .cd-t b { font-size: clamp(22px, 2vw, 30px); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
 .cd-t p { color: #b5aca0; font-size: 15px; line-height: 1.45; max-width: 26em; }
 .cd .gal-tags { padding-top: 4px; }
 .cd .gal-tags em { background: var(--e); color: #15120f; }
 .cd:hover .gal-tags em { transform: rotate(45deg); }
-/* prateleira embaixo das caixas */
 .prateleira { position: absolute; z-index: 0; left: calc(var(--m) - 14px); right: calc(var(--m) - 14px); top: var(--chao, 60%); height: 12px; border-radius: 3px; background: linear-gradient(#3a332d, #26211d); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 26px 30px -14px rgba(0, 0, 0, .85); pointer-events: none; }
 @media (max-width: 900px) {
   .galeria.cds { grid-template-columns: 1fr; gap: 56px; }
-  .cd-palco { padding-right: 18%; max-width: 420px; }
+  .cd-palco { padding: 0 16% 0 8%; max-width: 440px; }
   .prateleira { display: none; }
-  .cd-palco { border-bottom: 10px solid #2c2622; border-radius: 0 0 4px 4px; padding-bottom: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .cd-obj, .cd-tampa, .cd-disco { transition: none !important; } }
-.cd-frente::before { content: ''; position: absolute; inset: 0 0 45% 0; z-index: 1; background: linear-gradient(var(--sb, transparent) 0%, transparent 100%); pointer-events: none; }
-.cd-tit, .cd-n { z-index: 2; }
+/* disco estampado: a arte do case impressa no disco inteiro, com o anel de plástico transparente no miolo e o nome impresso */
+.cd-disco { background: #d8d3ce; }
+.cd-disco > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.cd-disco::before { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 50%; background: radial-gradient(circle, transparent 0 17.5%, rgba(0, 0, 0, .35) 18%, transparent 21%), conic-gradient(from 200deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .22) 12%, rgba(255, 255, 255, 0) 24%, rgba(255, 255, 255, 0) 52%, rgba(255, 255, 255, .16) 62%, rgba(255, 255, 255, 0) 72%); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45), inset 0 0 0 4px rgba(0, 0, 0, .25); }
+.cd-disco::after { z-index: 1; opacity: .5; }
+.cd-hub { position: absolute; z-index: 2; inset: 32%; border-radius: 50%; background: radial-gradient(circle, transparent 0 22%, rgba(230, 238, 245, .55) 23% 45%, rgba(255, 255, 255, .85) 46% 48%, rgba(230, 238, 245, .35) 49% 98%, rgba(255, 255, 255, .7) 99%); box-shadow: 0 0 0 1px rgba(0, 0, 0, .2); }
+.cd-anel { display: none; }
+.cd-disco b { z-index: 3; top: 12%; font-size: clamp(12px, 1.1vw, 16px); font-weight: 850; text-transform: uppercase; letter-spacing: -.02em; color: var(--tc); max-width: 60%; text-shadow: 0 1px 8px rgba(0, 0, 0, .25); }
+.cd-disco span { z-index: 3; bottom: 13%; font-size: 8.5px; color: var(--tc); opacity: .85; white-space: nowrap; }
