@@ -744,3 +744,9 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
    com linha reta embaixo (print dele, 16/11). Dentro da faixa a sombra é curta e macia, e sobra espaço embaixo. */
 .fita { padding-bottom: clamp(56px, 8vh, 96px); }
 .fita .fone { box-shadow: 0 0 0 1px #77675f, inset 0 0 0 2px #080706, 0 22px 36px -16px rgba(40, 8, 0, .42); }
+
+/* celular que mostra um site: a tela inteira do print fica disponível e quem rola em cima dela rola só ela (site.js, "rolar dentro do celular") */
+.fita .fone-v img { height: auto; object-fit: fill; }
+.fone-v.livre, .tela-a.livre { overflow-y: auto !important; overscroll-behavior-y: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.fone-v.livre::-webkit-scrollbar, .tela-a.livre::-webkit-scrollbar { display: none; }
+.fone-v.livre img, .tela-a.livre img { transform: none !important; animation: none !important; transition: none !important; }

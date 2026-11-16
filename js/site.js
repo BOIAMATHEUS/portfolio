@@ -339,6 +339,29 @@
       /* no celular quem aparece é o site no celular, rolando enquanto o aparelho atravessa a tela */
       mm.add('(max-width: 900px)', () => { const alvo = cel || img; janelaSite(alvo, cel ? null : barra, { ate: cel ? .45 : .6, gatilho: { trigger: alvo.closest('.fone, .janela'), start: 'top 78%', end: 'bottom 30%', onUpdate: pct } }); });
     });
+    /* rolar dentro do celular (pedido dele, 16/11): quem rola com o cursor ou o dedo em cima da tela do aparelho
+       assume o controle dela. A animação presa à página sai, a tela rola livre e, no fim dela, a rolagem volta para a página. */
+    $$('.fone-v, .tela-a').forEach((caixa) => {
+      const img = $('img', caixa); if (!img) return;
+      let livre = false, alvo = 0;
+      const solta = () => {
+        if (livre) return; livre = true;
+        const y = new DOMMatrixReadOnly(getComputedStyle(img).transform === 'none' ? undefined : getComputedStyle(img).transform).m42;
+        gsap.getTweensOf(img).forEach((t) => t.kill());
+        caixa.classList.add('livre'); gsap.set(img, { clearProps: 'transform' });
+        caixa.scrollTop = alvo = Math.max(0, -y);
+      };
+      caixa.addEventListener('wheel', (e) => {
+        const max = caixa.scrollHeight - caixa.clientHeight; if (max < 4) return;
+        solta();
+        const d = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? caixa.clientHeight : 1);
+        if ((d < 0 && caixa.scrollTop <= 0) || (d > 0 && caixa.scrollTop >= max - 1)) return; // na borda: a página segue
+        e.preventDefault(); e.stopPropagation();
+        alvo = Math.max(0, Math.min(max, (gsap.isTweening(caixa) ? alvo : caixa.scrollTop) + d));
+        gsap.to(caixa, { scrollTop: alvo, duration: .45, ease: 'power2.out', overwrite: true });
+      }, { passive: false });
+      caixa.addEventListener('touchstart', () => { if (caixa.scrollHeight - caixa.clientHeight > 4) solta(); }, { passive: true });
+    });
     /* ampliar imagem */
     const luz = $('#luz');
     if (luz) { $$('figure.zoom img').forEach((im) => im.parentElement.addEventListener('click', () => { luz.innerHTML = `<img src="${im.dataset.cheia || im.currentSrc || im.src}" alt="">`; luz.classList.add('on'); luz.scrollTop = 0; lenis && lenis.stop(); })); const fecha = () => { luz.classList.remove('on'); lenis && lenis.start(); }; luz.addEventListener('click', fecha); addEventListener('keydown', (e) => { if (e.key === 'Escape') fecha(); }); }
