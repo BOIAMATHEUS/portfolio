@@ -333,7 +333,7 @@
       const img = $('.janela-v img', v), barra = $('.barra-r i', v), rot = $('.vitrine-p', v), cel = $('.vitrine-cel img', v);
       const pct = (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; };
       mm.add('(min-width: 901px)', () => {
-        const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, onUpdate: pct } });
+        const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, refreshPriority: 1, onUpdate: pct } });
         if (cel) tl.to(cel, { y: () => Math.min(0, -(cel.offsetHeight - cel.parentElement.offsetHeight)), ease: 'none' }, 0);
       });
       /* no celular quem aparece é o site no celular, rolando enquanto o aparelho atravessa a tela */
@@ -341,7 +341,7 @@
     });
     /* rolar dentro do celular (pedido dele, 16/11): quem rola com o cursor ou o dedo em cima da tela do aparelho
        assume o controle dela. A animação presa à página sai, a tela rola livre e, no fim dela, a rolagem volta para a página. */
-    $$('.fone-v, .tela-a').forEach((caixa) => {
+    $$('.fone-v, .tela-a, .janela-v').forEach((caixa) => {
       const img = $('img', caixa); if (!img) return;
       let livre = false, alvo = 0;
       const solta = () => {
@@ -350,6 +350,9 @@
         gsap.getTweensOf(img).forEach((t) => t.kill());
         caixa.classList.add('livre'); gsap.set(img, { clearProps: 'transform' });
         caixa.scrollTop = alvo = Math.max(0, -y);
+        /* na janela do computador, a barra de rolagem desenhada passa a seguir a rolagem dela */
+        const br = caixa.closest('.janela') && $('.barra-r i', caixa.closest('.janela'));
+        if (br) { gsap.getTweensOf(br).forEach((t) => t.kill()); const pinta = () => gsap.set(br, { scaleY: Math.max(.04, caixa.scrollTop / Math.max(1, caixa.scrollHeight - caixa.clientHeight)) }); caixa.addEventListener('scroll', pinta, { passive: true }); pinta(); }
       };
       caixa.addEventListener('wheel', (e) => {
         const max = caixa.scrollHeight - caixa.clientHeight; if (max < 4) return;

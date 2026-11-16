@@ -750,9 +750,9 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 
 /* celular que mostra um site: a tela inteira do print fica disponível e quem rola em cima dela rola só ela (site.js, "rolar dentro do celular") */
 .fita .fone-v img { height: auto; object-fit: fill; }
-.fone-v.livre, .tela-a.livre { overflow-y: auto !important; overscroll-behavior-y: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.fone-v.livre::-webkit-scrollbar, .tela-a.livre::-webkit-scrollbar { display: none; }
-.fone-v.livre img, .tela-a.livre img { transform: none !important; animation: none !important; transition: none !important; }
+.fone-v.livre, .tela-a.livre, .janela-v.livre { overflow-y: auto !important; overscroll-behavior-y: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.fone-v.livre::-webkit-scrollbar, .tela-a.livre::-webkit-scrollbar, .janela-v.livre::-webkit-scrollbar { display: none; }
+.fone-v.livre img, .tela-a.livre img, .janela-v.livre img { transform: none !important; animation: none !important; transition: none !important; }
 
 /* tabuleiro do joguinho: arrastar troca peças, nunca seleciona nem arrasta a imagem (print dele, 16/11) */
 .tab, .tab * { -webkit-user-select: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
