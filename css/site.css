@@ -922,3 +922,11 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .nh-l li.ok span { position: absolute; top: 140%; left: 50%; translate: -50% 0; font-family: var(--pixel); font-size: 3.8cqw; color: #4d6b4a; white-space: nowrap; }
 .capa-nh .capa-t { font-size: 7.4cqw; }
 .capa-nh .capa-selo { background: #2b1d15; color: #f6ece4; }
+/* capas com a arte gerada (ChatGPT, 16/11): a imagem ocupa a capa; o texto fica pequeno nos cantos com um véu só onde ele está */
+.cd-encarte .capa-arte { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.cd-encarte:has(.capa-arte)::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, .28), transparent 18%, transparent 66%, rgba(0, 0, 0, .55)); }
+.capa-nh:has(.capa-arte)::after { background: linear-gradient(rgba(246, 236, 228, .85), rgba(246, 236, 228, .2) 42%, transparent 60%, rgba(43, 29, 21, .5)); }
+.capa-nh:has(.capa-arte) .capa-t, .capa-nh:has(.capa-arte) .capa-s { color: #fff; }
+.cd-encarte:has(.capa-arte) .capa-t { text-shadow: 0 2px 14px rgba(0, 0, 0, .35); }
+.capa-nh:has(.capa-arte)::after { background: linear-gradient(rgba(43, 29, 21, .35), transparent 18%, transparent 66%, rgba(43, 29, 21, .6)); }
+.capa-nh:has(.capa-arte) .capa-a, .capa-nh:has(.capa-arte) .capa-f { color: #fff; }
