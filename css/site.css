@@ -757,3 +757,12 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 /* tabuleiro do joguinho: arrastar troca peças, nunca seleciona nem arrasta a imagem (print dele, 16/11) */
 .tab, .tab * { -webkit-user-select: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
 .tab ::selection, .tab::selection { background: transparent; }
+
+/* fim de cada case: voltar para o case anterior ou para a lista, antes do bloco do próximo (pedido dele, 16/11) */
+.volta { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--linha); }
+.volta a { display: flex; flex-direction: column; gap: 8px; padding: clamp(28px, 4vw, 48px) var(--m); color: inherit; text-decoration: none; transition: background .25s; }
+.volta a + a { border-left: 1px solid var(--linha); align-items: flex-end; text-align: right; }
+.volta a span { font-family: var(--pixel); font-size: 13px; opacity: .55; }
+.volta a b { font-size: clamp(22px, 2.6vw, 38px); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.volta a:hover { background: color-mix(in srgb, var(--tinta) 5%, transparent); }
+@media (max-width: 700px) { .volta a b { font-size: 21px; } }

@@ -328,16 +328,19 @@
       });
       aps.forEach((a, i) => gsap.from(a, { y: 90 + (i % 2) * 40, opacity: 0, duration: 1, delay: i * .07, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 82%' } }));
     });
-    /* site de verdade dentro da janela: preso na tela enquanto rola do topo até o fim, com o celular ao lado */
+    /* site de verdade dentro da janela e do celular (pedido dele, 16/11): a página não prende mais. Rolar em cima da janela
+       ou do celular percorre o site; rolar fora deles segue o case. O número mostra até onde a pessoa foi no site. */
     $$('.vitrine').forEach((v) => {
-      const img = $('.janela-v img', v), barra = $('.barra-r i', v), rot = $('.vitrine-p', v), cel = $('.vitrine-cel img', v);
-      const pct = (s) => { if (rot) rot.textContent = Math.round(s.progress * 100) + '%'; };
-      mm.add('(min-width: 901px)', () => {
-        const tl = janelaSite(img, barra, { gatilho: { trigger: v, start: 'top top', end: () => '+=' + Math.min(3600, Math.max(900, (img.offsetHeight || 3000) * .5)), pin: true, anticipatePin: 1, refreshPriority: 1, onUpdate: pct } });
-        if (cel) tl.to(cel, { y: () => Math.min(0, -(cel.offsetHeight - cel.parentElement.offsetHeight)), ease: 'none' }, 0);
+      const rot = $('.vitrine-p', v), barra = $('.barra-r i', v);
+      if (barra) gsap.set(barra, { scaleY: .04 });
+      $$('.janela-v, .vitrine-cel .fone-v', v).forEach((c) => {
+        c.classList.add('livre');
+        c.addEventListener('scroll', () => {
+          const f = c.scrollTop / Math.max(1, c.scrollHeight - c.clientHeight);
+          if (rot) rot.textContent = Math.round(f * 100) + '%';
+          if (barra && c.classList.contains('janela-v')) gsap.set(barra, { scaleY: Math.max(.04, f) });
+        }, { passive: true });
       });
-      /* no celular quem aparece é o site no celular, rolando enquanto o aparelho atravessa a tela */
-      mm.add('(max-width: 900px)', () => { const alvo = cel || img; janelaSite(alvo, cel ? null : barra, { ate: cel ? .45 : .6, gatilho: { trigger: alvo.closest('.fone, .janela'), start: 'top 78%', end: 'bottom 30%', onUpdate: pct } }); });
     });
     /* rolar dentro do celular (pedido dele, 16/11): quem rola com o cursor ou o dedo em cima da tela do aparelho
        assume o controle dela. A animação presa à página sai, a tela rola livre e, no fim dela, a rolagem volta para a página. */
@@ -349,7 +352,8 @@
         const y = new DOMMatrixReadOnly(getComputedStyle(img).transform === 'none' ? undefined : getComputedStyle(img).transform).m42;
         gsap.getTweensOf(img).forEach((t) => t.kill());
         caixa.classList.add('livre'); gsap.set(img, { clearProps: 'transform' });
-        caixa.scrollTop = alvo = Math.max(0, -y);
+        if (y < 0) caixa.scrollTop = -y;
+        alvo = caixa.scrollTop;
         /* na janela do computador, a barra de rolagem desenhada passa a seguir a rolagem dela */
         const br = caixa.closest('.janela') && $('.barra-r i', caixa.closest('.janela'));
         if (br) { gsap.getTweensOf(br).forEach((t) => t.kill()); const pinta = () => gsap.set(br, { scaleY: Math.max(.04, caixa.scrollTop / Math.max(1, caixa.scrollHeight - caixa.clientHeight)) }); caixa.addEventListener('scroll', pinta, { passive: true }); pinta(); }

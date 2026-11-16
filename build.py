@@ -97,7 +97,7 @@ def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
     cel = f'<div class="fone tela vitrine-cel"><div class="fone-t web">{SB}<div class="fone-v"><img src="{src_m}" alt="{nome} no celular" loading="lazy"></div></div></div>' if src_m else ''
     return f'''<section class="vitrine {cls}" data-nav="claro">
   <div class="vitrine-topo"><div><span class="rot">{rot}</span><h2>{titulo}</h2></div><p>{texto}</p></div>
-  <div class="vitrine-p-l"><span class="px">role para percorrer o site</span><span class="px vitrine-p">0%</span></div>
+  <div class="vitrine-p-l"><span class="px">role dentro da tela para ver o site</span><span class="px vitrine-p">0%</span></div>
   <div class="vitrine-palco">
     <div class="janela"><div class="janela-b"><i></i><i></i><i></i><span>{nome}</span></div><div class="barra-r"><i></i></div><div class="janela-v"><img src="{src_d}" alt="{nome} em desktop"></div></div>
     {cel}
@@ -176,7 +176,8 @@ def pagina(p):
   </div>
 </header>
 {p['corpo']}
-<a class="prox" href="{p['prox'][0]}" data-vai="{p['prox'][2]}" style="background:{p['prox'][2]};color:{p['prox'][3]}" data-cur="próximo<br>case" data-nav="{p['prox'][4]}"><small>Próximo case</small><b>{p['prox'][1]}</b></a>
+<nav class="volta" data-nav="escuro" aria-label="Navegação entre cases"><a href="{p['volta'][0]}" data-vai="{p['volta'][2]}"><span>{p['volta'][3]}</span><b>← {p['volta'][1]}</b></a><a href="index.html#trabalhos" data-vai="#15120f"><span>Ver tudo</span><b>Todos os cases</b></a></nav>
+<a class="prox" href="{p['prox'][0]}" data-vai="{p['prox'][2]}" style="background:{p['prox'][2]};color:{p['prox'][3]}" data-cur="{p['prox'][6] if len(p['prox']) > 6 else 'próximo<br>case'}" data-nav="{p['prox'][4]}"><small>{p['prox'][5] if len(p['prox']) > 5 else 'Próximo case'}</small><b>{p['prox'][1]}</b></a>
 
 <section class="contato" id="contato" data-nav="claro">
   <span class="rot">Contato</span>
@@ -250,6 +251,7 @@ renova = dict(
             numeros([('39', 'telas no protótipo'), ('120', 'fases'), ('2', 'jogos')])
             + f'<p class="fora" data-sobe>O case também está no <a href="{BEHANCE}" target="_blank" rel="noopener">Behance {SETA}</a></p>'),
     ]),
+    volta=('index.html', 'Início', '#efe9e1', 'Voltar'),
     prox=('good-green.html', 'Good Green', '#0f2e2f', '#f3f7ea', 'claro'),
 )
 
@@ -266,7 +268,7 @@ gg = dict(
              'O site precisava fazer duas coisas ao mesmo tempo: explicar o produto para quem nunca ouviu falar dele e parecer gostoso antes de parecer saudável.'],
             cards([dict(t='Dor primeiro, produto depois', p='O quiz mostra só as dores que a pessoa marcou, a causa e um dado com fonte. A Good Green entra depois, como solução.', dest=True),
                    dict(t='Figma antes do código', p='Cada tela nasce no Figma, em desktop e celular, e só depois vira página. Site e Figma andam iguais.')])),
-        vitrine('02 · O site', 'A home, do topo ao rodapé.', 'A página fica presa aqui enquanto você rola. Ela começa no topo e desce junto com a sua rolagem.', 'Good Green · home', GG + 'home-d.webp', GG + 'home-m.webp'),
+        vitrine('02 · O site', 'A home, do topo ao rodapé.', 'Role em cima da janela ou do celular para ver o site do topo ao rodapé. Fora deles, o case continua.', 'Good Green · home', GG + 'home-d.webp', GG + 'home-m.webp'),
         frase('A bebida tem que parecer <em>gostosa</em> antes de parecer saudável.', 'f-gg'),
         cap('03 · O quiz', 'O quiz monta<br>o diagnóstico.',
             ['São quatro perguntas seguidas, sem tela educativa no meio.', 'O pop-up da roleta e o carrinho seguem a mesma linguagem: vidro, foto real e pouco texto.'],
@@ -283,6 +285,7 @@ gg = dict(
                      dict(n='quiz', t='O quiz assustou', p='Nenhuma começou. Não sabiam quanto tempo leva, se teriam de cadastrar dados ou se era obrigatório.', dest=True)])
             + tabela(['O que apareceu', 'O que vou mudar'], [['O topo parece suco', 'Subtítulo do topo dizendo que é suplemento de fibras em pó, uma medida na água'], ['Faltou o preparo', '“Como tomar” em 3 passos logo depois da foto, com a dose do dia'], ['Quiz sem contexto', '“4 perguntas, 1 minuto, sem cadastro” no botão do quiz'], ['Preço por dose', 'Custo por dose e por mês perto do botão de compra']])),
     ]),
+    volta=('renova.html', 'App Renova Be', '#e8563a', 'Case anterior'),
     prox=('rastreio.html', 'Rastreio', '#ecd9cb', '#2b1d15', 'escuro'),
 )
 
@@ -333,7 +336,8 @@ nhv = dict(
                      dict(n='expectativa', t='Queriam ver o caminho antes', p='Sem buscar, não sabiam que a tela mostra a linha do tempo, a transportadora e a previsão. Uma pediu um botão grande para o WhatsApp.', dest=True)])
             + tabela(['O que apareceu', 'O que vou mudar'], [['Receio com o CPF', 'Nota curta ao lado do campo: para que o CPF é usado e o que a tela mostra'], ['Não sabiam o que vem depois', 'Uma prévia do resultado embaixo da busca: previsão, etapas e transportadora'], ['Querem falar com alguém', 'Botão de WhatsApp visível também antes da busca']])),
     ]),
-    prox=('renova.html', 'App Renova Be', '#e8563a', '#fff', 'claro'),
+    volta=('good-green.html', 'Good Green', '#0f2e2f', 'Case anterior'),
+    prox=('index.html#sobre', 'Sobre mim', '#15120f', '#efe9e1', 'claro', 'Último case · agora, quem fez', 'conhecer'),
 )
 
 for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
