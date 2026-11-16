@@ -234,7 +234,18 @@ renova = dict(
             ['O segundo jogo é rápido de propósito: cabe na fila do café.', 'Ele usa a mesma linguagem do Match, para os dois jogos serem da mesma família.'],
             cards([dict(t='Martele os monstrinhos', p='São as dores: rugas, manchas, flacidez.'), dict(t='Não bata no Mini', p='A embalagem nunca é o vilão.'), dict(t='Pegue o dourado', p='Poder do Colágeno, pontos em dobro.', dest=True)])
             + fig(RN + 'key-toctoc.webp', 'Arte do jogo Toc Toc, Mini Colágeno', 'fig-p larga'), 'escuro'),
-        cap('06 · Processo', 'Protótipo no<br>lugar de tela.',
+        cap('06 · Teste com usuárias', 'Quatro mulheres,<br>três tarefas.',
+            ['Pedi para 4 mulheres de 27 a 61 anos, que tomam ou já tomaram suplemento, usarem o protótipo sozinhas no próprio celular. Nenhuma era cliente da marca. Elas tentaram jogar uma fase, marcar a dose do dia e escolher colágeno para 3 meses até o botão de pagar, e deram uma nota de 1 (muito difícil) a 7 (muito fácil) para cada tarefa.',
+             'Todas concluíram as três tarefas. As duas mais velhas concluíram com dificuldade.'],
+            numeros([('5,0', 'jogar uma fase (média de 1 a 7)'), ('5,8', 'marcar a dose do dia'), ('5,0', 'escolher o kit')])
+            + cards([dict(n='4 de 4', t='Ninguém entendeu o que ganha', p='Todas ficaram em dúvida sobre a recompensa. “A expressão ganhar dinheiro me fez pensar que poderia receber um valor na minha conta.” (61 anos)'),
+                     dict(n='4 de 4', t='Todas pediram um lembrete', p='A rotina foi a tarefa mais fácil, mas faltou o aviso. Duas procuraram a rotina dentro da página do produto.'),
+                     dict(n='3 de 4', t='Queriam ver a economia', p='Todas escolheram o kit de 3 potes, mas queriam o preço por pote e a economia lado a lado, e saber se o brinde já está incluído.', dest=True)])),
+        frase('“Não entendi se é possível receber <em>dinheiro de verdade.</em>”'),
+        cap('07 · Próximos ajustes', 'O que muda<br>a partir daqui.',
+            ['As mudanças seguem o que travou mais de uma pessoa. Depois, testo de novo as mesmas tarefas.'],
+            tabela(['O que apareceu', 'O que vou mudar'], [['A recompensa não fica clara', 'Trocar “ganhar dinheiro” por “saldo para usar nas compras”, com um exemplo em reais antes da primeira fase'], ['Falta lembrete', 'Pedir o horário do lembrete ao começar a rotina'], ['A economia do kit não aparece', 'Preço por pote e economia lado a lado em cada kit, e brinde com “incluso no valor”'], ['As mais velhas tiveram mais dificuldade', 'Letras e botões principais maiores e um tutorial curto no primeiro acesso']])),
+        cap('08 · Processo', 'Protótipo no<br>lugar de tela.',
             ['Em vez de entregar só telas, entreguei um protótipo navegável no celular. O time implementou a partir dele.'],
             numeros([('39', 'telas no protótipo'), ('120', 'fases'), ('2', 'jogos')])
             + f'<p class="fora" data-sobe>O case também está no <a href="{BEHANCE}" target="_blank" rel="noopener">Behance {SETA}</a></p>'),
@@ -264,6 +275,13 @@ gg = dict(
         cap('04 · Lançamento', 'Antes de a loja abrir,<br>a marca precisa de lista.',
             ['Desenhei as páginas de entrada do pré-lançamento: captação para o grupo, calculadora de fibras e as páginas de apoio do site.'],
             grade([fig(GG + 'capt-d.webp', 'Página de captação do lançamento', '', 'Captação'), fig(GG + 'fibras-d.webp', 'Calculadora de fibras', '', 'Calculadora de fibras')], 2)),
+        cap('05 · Com as pessoas', 'Metade achou<br>que era suco.',
+            ['As mesmas 4 mulheres olharam o topo do site por 5 segundos, sem rolar, e disseram o que a marca vendia. Depois navegaram por 2 minutos e explicaram o produto com as próprias palavras.'],
+            numeros([('2 de 4', 'disseram “suco” no teste de 5 segundos'), ('4 de 4', 'entenderam que é suplemento depois de navegar'), ('0 de 4', 'fizeram o quiz')])
+            + cards([dict(n='5 segundos', t='O topo parece bebida', p='As duas mais velhas leram “suco” ou “bebida natural”. As duas mais novas leram “suplemento”.'),
+                     dict(n='navegação', t='Faltou o modo de preparo', p='3 de 4 pediram instruções simples: quanto tomar, como preparar, quantas vezes. “Parei porque prefiro textos curtos e informações diretas.” (61 anos)'),
+                     dict(n='quiz', t='O quiz assustou', p='Nenhuma começou. Não sabiam quanto tempo leva, se teriam de cadastrar dados ou se era obrigatório.', dest=True)])
+            + tabela(['O que apareceu', 'O que vou mudar'], [['O topo parece suco', 'Subtítulo do topo dizendo que é suplemento de fibras em pó, uma medida na água'], ['Faltou o preparo', '“Como tomar” em 3 passos logo depois da foto, com a dose do dia'], ['Quiz sem contexto', '“4 perguntas, 1 minuto, sem cadastro” no botão do quiz'], ['Preço por dose', 'Custo por dose e por mês perto do botão de compra']])),
     ]),
     prox=('rastreio.html', 'Rastreio', '#ecd9cb', '#2b1d15', 'escuro'),
 )
@@ -306,7 +324,14 @@ nhv = dict(
         cap('07 · Resultado', 'No ar, com<br>dados reais.', [],
             cards([dict(t='O que foi entregue', li=['Rastreio só com o CPF, publicado na loja nova.', 'Todos os estados: Pix pendente, separação, a caminho, entregue, cancelado, sem pedidos, erro e limite.', 'Design system com tokens, componentes e ícones.']),
                    dict(t='Decisões que pesaram', li=['Segurança: só cidade, a mesma resposta para CPF sem pedido, limite de buscas.', 'O Pix pendente dentro do rastreio: acompanhar vira também concluir o pagamento.', 'Uma linha do tempo só, com a transportadora dentro dela.'], dest=True),
-                   dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Teste com clientes reais e medição dos contatos de rastreio no atendimento.'])])),
+                   dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Medir os contatos de rastreio no atendimento antes e depois.'])])),
+        cap('08 · Com as clientes', 'Entenderam<br>sem explicação.',
+            ['Mostrei a tela no ar para as mesmas 4 mulheres, duas delas clientes da New Hair, e perguntei o que precisavam fazer ali, só olhando.'],
+            numeros([('4 de 4', 'entenderam na hora que é para digitar o CPF'), ('6,3', 'facilidade média (de 1 a 7)'), ('4 de 4', 'já perguntaram “cadê meu pedido?” a alguma loja')])
+            + cards([dict(n='primeira olhada', t='Uma função só ajuda', p='Foi a experiência mais fácil para 3 das 4. “Tem uma função só.” (61 anos)'),
+                     dict(n='confiança', t='O CPF ainda gera receio', p='3 de 4 queriam saber por que o CPF é pedido e como os dados são protegidos antes de digitar.'),
+                     dict(n='expectativa', t='Queriam ver o caminho antes', p='Sem buscar, não sabiam que a tela mostra a linha do tempo, a transportadora e a previsão. Uma pediu um botão grande para o WhatsApp.', dest=True)])
+            + tabela(['O que apareceu', 'O que vou mudar'], [['Receio com o CPF', 'Nota curta ao lado do campo: para que o CPF é usado e o que a tela mostra'], ['Não sabiam o que vem depois', 'Uma prévia do resultado embaixo da busca: previsão, etapas e transportadora'], ['Querem falar com alguém', 'Botão de WhatsApp visível também antes da busca']])),
     ]),
     prox=('renova.html', 'App Renova Be', '#e8563a', '#fff', 'claro'),
 )
