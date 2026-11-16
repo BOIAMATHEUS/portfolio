@@ -739,3 +739,8 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
   .fita-i { position: sticky; left: 0; width: calc(100vw - var(--m) * 2); margin-bottom: 18px; }
   .fita::before { margin-bottom: 10px; }
 }
+
+/* faixa de celulares: a sombra do aparelho descia ~110 px e era cortada pela faixa (overflow), virando um retângulo
+   com linha reta embaixo (print dele, 16/11). Dentro da faixa a sombra é curta e macia, e sobra espaço embaixo. */
+.fita { padding-bottom: clamp(56px, 8vh, 96px); }
+.fita .fone { box-shadow: 0 0 0 1px #77675f, inset 0 0 0 2px #080706, 0 22px 36px -16px rgba(40, 8, 0, .42); }
