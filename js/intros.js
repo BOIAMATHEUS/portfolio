@@ -17,10 +17,11 @@
     const rs = $$('.nome .pal').map((p) => p.getBoundingClientRect()), cs = getComputedStyle(nome), fs = parseFloat(cs.fontSize);
     const x0 = Math.min(...rs.map((r) => r.left)), yB = Math.max(...rs.map((r) => r.bottom)) + fs * .05, yT = Math.min(...rs.map((r) => r.top)) - fs * .06, embaixo = innerWidth >= 900;
     const ov = novo(document.body, 'div', 'intro-pr'), gr = novo(ov, 'div', 'pr-grade');
-    const cam = novo(ov, 'div', 'pr-cam px', `<div class="pr-cam-t"><b>portfolio.fig</b><i>M</i></div>${['nome', 'texto', '2 imagens'].map((t) => `<div class="pr-l">${QUADRO}${t}</div>`).join('')}`);
+    const ICONE = { nome: QUADRO, texto: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3.5h10M8 3.5v10"/></svg>', imagens: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="1.8" y="2.5" width="12.4" height="11" rx="2"/><circle cx="5.8" cy="6.3" r="1.2"/><path d="M2.4 12.2l3.7-3.5 2.6 2.4 2-1.8 2.9 2.6"/></svg>' };
+    const cam = novo(ov, 'div', 'pr-cam px', `<div class="pr-cam-t"><b>portfolio.fig</b><i>M</i></div><div class="pr-cam-s">Camadas</div>${[['nome', 'nome'], ['texto', 'texto'], ['imagens', '2 imagens']].map(([k, t]) => `<div class="pr-l" data-l="${k}">${ICONE[k]}<span>${t}</span></div>`).join('')}`);
     const barra = novo(ov, 'div', 'pr-barra px', '<span data-f="wire">wireframe</span><span data-f="cont">contorno</span><span data-f="final">final</span>');
     barra.style.top = (embaixo ? yB + 34 : yT - 62) + 'px'; cam.style.cssText = `left:${x0}px;top:${yB + 22}px`;
-    const etapa = (n) => $$('span', barra).forEach((s) => s.classList.toggle('on', s.dataset.f === n));
+    const etapa = (n) => { $$('span', barra).forEach((s) => s.classList.toggle('on', s.dataset.f === n)); $$('.pr-l', cam).forEach((l) => l.classList.toggle('on', n === 'final' || (n === 'cont' && l.dataset.l === 'nome'))); };
     const botao = (n) => { const r = $(`[data-f="${n}"]`, barra).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
     const cur = novo(ov, 'span', 'pr-cur', '<u class="px">Matheus</u>'), P = { x: innerWidth * .78, y: (embaixo ? yB : yT) - 40 }, poe = () => gsap.set(cur, { x: P.x, y: P.y });
     poe(); etapa('wire');

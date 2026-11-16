@@ -598,12 +598,15 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .pr-barra { left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 3px; padding: 5px; border-radius: 14px; background: #fff; box-shadow: var(--cartao); }
 .pr-barra span { height: 36px; padding: 0 15px; border-radius: 9px; display: grid; place-items: center; font-size: 13.5px; transition: background .12s, color .12s; }
 .pr-barra span.on { background: var(--sel); color: #fff; }
-.pr-cam { width: 196px; padding: 10px 12px 11px; border-radius: 12px; background: #fff; box-shadow: var(--cartao); font-size: 12.5px; }
+.pr-cam { z-index: 3; width: 196px; padding: 10px 12px 11px; border-radius: 12px; background: #fff; box-shadow: var(--cartao); font-size: 12.5px; }
 .pr-cam-t { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid var(--linha); }
 .pr-cam-t b { font-weight: 400; }
 .pr-cam-t i { width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 10.5px; color: #fff; background: var(--sel); }
-.pr-l { display: flex; align-items: center; gap: 7px; padding: 4px 0; color: var(--tinta-2); white-space: nowrap; }
-.pr-l svg { width: 13px; height: 13px; display: block; color: var(--sel); }
+.pr-l { display: flex; align-items: center; gap: 8px; margin: 1px -6px; padding: 5px 6px; border-radius: 7px; color: var(--tinta-2); white-space: nowrap; transition: background .15s, color .15s; }
+.pr-l svg { width: 13px; height: 13px; flex: none; display: block; color: color-mix(in srgb, var(--tinta) 45%, transparent); transition: color .15s; }
+.pr-l.on { background: color-mix(in srgb, var(--sel) 12%, transparent); color: var(--sel); }
+.pr-l.on svg { color: var(--sel); }
+.pr-cam-s { margin: 2px 0 3px; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; opacity: .45; }
 .pr-cur { left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--sel); box-shadow: 0 0 0 2px #fff; z-index: 5; }
 .pr-cur u { position: absolute; left: 14px; top: 12px; text-decoration: none; white-space: nowrap; font-size: 12px; padding: 3px 8px; border-radius: 4px 9px 9px 9px; background: var(--sel); color: #fff; }
 .wf-b { left: 0; top: 0; border-radius: 14px; background: #d2cbbe; transform-origin: 0 50%; }
