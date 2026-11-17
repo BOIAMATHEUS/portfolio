@@ -336,7 +336,7 @@ nhv = dict(
             + cards([dict(n='decisão', t='Não redesenhar o checkout', p='Ele aprovava 99% no cartão. Mexer na tela não traria o Pix de volta.'),
                      dict(n='no rastreio', t='Pagar onde a cliente volta', p='Quem gerou o Pix e não pagou volta para saber do pedido. Ali a tela mostra o Pix pendente com o código copia e cola e a validade. Junto disso, o time de CRM melhorou o fluxo de Pix abandonado.'),
                      dict(n='hoje', t='6 em cada 10 Pix pagam', p='Contra 44% no começo de agosto. A subida maior veio antes desta análise, por isso ela entra aqui como contexto, não como resultado meu.', dest=True)])),
-        frase('A tela de rastreio virou também um lugar para <em>concluir o pagamento.</em>', 'f-nhv'),
+        frase('O problema não era a tela do checkout. Era o Pix que <em>ficava para depois.</em>', 'f-nhv'),
         cap('04 · Baixa fidelidade', 'Primeiro a ordem,<br>depois a cor.',
             ['Três telas em cinza para validar a hierarquia no celular. A cliente quer saber, nessa ordem: quando chega, onde está e os detalhes.'],
             fig(NH + 't-wireframes.webp', 'Wireframes em cinza das três telas: busca, lista e pedido aberto', 'fig-p larga')
