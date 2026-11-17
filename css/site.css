@@ -930,3 +930,15 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .cd-encarte:has(.capa-arte) .capa-t { text-shadow: 0 2px 14px rgba(0, 0, 0, .35); }
 .capa-nh:has(.capa-arte)::after { background: linear-gradient(rgba(43, 29, 21, .35), transparent 18%, transparent 66%, rgba(43, 29, 21, .6)); }
 .capa-nh:has(.capa-arte) .capa-a, .capa-nh:has(.capa-arte) .capa-f { color: #fff; }
+
+/* barras do dado de caixa (case Rastreio): pago sobre criado por forma de pagamento */
+.pgx { margin-top: clamp(30px, 4vw, 56px); display: grid; gap: 14px; max-width: 920px; }
+.pgx-l { display: grid; grid-template-columns: 120px 1fr 84px; align-items: center; gap: 16px; }
+.pgx-n { font-size: 16px; font-weight: 600; }
+.pgx-t { height: 14px; border-radius: 99px; background: color-mix(in srgb, currentColor 10%, transparent); overflow: hidden; }
+.pgx-t i { display: block; height: 100%; border-radius: 99px; background: #7d5b49; }
+.pgx-l b { font-size: 22px; font-weight: 800; letter-spacing: -.03em; text-align: right; }
+.pgx-l.alerta .pgx-t i { background: #c4572f; }
+.pgx-l.alerta b { color: #c4572f; }
+.pgx-leg { margin-top: 6px; font-size: 14px; color: var(--tinta-2); }
+@media (max-width: 600px) { .pgx-l { grid-template-columns: 92px 1fr 62px; gap: 10px; } .pgx-l b { font-size: 18px; } }
