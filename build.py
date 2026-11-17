@@ -327,6 +327,15 @@ nhv = dict(
             cards([dict(t='A busca por CPF existe', p='A plataforma de pedidos busca por documento: dá para listar todos os pedidos de uma pessoa, filtrando pelo CPF exato.'),
                    dict(t='O rastreio detalhado ainda não chega', p='Os eventos da transportadora não vêm pela API hoje. A linha do tempo foi desenhada para recebê-los quando a integração existir.'),
                    dict(t='O Pix pendente é uma oportunidade', p='O pedido traz o código copia e cola e a validade. A tela vira um lugar para concluir o pagamento, não só para acompanhar.', dest=True)])),
+        cap('Dado de caixa', 'Por que o Pix<br>entrou no rastreio.',
+            ['Enquanto desenhava o rastreio, percebi o mesmo padrão no checkout. Revisitei os dados de quem comprava e de quem não comprava, pelo caixa da Yampi e não pelo pixel: 9.882 pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
+             'Com cartão, quase todo pedido vira pagamento. Com Pix, que é metade dos pedidos, mais de 4 em cada 10 nunca são pagos. O problema não estava na tela do checkout, e sim no Pix que fica para depois.'],
+            '<div class="pgx" data-sobe role="img" aria-label="Pedidos pagos por forma de pagamento: Visa 98,8%, Mastercard 98,6%, Elo 96,6%, Pix 57,4%">'
+            + ''.join(f'<div class="pgx-l{" alerta" if n == "Pix" else ""}"><span class="pgx-n">{n}</span><span class="pgx-t"><i style="width:{v}%"></i></span><b>{str(v).replace(".", ",")}%</b></div>' for n, v in [('Visa', 98.8), ('Mastercard', 98.6), ('Elo', 96.6), ('Pix', 57.4)])
+            + '<p class="pgx-leg">Pedidos pagos sobre pedidos criados, por forma de pagamento. Pix é 53% dos pedidos.</p></div>'
+            + cards([dict(n='decisão', t='Não redesenhar o checkout', p='Ele aprovava 99% no cartão. Mexer na tela não traria o Pix de volta.'),
+                     dict(n='no rastreio', t='Pagar onde a cliente volta', p='Quem gerou o Pix e não pagou volta para saber do pedido. Ali a tela mostra o Pix pendente com o código copia e cola e a validade. Junto disso, o time de CRM melhorou o fluxo de Pix abandonado.'),
+                     dict(n='hoje', t='6 em cada 10 Pix pagam', p='Contra 44% no começo de agosto. A subida maior veio antes desta análise, por isso ela entra aqui como contexto, não como resultado meu.', dest=True)])),
         frase('A tela de rastreio virou também um lugar para <em>concluir o pagamento.</em>', 'f-nhv'),
         cap('04 · Baixa fidelidade', 'Primeiro a ordem,<br>depois a cor.',
             ['Três telas em cinza para validar a hierarquia no celular. A cliente quer saber, nessa ordem: quando chega, onde está e os detalhes.'],
@@ -346,15 +355,6 @@ nhv = dict(
             + '<p class="fora" data-sobe>Acessibilidade (WCAG AA), conferida na tela no ar:</p>'
             + numeros([('37 de 37', 'textos com contraste AA'), ('54 px', 'altura do botão principal'), ('100%', 'campos com rótulo e imagens com texto alternativo')])
             + '<p class="fora" data-sobe>Próximo ajuste: os botões do modo de demonstração e o do WhatsApp têm 36 a 40 px de altura, abaixo dos 44 px recomendados para toque.</p>'),
-        cap('Dado de caixa', 'O checkout não<br>era o problema.',
-            ['Antes de redesenhar o checkout, li os pedidos da Yampi pelo caixa, não pelo pixel: 9.882 pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
-             'Com cartão, quase todo pedido vira pagamento. Com Pix, que é metade dos pedidos, mais de 4 em cada 10 nunca são pagos. O problema estava no pagamento do Pix, não na tela do checkout.'],
-            '<div class="pgx" data-sobe role="img" aria-label="Pedidos pagos por forma de pagamento: Visa 98,8%, Mastercard 98,6%, Elo 96,6%, Pix 57,4%">'
-            + ''.join(f'<div class="pgx-l{" alerta" if n == "Pix" else ""}"><span class="pgx-n">{n}</span><span class="pgx-t"><i style="width:{v}%"></i></span><b>{str(v).replace(".", ",")}%</b></div>' for n, v in [('Visa', 98.8), ('Mastercard', 98.6), ('Elo', 96.6), ('Pix', 57.4)])
-            + '<p class="pgx-leg">Pedidos pagos sobre pedidos criados, por forma de pagamento. Pix é 53% dos pedidos.</p></div>'
-            + cards([dict(n='decisão', t='Não redesenhar o checkout', p='A interface aprovava 99% no cartão. Mexer nela não traria o Pix de volta.'),
-                     dict(n='o que mudou', t='Tratar o pagamento', p='O problema virou recuperação de Pix pendente: o time de CRM melhorou o fluxo de Pix abandonado, e o rastreio passou a mostrar o Pix pendente com o código para pagar.'),
-                     dict(n='hoje', t='6 em cada 10 Pix pagam', p='Contra 44% no começo de agosto. A subida maior veio antes desta análise, por isso ela entra aqui como contexto, não como resultado meu.', dest=True)])),
         prototipo('Teste você', 'Busque um<br>pedido.', ['A tela no ar, em modo de demonstração: escolha um cenário (Pix pendente, a caminho, entregue) e busque. Os dados são fictícios, nenhum pedido real aparece.'], 'https://www.newhair.com.br/rastreio?demo=1', 'Rastreio da New Hair em demonstração'),
         cap('08 · Com as clientes', 'Entenderam<br>sem explicação.',
             ['Mostrei a tela no ar para as mesmas 4 mulheres, duas delas clientes da New Hair, e perguntei o que precisavam fazer ali, só olhando.'],
