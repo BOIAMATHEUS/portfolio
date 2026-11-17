@@ -1035,3 +1035,33 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .prateleira { height: 18px; border-radius: 2px 2px 6px 6px; background: linear-gradient(#4d3f34 0%, #3a2f27 45%, #251e19 100%); box-shadow: 0 1px 0 rgba(255, 228, 200, .16) inset, 0 34px 42px -18px rgba(0, 0, 0, .95), 0 6px 10px -4px rgba(0, 0, 0, .6); }
 .prateleira::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 16px; background: linear-gradient(#1e1916, #3d3229 85%, #4f4135); clip-path: polygon(1.4% 0, 98.6% 0, 100% 100%, 0 100%); }
 .prateleira::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 236, 214, .35) 20%, rgba(255, 236, 214, .35) 80%, transparent); }
+
+/* ===== Vira Cam no celular: prints em carrossel e design system compacto ===== */
+@media (max-width: 700px) {
+  .t-vira .grade { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: calc(var(--m) * -1); padding: 4px var(--m) 14px; scrollbar-width: none; }
+  .t-vira .grade::-webkit-scrollbar { display: none; }
+  .t-vira .grade > * { flex: 0 0 88%; scroll-snap-align: center; }
+  .vds { border-radius: 24px; padding: 18px 14px; gap: 26px; margin-inline: calc(var(--m) * -.5); }
+  .vds-pal { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vds-cor { padding: 7px 10px 7px 7px; gap: 9px; }
+  .vds-cor i { width: 32px; height: 32px; flex: none; }
+  .vds-cor b { font-size: 13px; }
+  .vds-cor small { font-size: 10px; line-height: 1.25; }
+  .vds-t { padding: 10px 0; }
+  .vds-c { padding: 16px; border-radius: 20px; }
+  .vds-seg { flex-wrap: nowrap; gap: 6px; }
+  .vds-seg button { width: 44px; height: 56px; font-size: 18px; flex: none; }
+  .vds-palco { min-height: 140px; }
+  .vds-ms { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .vds-m { padding: 11px 12px; border-radius: 14px; }
+  .vds-m b { font-size: 13px; }
+}
+
+/* ===== celular: abertura com o nome e a apresentação no centro da tela de verdade ===== */
+@media (max-width: 700px) {
+  .hero { justify-content: center; }
+  .hero-topo { position: absolute; top: 66px; left: var(--m); right: var(--m); margin: 0; }
+  .hero-pe { margin-top: 26px; margin-bottom: 0; }
+  .hero-info { font-size: 19px; line-height: 1.38; }
+  .hero-info .px { font-size: 15px; margin-top: 12px; }
+}

@@ -348,8 +348,15 @@
       alvo.animate(k, { duration: d, easing: e, fill: 'both' });
     }));
   })();
-    /* nos cases os gatos não disputam a leitura: aparecem no topo e no fim, somem no meio */
-    if (G && G.faixa && G.faixa.el && $('.ch') && $('.volta')) ScrollTrigger.create({ trigger: '.ch', start: 'bottom 75%', endTrigger: '.volta', end: 'top bottom', onToggle: (st) => gsap.to(G.faixa.el, { autoAlpha: st.isActive ? 0 : 1, duration: .5, overwrite: true }) });
+    /* nos cases os gatos não disputam a leitura: ao sair do topo eles descem e somem aos poucos, presos à rolagem; perto do fim voltam do mesmo jeito */
+    if (G && G.faixa && G.faixa.el && $('.ch') && $('.volta')) {
+      const fx = G.faixa.el, cel = innerWidth < 700, RAMPA = cel ? 160 : 520;
+      ScrollTrigger.create({ trigger: '.ch', start: cel ? 'top top' : 'bottom 85%', endTrigger: '.volta', end: 'top bottom', onUpdate: (st) => {
+        const total = st.end - st.start, px = st.progress * total, vis = 1 - Math.min(1, (cel ? total - px : Math.min(px, total - px)) / RAMPA);
+        gsap.set(fx, { opacity: vis, y: (1 - vis) * 90, visibility: vis < .02 ? 'hidden' : 'visible' });
+      }, onLeave: () => gsap.set(fx, { opacity: 1, y: 0, visibility: 'visible' }), onLeaveBack: () => { if (!cel) gsap.set(fx, { opacity: 1, y: 0, visibility: 'visible' }); } });
+      if (cel) gsap.set(fx, { opacity: 0, y: 90, visibility: 'hidden' });
+    }
     gsap.set(cortina, { yPercent: 0 }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) });
     const h = $('.ch h1');
     if (h) { linhas(h, { delay: .55 }); gsap.from(['.ch .rot', '.ch-d', '.meta'], { y: 24, opacity: 0, duration: .8, stagger: .08, delay: .9, ease: 'power3.out' }); }

@@ -40,7 +40,7 @@
     const P = { S: pontoLetra(L.S, 'S'), b: pontoLetra(L.b, 'b', 'haste'), o: pontoLetra(L.o, 'o'), a: pontoLetra(L.a2, 'a') };
     const sit = (G.A[G.ZORO].sit || 182);
     const fs = () => parseFloat(getComputedStyle(L.i).fontSize);
-    const escala = () => fs() * (innerWidth < 900 ? .42 : .29) / sit;
+    const escala = () => fs() * (innerWidth < 700 ? .6 : innerWidth < 900 ? .42 : .29) / sit;
     const espera = (ms, vivo) => new Promise((r) => setTimeout(() => r(vivo()), ms));
 
     /* ---------- pingo ---------- */
