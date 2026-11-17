@@ -256,10 +256,13 @@ renova = dict(
         frase('“Não entendi se é possível receber <em>dinheiro de verdade.</em>”'),
         cap('07 · Próximos ajustes', 'O que muda<br>a partir daqui.',
             ['As mudanças seguem o que travou mais de uma pessoa. Depois, testo de novo as mesmas tarefas.'],
-            tabela(['O que apareceu', 'O que vou mudar'], [['A recompensa não fica clara', 'Trocar “ganhar dinheiro” por “saldo para usar nas compras”, com um exemplo em reais antes da primeira fase'], ['Falta lembrete', 'Pedir o horário do lembrete ao começar a rotina'], ['A economia do kit não aparece', 'Preço por pote e economia lado a lado em cada kit, e brinde com “incluso no valor”'], ['As mais velhas tiveram mais dificuldade', 'Letras e botões principais maiores e um tutorial curto no primeiro acesso']])),
+            tabela(['O que apareceu', 'O que vou mudar'], [['A recompensa não fica clara', 'Trocar “ganhar dinheiro” por “saldo para usar nas compras”, com um exemplo em reais antes da primeira fase'], ['Falta lembrete', 'Pedir o horário do lembrete ao começar a rotina'], ['A economia do kit não aparece', 'Preço por pote e economia lado a lado em cada kit, e brinde com “incluso no valor”'], ['As mais velhas tiveram mais dificuldade', 'Letras e botões principais maiores e um tutorial curto no primeiro acesso']])
+            + '<p class="fora" data-sobe>Acessibilidade (WCAG AA), medida no protótipo com um script de contraste e de área de toque:</p>'
+            + tabela(['O que a auditoria apontou', 'O que vou mudar'], [['“Comprar agora” em 9 px, com contraste de 3,7:1', 'Mínimo de 12 px e contraste de 4,5:1 nos textos de botão'], ['Favoritar, atendimento e notificações com 30 a 36 px de área de toque', 'Área de toque de 44 px, mesmo com o ícone menor'], ['A página declarada em inglês para o leitor de tela', 'Idioma da página em português (pt-BR)']])),
         cap('08 · Processo', 'Protótipo no<br>lugar de tela.',
-            ['Em vez de entregar só telas, entreguei um protótipo navegável no celular. O time implementou a partir dele.'],
-            numeros([('39', 'telas no protótipo'), ('120', 'fases'), ('2', 'jogos')])
+            ['Em vez de entregar só telas, entreguei um protótipo navegável no celular. O time implementou a partir dele.',
+             'O protótipo foi construído com o Claude Code em React, a partir das telas do Figma: as regras da rotina, o carrinho que leva à loja de verdade e cada fase dos jogos. As artes do jogo saíram do ChatGPT e os fundos animados dos mapas do Google Flow, sempre a partir de uma referência aprovada.'],
+            numeros([('39', 'telas no protótipo'), ('180', 'fases'), ('2', 'jogos')])
             + f'<p class="fora" data-sobe>O case também está no <a href="{BEHANCE}" target="_blank" rel="noopener">Behance {SETA}</a></p>'),
     ]),
     volta=('index.html', 'Início', '#efe9e1', 'Voltar'),
@@ -334,12 +337,15 @@ nhv = dict(
             versoes([('v1', 'A base', 'Busca por CPF, lista de pedidos e linha do tempo.'), ('v2', 'Uma linha do tempo só', 'Os eventos da transportadora entram dentro de “Enviado”. Ícones em cada etapa e a situação no topo do pedido.'), ('v3', 'Mais New Hair, mobile first', 'Caramelo e nudes da marca, título em itálico. Produto como destaque, pílula com ícone, botões de 44 px.'), ('v4', 'A partir das referências', 'Previsão grande (“Chega amanhã”), painéis e faixa de atendimento em caramelo cheio. Ajustes finos no pé e na nota do CPF.')])),
         fita([tela_alta(NH + 't-busca.webp', 'Busca'), tela_alta(NH + 't-lista.webp', 'Lista de pedidos'), tela_alta(NH + 't-a-caminho.webp', 'Pedido a caminho'), tela_alta(NH + 't-pix-pendente.webp', 'Pix pendente'), tela_alta(NH + 't-entregue.webp', 'Entregue'), tela_alta(NH + 't-sem-pedidos.webp', 'CPF sem pedidos')]),
         cap('06 · Desktop e sistema', 'No desktop, o título<br>ao lado da busca.',
-            ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma, com os mesmos nomes e cores usados no desenvolvimento.'],
+            ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma, com os mesmos nomes e cores usados no desenvolvimento: pílula de status nos 5 estados do pedido, botões (incluindo o estado “copiado”), etapa da linha do tempo feita, atual e pendente, cartão do pedido, faixa de atendimento e 22 ícones no desenho do Lucide.'],
             grade([fig(NH + 't-desktop.webp', 'Tela de rastreio em desktop', 'fig-p', 'Desktop'), fig(NH + 't-componentes.webp', 'Componentes do design system do rastreio', 'fig-p', 'Componentes')], '2 iguais')),
         cap('07 · Resultado', 'No ar, com<br>dados reais.', [],
             cards([dict(t='O que foi entregue', li=['Rastreio só com o CPF, publicado na loja nova.', 'Todos os estados: Pix pendente, separação, a caminho, entregue, cancelado, sem pedidos, erro e limite.', 'Design system com tokens, componentes e ícones.']),
                    dict(t='Decisões que pesaram', li=['Segurança: só cidade, a mesma resposta para CPF sem pedido, limite de buscas.', 'O Pix pendente dentro do rastreio: acompanhar vira também concluir o pagamento.', 'Uma linha do tempo só, com a transportadora dentro dela.'], dest=True),
-                   dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Medir os contatos de rastreio no atendimento antes e depois.'])])),
+                   dict(t='Próximos passos', li=['Eventos da transportadora em tempo real, pela integração interna.', 'Aviso de “saiu para entrega”.', 'Medir os contatos de rastreio no atendimento antes e depois.'])])
+            + '<p class="fora" data-sobe>Acessibilidade (WCAG AA), conferida na tela no ar:</p>'
+            + numeros([('37 de 37', 'textos com contraste AA'), ('54 px', 'altura do botão principal'), ('100%', 'campos com rótulo e imagens com texto alternativo')])
+            + '<p class="fora" data-sobe>Próximo ajuste: os botões do modo de demonstração e o do WhatsApp têm 36 a 40 px de altura, abaixo dos 44 px recomendados para toque.</p>'),
         prototipo('Teste você', 'Busque um<br>pedido.', ['A tela no ar, em modo de demonstração: escolha um cenário (Pix pendente, a caminho, entregue) e busque. Os dados são fictícios, nenhum pedido real aparece.'], 'https://www.newhair.com.br/rastreio?demo=1', 'Rastreio da New Hair em demonstração'),
         cap('08 · Com as clientes', 'Entenderam<br>sem explicação.',
             ['Mostrei a tela no ar para as mesmas 4 mulheres, duas delas clientes da New Hair, e perguntei o que precisavam fazer ali, só olhando.'],
