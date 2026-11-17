@@ -365,10 +365,67 @@ nhv = dict(
             + tabela(['O que apareceu', 'O que vou mudar'], [['Receio com o CPF', 'Nota curta ao lado do campo: para que o CPF é usado e o que a tela mostra'], ['Não sabiam o que vem depois', 'Uma prévia do resultado embaixo da busca: previsão, etapas e transportadora'], ['Querem falar com alguém', 'Botão de WhatsApp visível também antes da busca']])),
     ]),
     volta=('good-green.html', 'Good Green', '#0f2e2f', 'Case anterior'),
+    prox=('vira-cam.html', 'Vira Cam', '#0f0e0e', '#ffffff', 'claro'),
+)
+
+
+# ================= Vira Cam =================
+VC = 'assets/vira/'
+APP = 'https://vira-cam.renova-black-preview.workers.dev/'
+vira = dict(
+    tema='t-vira', nav='claro', cor='#0f0e0e', titulo='Vira Cam · câmera do celular no OBS', seo='Vira Cam: web app feito com IA e testado ao vivo', sobre=['Produto digital', 'Web app', 'Live', 'IA no processo', 'Design system'],
+    desc='Case de produto de Matheus Saboia: Vira Cam, web app que transforma qualquer celular em câmera do OBS pelo Wi-Fi. Feito do zero com IA e testado numa live de verdade.',
+    arte=VC + 'hero.webp', rot='04 · Produto próprio · feito com IA', h1='Vira<br><em>Cam</em>',
+    d='Qualquer celular vira câmera do OBS pelo Wi-Fi, sem instalar nada. Feito do zero com IA e testado numa live de verdade.',
+    meta=[('Papel', 'Produto, UX/UI e direção'), ('Período', 'Outubro e novembro de 2026'), ('Plataforma', 'Web app: celular e computador'), ('Ferramentas', 'IA, design system e protótipo')],
+    corpo=''.join([
+        cap('01 · Problema', 'Duas câmeras<br>que não conversavam.',
+            ['Nas lives da marca, um iPhone entrava por cabo e outro pelo Wi-Fi, cada um com um aplicativo e um programa diferente no computador. Na hora da live, as duas câmeras não ficavam conectadas juntas.',
+             'Era preciso usar vários celulares como câmera, em pé, sem instalar nada e sem cair numa live de horas.'],
+            cards([dict(t='Problema', li=['Dois aplicativos e dois programas para duas câmeras.', 'Conexão que caía no meio da live.']),
+                   dict(t='Objetivo', p='Abrir um link no celular e ele virar câmera do OBS, em 9:16, com até 5 celulares ao mesmo tempo.', dest=True),
+                   dict(t='Restrições', li=['Nada para instalar no celular.', 'Uma live dura horas: tudo precisa se recuperar sozinho.'])])),
+        cap('02 · Pesquisa', 'O cabo não era<br>o caminho.',
+            ['Antes de desenhar, pesquisei como um celular pode mandar vídeo para o computador e o que derruba uma câmera no meio da live.'],
+            cards([dict(n='achado', t='O navegador não manda vídeo por cabo', p='Toda webcam de celular por cabo depende de aplicativo e de programa no computador. Para uma página, o cabo só serve como rede.'),
+                   dict(n='achado', t='No mesmo Wi-Fi, o vídeo vai direto', p='Do celular para o computador, sem passar por servidor. A internet só ajuda os dois a se encontrarem.'),
+                   dict(n='achado', t='O que derruba a câmera', p='Wi-Fi que oscila, ligação que toma a câmera, tela que apaga. Cada caso ganhou uma saída automática.', dest=True)])),
+        frase('O celular abre um link e <em>vira câmera.</em>', 'f-vira'),
+        cap('03 · No celular', 'Uma câmera,<br>não um formulário.',
+            ['A tela ao vivo é um visor: a imagem ocupa a tela, o estado fica numa pílula que acende em vermelho quando o OBS recebe a imagem, e os controles ficam ao alcance do polegar.',
+             'Para quem está no tripé, um toque apaga a tela sem desligar a câmera. Para quem vai entrar ao vivo, o botão “Ver como no Instagram” mostra o que a live cobre por cima da imagem.'],
+            ''),
+        fita([aparelho(VC + 'c-tutorial.webp', 'Primeira vez'), aparelho(VC + 'c-entrada.webp', 'Entrada'), aparelho(VC + 'c-ao-vivo.webp', 'Ao vivo'), aparelho(VC + 'c-guia.webp', 'Ver como no Instagram'), aparelho(VC + 'c-ajustes.webp', 'Ajustes'), aparelho(VC + 'c-trocar.webp', 'Trocar de câmera'), aparelho(VC + 'c-bloqueada.webp', 'Câmera bloqueada'), aparelho(VC + 'c-apagada.webp', 'Tela apagada')]),
+        cap('04 · No computador', 'Para quem<br>opera o OBS.',
+            ['Quem usa OBS está no computador. O painel mostra as 5 câmeras lado a lado: a câmera livre mostra o próprio QR, então basta apontar o celular para ela.',
+             'Cada câmera tem o link pronto para colar no OBS, um passo a passo de como ligar, e um clique abre a imagem grande sem pedir outro vídeo ao celular.'],
+            grade([fig(VC + 'd-painel.webp', 'Painel com as cinco câmeras, três conectadas e duas com QR', 'fig-p', 'Câmeras'), fig(VC + 'd-foco.webp', 'Câmera aberta em tamanho grande no painel', 'fig-p', 'Câmera grande'), fig(VC + 'd-obs.webp', 'Passo a passo para ligar a câmera no OBS', 'fig-p', 'Ligar no OBS'), fig(VC + 'd-conta.webp', 'Tela de entrar na conta no computador', 'fig-p', 'Conta')], '2 iguais')),
+        cap('05 · Decisões', 'O que pesou<br>no desenho.', [],
+            regras([('Equipe', 'Uma chave por equipe', 'Ela vai junto no QR e no link do OBS. Nenhuma outra tela consegue puxar a câmera de quem está ao vivo.'),
+                    ('Zoom', 'O zoom acontece no OBS', 'O celular manda a imagem inteira e o OBS aplica o zoom e o enquadramento. A prévia no celular é igual ao que vai ao ar.'),
+                    ('Vidro', 'Leve durante a live', 'Fora da transmissão, o vidro tem desfoque. Durante a live, vira uma camada translúcida simples, para a imagem seguir a 30 quadros por segundo.')])),
+        cap('06 · Design system', 'Um sistema<br>só.',
+            ['Celular, painel e conta usam as mesmas peças: paleta escura com o vermelho reservado para o que está no ar, Helvetica, pílulas de vidro e quatro durações de movimento.',
+             'Todas as transições estão mapeadas, com duração, curva e o que dispara cada uma.'],
+            grade([fig(VC + 's-cor.webp', 'Paleta do Vira Cam em pílulas', 'fig-p', 'Cor'), fig(VC + 's-comp.webp', 'Componentes do Vira Cam', 'fig-p', 'Componentes'), fig(VC + 's-mov.webp', 'Tabela de transições do Vira Cam', 'fig-p', 'Movimento')], 3)
+            + f'<p class="fora" data-sobe><a class="proto-fora" href="{APP}sistema" target="_blank" rel="noopener">Abrir o design system {SETA}</a></p>'),
+        cap('07 · Processo', 'Feito do zero<br>com IA.',
+            ['Eu defini o problema, pesquisei, desenhei o fluxo e a interface e revisei cada tela. O código, os testes e as imagens foram feitos com IA, a partir das minhas instruções.'],
+            cards([dict(n='código', t='App e testes com IA', p='A interface, a conexão entre celular e computador e um teste que liga 5 celulares e 5 OBS simulados a cada mudança.'),
+                   dict(n='imagens', t='Pessoas geradas no ChatGPT', p='As cinco pessoas que aparecem nas câmeras de exemplo e as variações do ícone.'),
+                   dict(n='meu papel', t='Produto e design', p='Problema, pesquisa, fluxo, interface, design system, revisão e o teste na live.', dest=True)])),
+        cap('08 · Resultado', 'Testado<br>ao vivo.',
+            ['O Vira Cam rodou a live de lançamento de outubro da New Hair, do começo ao fim, no lugar dos dois aplicativos.'],
+            numeros([('5', 'celulares ao mesmo tempo'), ('30', 'quadros por segundo em cada câmera'), ('0', 'aplicativos para instalar')])
+            + cards([dict(t='O que foi entregue', li=['Câmera no celular, painel no computador e conta.', 'Tutorial da primeira vez e todos os estados de erro.', 'Design system com movimento mapeado.']),
+                     dict(t='Próximos passos', li=['Contas de verdade, ligadas ao painel.', 'Versão para iPhone e Android nas lojas.', 'Teste com outras equipes de live.'], dest=True)])
+            + f'<p class="fora" data-sobe><a class="proto-fora" href="{APP}" target="_blank" rel="noopener">Abrir o app no celular {SETA}</a> &nbsp; <a class="proto-fora" href="{APP}painel" target="_blank" rel="noopener">Abrir o painel {SETA}</a></p>'),
+    ]),
+    volta=('rastreio.html', 'Rastreio', '#7d5b49', 'Case anterior'),
     prox=('index.html#supervisao', 'Supervisão', '#15120f', '#efe9e1', 'claro', 'Último case · agora, quem aprova cada tela', 'conhecer'),
 )
 
-for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv)]:
+for nome, p in [('renova.html', renova), ('good-green.html', gg), ('rastreio.html', nhv), ('vira-cam.html', vira)]:
     p['arq'] = nome
     open(nome, 'w', encoding='utf-8').write(medidas(pagina(p)))
     print(nome, 'ok')
@@ -383,7 +440,7 @@ resumo = hashlib.md5()
 for f in sorted(glob.glob('css/*.css') + glob.glob('js/*.js')):
     resumo.update(open(f, 'rb').read())
 V = resumo.hexdigest()[:8]
-for nome in ('index.html', 'renova.html', 'good-green.html', 'rastreio.html'):
+for nome in ('index.html', 'renova.html', 'good-green.html', 'rastreio.html', 'vira-cam.html'):
     t = open(nome, encoding='utf-8').read()
     t = re.sub(r'((?:href|src)="(?:css|js)/[\w\-]+\.(?:css|js))(?:\?v=\w+)?"', rf'\1?v={V}"', t)
     open(nome, 'w', encoding='utf-8').write(t)
@@ -391,7 +448,7 @@ print('versão', V)
 
 # ---------- mapa do site (a data muda sozinha a cada geração) ----------
 hoje = datetime.date.today().isoformat()
-urls = [('', '1.0'), ('renova.html', '0.8'), ('good-green.html', '0.8'), ('rastreio.html', '0.8')]
+urls = [('', '1.0'), ('renova.html', '0.8'), ('good-green.html', '0.8'), ('rastreio.html', '0.8'), ('vira-cam.html', '0.8')]
 open('sitemap.xml', 'w', encoding='utf-8', newline='\n').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + ''.join(f'  <url><loc>{BASE}{u}</loc><lastmod>{hoje}</lastmod><priority>{pr}</priority></url>\n' for u, pr in urls)

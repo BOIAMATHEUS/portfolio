@@ -942,3 +942,32 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
 .pgx-l.alerta b { color: #c4572f; }
 .pgx-leg { margin-top: 6px; font-size: 14px; color: var(--tinta-2); }
 @media (max-width: 600px) { .pgx-l { grid-template-columns: 92px 1fr 62px; gap: 10px; } .pgx-l b { font-size: 18px; } }
+
+/* ===== case Vira Cam (04) ===== */
+:root { --vira: #fe2e4b; }
+.t-vira { --cor: var(--vira); }
+.t-vira .ch { background: #0f0e0e; color: #fff; }
+.t-vira .ch-arte::after { background: linear-gradient(90deg, rgba(15, 14, 14, 1) 0%, rgba(15, 14, 14, .55) 32%, rgba(15, 14, 14, 0) 62%); }
+.t-vira .ch h1 em { color: var(--vira); }
+.f-vira em { color: var(--vira); }
+.c-vira .caso-pin { background: radial-gradient(60% 70% at 80% 55%, rgba(254, 46, 75, .45), transparent 70%), linear-gradient(160deg, #2b1317 0%, #0f0e0e 70%); color: #fff; }
+.c-vira h3 em { color: var(--vira); font-style: normal; }
+.c-vira .caso-d { color: rgba(255, 255, 255, .72); }
+.c-vira .tags span { border-color: rgba(255, 255, 255, .28); color: #fff; }
+.c-vira .btn { background: var(--vira); color: #fff; }
+.c-vira .btn::before { background: #fff; }
+.c-vira .btn:hover { color: #0f0e0e; }
+.vira-vis { position: relative; display: grid; place-items: center; }
+.vira-vis .fone { width: min(270px, 64%); }
+.vira-obs { position: absolute; right: 2%; bottom: 14%; width: min(220px, 40%); border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .18), 0 30px 60px -20px rgba(0, 0, 0, .8); background: #0f0e0e; rotate: 4deg; }
+.vira-obs img { display: block; width: 100%; aspect-ratio: 9 / 13; object-fit: cover; object-position: 50% 15%; }
+.vira-obs span { position: absolute; left: 10px; top: 10px; font-size: 11px; font-weight: 700; color: #fff; background: rgba(15, 14, 14, .6); padding: 5px 9px; border-radius: 99px; }
+.vira-ar { position: absolute; left: 50%; top: 9%; translate: -50% 0; z-index: 2; font-size: 12px; font-weight: 700; color: #fff; background: var(--vira); padding: 7px 12px; border-radius: 99px; letter-spacing: .02em; animation: vira-pisca 1.6s ease-in-out infinite; }
+@keyframes vira-pisca { 50% { opacity: .55; } }
+.capa-vc { background: #0f0e0e; color: #fff; }
+.capa-vc .capa-t { font-size: 8.4cqw; }
+.capa-vc:has(.capa-arte)::after { background: linear-gradient(rgba(15, 14, 14, .55), rgba(15, 14, 14, .1) 40%, transparent 60%, rgba(15, 14, 14, .8)); }
+.capa-vc:has(.capa-arte) .capa-t, .capa-vc:has(.capa-arte) .capa-s { color: #fff; }
+@media (min-width: 901px) { .galeria.cds { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 601px) and (max-width: 900px) { .galeria.cds { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .vira-ar { animation: none; } }

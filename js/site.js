@@ -266,6 +266,7 @@
     let prog = 0, chegou = false, tocado = -1;
     if (G && !G.calmo) { const cc = G.palco.cria(G.ZORO, { ponto: () => { const r = fone.getBoundingClientRect(); return { x: r.right + r.width * .1, y: r.top + r.height * (.36 + .46 * prog) }; }, s: () => (innerWidth < 900 ? .5 : .66), pose: () => (chegou ? 'x9' : 'x8') }); cenaRolagem(cc, { trigger: '.c-nhv', start: 'top 45%', endTrigger: '.sobre', end: 'top 60%' }); }
     entra('.c-nhv');
+    entra('.c-vira');
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
     tl.to(o, { n: TXT.length, duration: 1.2, onUpdate: () => { cpf.textContent = TXT.slice(0, Math.round(o.n)); } })
       .add(() => $('#rast-b').classList.add('ok'), '+=.15').add(() => $('#rast-b').classList.remove('ok'), '+=.25')
@@ -324,6 +325,8 @@
 
   /* ================= páginas de case ================= */
   function caso() {
+    /* nos cases os gatos não disputam a leitura: aparecem no topo e no fim, somem no meio */
+    if (G && G.faixa && G.faixa.el && $('.ch') && $('.volta')) ScrollTrigger.create({ trigger: '.ch', start: 'bottom 75%', endTrigger: '.volta', end: 'top bottom', onToggle: (st) => gsap.to(G.faixa.el, { autoAlpha: st.isActive ? 0 : 1, duration: .5, overwrite: true }) });
     gsap.set(cortina, { yPercent: 0 }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) });
     const h = $('.ch h1');
     if (h) { linhas(h, { delay: .55 }); gsap.from(['.ch .rot', '.ch-d', '.meta'], { y: 24, opacity: 0, duration: .8, stagger: .08, delay: .9, ease: 'power3.out' }); }

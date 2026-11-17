@@ -15,6 +15,7 @@
 - [App Renova Be](https://boiamatheus.github.io/portfolio/renova.html): redesenho do app de uma marca de autocuidado, para iOS e Android. O app repetia o site; passou a ter uma rotina diária de tratamento, uma moeda em reais (Renova Coins) que vira desconto no checkout e dois jogos com a cara da marca (Renova Match e Toc Toc, Mini Colágeno). Entregue como protótipo navegável.
 - [Good Green](https://boiamatheus.github.io/portfolio/good-green.html): site completo e jornada de lançamento de uma marca nova de bebida verde em pó. Inclui home, página de produto, quiz de diagnóstico, páginas de captação e pop-ups, em desktop e celular.
 - [Rastreio de pedido da New Hair](https://boiamatheus.github.io/portfolio/rastreio.html): tela para a cliente achar todos os pedidos só com o CPF e entender, em uma frase, onde cada um está e quando chega. Mostra o Pix pendente para concluir o pagamento na mesma tela. Inclui design system.
+- [Vira Cam](https://boiamatheus.github.io/portfolio/vira-cam.html): web app próprio que transforma qualquer celular em câmera do OBS pelo Wi-Fi, sem instalar nada, com painel no computador. Feito do zero com IA (código, testes e imagens) a partir das decisões de produto e design dele, e testado numa live de verdade.
 
 ## Contato
 
