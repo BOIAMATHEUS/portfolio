@@ -69,6 +69,8 @@
   window.__intro = 1; if (!abertura) document.documentElement.classList.remove('abrindo');
   if (G) G.faixa.inicia({ abertura });
   const cenaRolagem = (cena, cfg) => ScrollTrigger.create(Object.assign({ onToggle: (st) => G.palco.liga(cena, st.isActive) }, cfg));
+  /* celular, página inicial: na prateleira e nos painéis dos cases os gatos saem do pé da tela para não cobrir títulos */
+  if (G && hero && innerWidth < 700 && document.getElementById('trabalhos') && document.querySelector('.sobre')) ScrollTrigger.create({ trigger: '#trabalhos', start: 'top 85%', endTrigger: '.sobre', end: 'top 85%', onToggle: (st) => gsap.to(G.faixa.el, { autoAlpha: st.isActive ? 0 : 1, y: st.isActive ? 60 : 0, duration: .5, overwrite: true }) });
 
   /* ---------- revelar ao rolar e títulos por linha ---------- */
   $$('[data-sobe]').forEach((el) => gsap.to(el, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));

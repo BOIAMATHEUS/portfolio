@@ -1065,3 +1065,24 @@ figure.zoom figcaption { position: absolute; left: 14px; bottom: 14px; font-fami
   .hero-info { font-size: 19px; line-height: 1.38; }
   .hero-info .px { font-size: 15px; margin-top: 12px; }
 }
+
+/* ===== celular: correções da auditoria de 17/11 ===== */
+html, body { overflow-x: clip; }
+h1, h2, h3, .card b, .cd-t b, .volta b, .regras b, .fato span, .cs p { text-wrap: pretty; }
+img { color: transparent; }
+@media (max-width: 700px) {
+  /* números em trio: um por linha, valor ao lado da legenda, nada passa da tela */
+  .numeros.n3 { grid-template-columns: 1fr; }
+  .numeros.n3 div, .numeros.n3 div + div { display: flex; align-items: baseline; gap: 16px; padding: 16px 0; border-left: 0; border-bottom: 1px solid var(--linha); }
+  .numeros.n3 b { font-size: 11vw; flex: none; }
+  .numeros.n3 span { margin-top: 0; font-size: 15px; }
+  /* menu e links com área de toque de 44 px */
+  .nav a { padding-block: 12px; }
+  .proto-fora, .contato a { min-height: 44px; display: inline-flex; align-items: center; }
+  /* menu claro legível sobre foto clara no topo dos cases */
+  .nav.claro:not(.rolou) { text-shadow: 0 1px 10px rgba(0, 0, 0, .55); }
+  /* título da banda legível sobre imagem movimentada */
+  .banda::after { background: linear-gradient(180deg, rgba(15, 10, 9, .15) 0%, rgba(15, 10, 9, .35) 35%, rgba(15, 10, 9, .9) 100%); }
+  /* gatos não cobrem os botões de contato no fim das páginas */
+  .contato { padding-bottom: calc(var(--faixa) + 90px); }
+}
