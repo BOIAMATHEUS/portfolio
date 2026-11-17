@@ -328,13 +328,13 @@ nhv = dict(
                    dict(t='O rastreio detalhado ainda não chega', p='Os eventos da transportadora não vêm pela API hoje. A linha do tempo foi desenhada para recebê-los quando a integração existir.'),
                    dict(t='O Pix pendente é uma oportunidade', p='O pedido traz o código copia e cola e a validade. A tela vira um lugar para concluir o pagamento, não só para acompanhar.', dest=True)])),
         cap('Dado de caixa', 'Por que o Pix<br>entrou no rastreio.',
-            ['Enquanto desenhava o rastreio, percebi o mesmo padrão no checkout. Revisitei os dados de quem comprava e de quem não comprava, pelo caixa da Yampi e não pelo pixel: 9.882 pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
-             'Com cartão, quase todo pedido vira pagamento. Com Pix, que é metade dos pedidos, mais de 4 em cada 10 nunca são pagos. O problema não estava na tela do checkout, e sim no Pix que fica para depois.'],
+            ['Enquanto analisava o rastreio, fui olhar também os pagamentos. Revisitei os dados de quem comprava e de quem não comprava, pelo caixa da Yampi e não pelo pixel: 9.882 pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
+             'Com cartão, quase todo pedido vira pagamento. Com Pix, que é metade dos pedidos, mais de 4 em cada 10 nunca são pagos. O problema não estava na tela do checkout, e sim no Pix que fica para depois. Levei esse dado para a equipe.'],
             '<div class="pgx" data-sobe role="img" aria-label="Pedidos pagos por forma de pagamento: Visa 98,8%, Mastercard 98,6%, Elo 96,6%, Pix 57,4%">'
             + ''.join(f'<div class="pgx-l{" alerta" if n == "Pix" else ""}"><span class="pgx-n">{n}</span><span class="pgx-t"><i style="width:{v}%"></i></span><b>{str(v).replace(".", ",")}%</b></div>' for n, v in [('Visa', 98.8), ('Mastercard', 98.6), ('Elo', 96.6), ('Pix', 57.4)])
             + '<p class="pgx-leg">Pedidos pagos sobre pedidos criados, por forma de pagamento. Pix é 53% dos pedidos.</p></div>'
             + cards([dict(n='decisão', t='Não redesenhar o checkout', p='Ele aprovava 99% no cartão. Mexer na tela não traria o Pix de volta.'),
-                     dict(n='no rastreio', t='Pagar onde a cliente volta', p='Quem gerou o Pix e não pagou volta para saber do pedido. Ali a tela mostra o Pix pendente com o código copia e cola e a validade. Junto disso, o time de CRM melhorou o fluxo de Pix abandonado.'),
+                     dict(n='o que fiz', t='Avisei a equipe', p='Com os números na mão, o time de CRM melhorou o fluxo de Pix abandonado. No rastreio, quem volta para saber do pedido encontra o Pix pendente com o código copia e cola e a validade.'),
                      dict(n='hoje', t='6 em cada 10 Pix pagam', p='Contra 44% no começo de agosto. A subida maior veio antes desta análise, por isso ela entra aqui como contexto, não como resultado meu.', dest=True)])),
         frase('O problema não era a tela do checkout. Era o Pix que <em>ficava para depois.</em>', 'f-nhv'),
         cap('04 · Baixa fidelidade', 'Primeiro a ordem,<br>depois a cor.',
