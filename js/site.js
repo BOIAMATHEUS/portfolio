@@ -325,6 +325,29 @@
 
   /* ================= páginas de case ================= */
   function caso() {
+
+  /* ---------- design system do Vira Cam: peças que reagem ao toque ---------- */
+  (function vds() {
+    const box = document.querySelector('.vds'); if (!box) return;
+    box.querySelectorAll('.vds-seg button').forEach((b) => b.addEventListener('click', () => box.querySelectorAll('.vds-seg button').forEach((x) => x.classList.toggle('on', x === b))));
+    const tog = box.querySelector('.vds-tog'); if (tog) tog.addEventListener('click', () => tog.classList.toggle('off'));
+    const alvo = box.querySelector('#vdsAlvo'); if (!alvo) return;
+    const S = 'cubic-bezier(.2,.8,.2,1)';
+    const A = {
+      toque: [[{ transform: 'scale(1)' }, { transform: 'scale(.94)' }, { transform: 'scale(1)' }], 260, 'cubic-bezier(.34,1.4,.64,1)'],
+      cascata: [[{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], 480, S],
+      visor: [[{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], 480, S],
+      folha: [[{ opacity: .4, transform: 'translateY(40px)' }, { opacity: 1, transform: 'none' }], 240, S],
+      aviso: [[{ opacity: 0, transform: 'translateY(-10px)' }, { opacity: 1, transform: 'none' }], 200, S],
+      ar: [[{ background: 'rgba(255,255,255,.08)' }, { background: '#fe2e4b' }, { background: 'rgba(255,255,255,.08)' }], 1600, 'ease-in-out'],
+      conectou: [[{ borderColor: 'rgba(255,255,255,.18)', boxShadow: 'none' }, { borderColor: 'rgba(254,46,75,.9)', boxShadow: '0 18px 40px -14px rgba(254,46,75,.8)' }], 320, S],
+    };
+    box.querySelectorAll('.vds-m').forEach((b) => b.addEventListener('click', () => {
+      box.querySelectorAll('.vds-m').forEach((x) => x.classList.toggle('on', x === b));
+      const [k, d, e] = A[b.dataset.m]; alvo.lastChild.textContent = b.querySelector('b').textContent;
+      alvo.animate(k, { duration: d, easing: e, fill: 'both' });
+    }));
+  })();
     /* nos cases os gatos não disputam a leitura: aparecem no topo e no fim, somem no meio */
     if (G && G.faixa && G.faixa.el && $('.ch') && $('.volta')) ScrollTrigger.create({ trigger: '.ch', start: 'bottom 75%', endTrigger: '.volta', end: 'top bottom', onToggle: (st) => gsap.to(G.faixa.el, { autoAlpha: st.isActive ? 0 : 1, duration: .5, overwrite: true }) });
     gsap.set(cortina, { yPercent: 0 }); gsap.to(cortina, { yPercent: -101, duration: .8, ease: 'power3.inOut', delay: .15, onComplete: () => gsap.set(cortina, { yPercent: 101 }) });

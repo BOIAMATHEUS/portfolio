@@ -115,6 +115,30 @@ def prototipo(rot, titulo, textos, url, nome, cls=''):
 </section>'''
 
 
+def vira_ds():
+    # design system do Vira Cam montado em código dentro do case (não print)
+    cores = [('#FE2E4B', 'vermelho', 'no ar e ação principal'), ('#0F0E0E', 'fundo', 'quase preto'), ('#161316', 'superfície', 'cartões'), ('#4B4A4B', 'cinza', 'apoio'), ('#FFFFFF', 'branco', 'texto e seleção'), ('#3DDC84', 'conectado', 'estado'), ('#FFB340', 'aguardando', 'estado')]
+    pal = ''.join(f'<div class="vds-cor"><i style="background:{h}"></i><div><b>{h}</b><small>{n} · {u}</small></div></div>' for h, n, u in cores)
+    tipo = ''.join(f'<div class="vds-t"><span>{r}</span><p style="{s}">{t}</p></div>' for r, s, t in [
+        ('Display · 500 · −5%', 'font-size:clamp(40px,5vw,72px);font-weight:500;letter-spacing:-.05em;line-height:.95', '<em class="vds-grad">Câmeras</em>'),
+        ('Título · 500 · −4%', 'font-size:clamp(24px,2.6vw,36px);font-weight:500;letter-spacing:-.04em;line-height:1.05', 'Seu celular vira câmera do OBS.'),
+        ('Corpo · 400', 'font-size:16px;color:rgba(255,255,255,.66)', 'Escolha o número desta câmera e toque em Ligar.'),
+        ('Valor · 600 · tabular', 'font-size:18px;font-weight:600;font-variant-numeric:tabular-nums', '1080p · 30 fps · 1,2 Mb · 0 ms')])
+    comp = '''<div class="vds-c"><small>Botões</small><div class="vds-l"><button class="vds-b r" type="button">Ligar câmera</button><button class="vds-b w" type="button">Copiar link do OBS</button><button class="vds-b" type="button">Pausar prévias</button></div></div>
+      <div class="vds-c"><small>Status</small><div class="vds-l"><span class="vds-p"><i></i>Toque em Ligar câmera</span><span class="vds-p warn"><i></i>Aguardando o OBS</span><span class="vds-p ar"><i></i>OBS conectado</span></div></div>
+      <div class="vds-c"><small>Escolha de câmera</small><div class="vds-l vds-seg"><button type="button" class="on">1<small>CAM</small></button><button type="button">2<small>CAM</small></button><button type="button">3<small>CAM</small></button><button type="button">4<small>CAM</small></button><button type="button">5<small>CAM</small></button></div></div>
+      <div class="vds-c"><small>Leituras e chave</small><div class="vds-l"><div class="vds-leit"><div><b>1080p</b><small>Imagem</small></div><div><b>1,2 Mb</b><small>Envio</small></div><div><b>0 ms</b><small>Atraso</small></div></div><button type="button" class="vds-tog" aria-label="Interruptor"></button></div></div>'''
+    mov = ''.join(f'<button type="button" class="vds-m" data-m="{k}"><b>{n}</b><span>{d}</span></button>' for k, n, d in [
+        ('toque', 'Toque', '120 ms · mola'), ('cascata', 'Entrada em cascata', '480 ms · +40 ms'), ('visor', 'Visor ao vivo', '480 ms · escala .96'), ('folha', 'Folha e modal', '240 ms · 40 px'), ('aviso', 'Aviso', '200 ms · 10 px'), ('ar', 'No ar', '1,6 s · pulso'), ('conectou', 'Câmera conectou', '320 ms · borda')])
+    return f'''<div class="vds" data-sobe>
+  <div class="vds-bloco"><span class="vds-rot">Cor</span><div class="vds-pal">{pal}</div></div>
+  <div class="vds-bloco"><span class="vds-rot">Tipografia · Helvetica</span>{tipo}</div>
+  <div class="vds-bloco"><span class="vds-rot">Componentes · toque para testar</span><div class="vds-comp">{comp}</div></div>
+  <div class="vds-bloco"><span class="vds-rot">Movimento · toque para ver</span><div class="vds-mov"><div class="vds-palco"><div class="vds-alvo" id="vdsAlvo"><i></i>Vira Cam</div></div><div class="vds-ms">{mov}</div></div>
+    <p class="vds-nota">Quatro durações (120, 220, 320 e 480 ms) e uma curva de saída suave, cubic-bezier(.2,.8,.2,1). Com “reduzir movimento” ligado no sistema, tudo para.</p></div>
+</div>'''
+
+
 def tabela(cab, linhas):
     h = '<div class="tab-l cab">' + ''.join(f'<span>{c}</span>' for c in cab) + '</div>'
     for l in linhas:
@@ -390,7 +414,7 @@ vira = dict(
             cards([dict(n='achado', t='O navegador não manda vídeo por cabo', p='Toda webcam de celular por cabo depende de aplicativo e de programa no computador. Para uma página, o cabo só serve como rede.'),
                    dict(n='achado', t='No mesmo Wi-Fi, o vídeo vai direto', p='Do celular para o computador, sem passar por servidor. A internet só ajuda os dois a se encontrarem.'),
                    dict(n='achado', t='O que derruba a câmera', p='Wi-Fi que oscila, ligação que toma a câmera, tela que apaga. Cada caso ganhou uma saída automática.', dest=True)])),
-        frase('O celular abre um link e <em>vira câmera.</em>', 'f-vira'),
+        frase('O celular abre um link e <em>vira&nbsp;câmera.</em>', 'f-vira'),
         cap('03 · No celular', 'Uma câmera,<br>não um formulário.',
             ['A tela ao vivo é um visor: a imagem ocupa a tela, o estado fica numa pílula que acende em vermelho quando o OBS recebe a imagem, e os controles ficam ao alcance do polegar.',
              'Para quem está no tripé, um toque apaga a tela sem desligar a câmera. Para quem vai entrar ao vivo, o botão “Ver como no Instagram” mostra o que a live cobre por cima da imagem.'],
@@ -407,8 +431,8 @@ vira = dict(
         cap('06 · Design system', 'Um sistema<br>só.',
             ['Celular, painel e conta usam as mesmas peças: paleta escura com o vermelho reservado para o que está no ar, Helvetica, pílulas de vidro e quatro durações de movimento.',
              'Todas as transições estão mapeadas, com duração, curva e o que dispara cada uma.'],
-            grade([fig(VC + 's-cor.webp', 'Paleta do Vira Cam em pílulas', 'fig-p', 'Cor'), fig(VC + 's-comp.webp', 'Componentes do Vira Cam', 'fig-p', 'Componentes'), fig(VC + 's-mov.webp', 'Tabela de transições do Vira Cam', 'fig-p', 'Movimento')], 3)
-            + f'<p class="fora" data-sobe><a class="proto-fora" href="{APP}sistema" target="_blank" rel="noopener">Abrir o design system {SETA}</a></p>'),
+            vira_ds()
+            + f'<p class="fora" data-sobe><a class="proto-fora" href="{APP}sistema" target="_blank" rel="noopener">Abrir o design system completo {SETA}</a></p>'),
         cap('07 · Processo', 'Feito do zero<br>com IA.',
             ['Eu defini o problema, pesquisei, desenhei o fluxo e a interface e revisei cada tela. O código, os testes e as imagens foram feitos com IA, a partir das minhas instruções.'],
             cards([dict(n='código', t='App e testes com IA', p='A interface, a conexão entre celular e computador e um teste que liga 5 celulares e 5 OBS simulados a cada mudança.'),
@@ -419,7 +443,7 @@ vira = dict(
             numeros([('5', 'celulares ao mesmo tempo'), ('30', 'quadros por segundo em cada câmera'), ('0', 'aplicativos para instalar')])
             + cards([dict(t='O que foi entregue', li=['Câmera no celular, painel no computador e conta.', 'Tutorial da primeira vez e todos os estados de erro.', 'Design system com movimento mapeado.']),
                      dict(t='Próximos passos', li=['Contas de verdade, ligadas ao painel.', 'Versão para iPhone e Android nas lojas.', 'Teste com outras equipes de live.'], dest=True)])
-            + f'<p class="fora" data-sobe><a class="proto-fora" href="{APP}" target="_blank" rel="noopener">Abrir o app no celular {SETA}</a> &nbsp; <a class="proto-fora" href="{APP}painel" target="_blank" rel="noopener">Abrir o painel {SETA}</a></p>'),
+            ),
     ]),
     volta=('rastreio.html', 'Rastreio', '#7d5b49', 'Case anterior'),
     prox=('index.html#supervisao', 'Supervisão', '#15120f', '#efe9e1', 'claro', 'Último case · agora, quem aprova cada tela', 'conhecer'),
