@@ -1086,3 +1086,5 @@ img { color: transparent; }
   /* gatos não cobrem os botões de contato no fim das páginas */
   .contato { padding-bottom: calc(var(--faixa) + 90px); }
 }
+/* CDs apoiados no meio do tampo da prateleira, não na borda da frente */
+@media (min-width: 701px) { .prateleira { top: calc(var(--chao, 60%) + 10px); } .cd-palco::after { bottom: -4px; } }
