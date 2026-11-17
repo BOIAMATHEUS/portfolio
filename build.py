@@ -414,7 +414,7 @@ vira = dict(
             cards([dict(n='achado', t='O navegador não manda vídeo por cabo', p='Toda webcam de celular por cabo depende de aplicativo e de programa no computador. Para uma página, o cabo só serve como rede.'),
                    dict(n='achado', t='No mesmo Wi-Fi, o vídeo vai direto', p='Do celular para o computador, sem passar por servidor. A internet só ajuda os dois a se encontrarem.'),
                    dict(n='achado', t='O que derruba a câmera', p='Wi-Fi que oscila, ligação que toma a câmera, tela que apaga. Cada caso ganhou uma saída automática.', dest=True)])),
-        frase('O celular abre um link e <em>vira&nbsp;câmera.</em>', 'f-vira'),
+        frase('O celular abre um link e<br><em>vira câmera.</em>', 'f-vira'),
         cap('03 · No celular', 'Uma câmera,<br>não um formulário.',
             ['A tela ao vivo é um visor: a imagem ocupa a tela, o estado fica numa pílula que acende em vermelho quando o OBS recebe a imagem, e os controles ficam ao alcance do polegar.',
              'Para quem está no tripé, um toque apaga a tela sem desligar a câmera. Para quem vai entrar ao vivo, o botão “Ver como no Instagram” mostra o que a live cobre por cima da imagem.'],

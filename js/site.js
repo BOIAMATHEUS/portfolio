@@ -78,7 +78,7 @@
   }
   $$('[data-linhas]').forEach((h) => linhas(h, { scrollTrigger: { trigger: h, start: 'top 86%' } }));
   function palavras(el, cfg) {
-    const anda = (no) => [...no.childNodes].map((c) => c.nodeType === 3 ? c.textContent.split(/(\s+)/).map((p) => p.trim() ? `<span class="w">${p}</span>` : p).join('') : `<em>${anda(c)}</em>`).join('');
+    const anda = (no) => [...no.childNodes].map((c) => c.nodeType === 3 ? c.textContent.split(/([ \t\n]+)/).map((p) => p.trim() ? `<span class="w">${p}</span>` : p).join('') : c.nodeName === 'BR' ? '<br>' : `<em>${anda(c)}</em>`).join('');
     el.innerHTML = anda(el);
     gsap.to($$('.w', el), { opacity: 1, stagger: .08, ease: 'none', scrollTrigger: Object.assign({ trigger: el, start: 'top 82%', end: 'bottom 45%', scrub: .4 }, cfg) });
   }
