@@ -1149,3 +1149,8 @@ img { color: transparent; }
 .vivo-c iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #fff; }
 .vitrine.ao-vivo .janela-v { position: absolute; inset: 0; top: 34px; }
 .vitrine.ao-vivo .vitrine-cel .fone-v { position: relative; height: 100%; }
+/* vitrine ao vivo no computador: a janela ocupa a largura toda das margens e o celular fica colado à direita */
+@media (min-width: 901px) {
+  .vitrine.ao-vivo .vitrine-palco { justify-content: space-between; }
+  .vitrine.ao-vivo .janela { flex: 1 1 auto; width: auto; min-width: 0; }
+}
