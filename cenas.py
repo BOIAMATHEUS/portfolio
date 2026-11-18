@@ -101,17 +101,6 @@ def salva(im, nome):
     return os.path.getsize(f'assets/cenas/{nome}.webp') // 1000
 
 
-def objeto(arq, o):
-    """objeto que se mexe: camada própria, do tamanho do cenário, transparente em volta"""
-    return f'<img class="sup-o" data-o="{o}" src="assets/cenas/{arq}.webp" alt="" width="1280" height="800" loading="lazy">'
-
-
-def alvo(i, x, y, w, h, cur, rotulo):
-    """área de toque em cima de um objeto do cenário (coordenadas em unidades de 160 x 100)"""
-    return (f'<button class="sup-i" type="button" data-i="{i}" data-cur="{cur}" aria-label="{rotulo}" '
-            f'style="left:{x / 1.6:.2f}%;top:{y}%;width:{w / 1.6:.2f}%;height:{h}%"></button>')
-
-
 def caixa(t, x, y, w, h, tom='a', rotulo=None, fita=True):
     c, luz, som = {'a': ('#c9995f', '#e0b780', '#a3733f'), 'b': ('#b98850', '#d3a468', '#925f33'), 'c': ('#a87843', '#c2915a', '#80562c'), 'az': ('#3d6ea8', '#5b8cc6', '#2a5285'), 'br': ('#e9e2d6', '#ffffff', '#c4bba9')}[tom]
     t.r(x, y, w, h, c)
@@ -298,11 +287,10 @@ def luna():
         for y, c in ((85, '#b8477a'), (88.5, '#b8477a'), (90.5, '#a53c6c')):
             t.ln(129, y + 1, 139, y - 1, c)
         t.ln(132, 81.5, 135.5, 92.5, '#f5a3c5')
-    nv = D()
-    nv.prop(novelo)
+    p.prop(novelo)
     for x, y, w in ((121, 92, 8), (117, 93, 4.5), (112, 92.5, 5.5), (109, 91.5, 3.5)):
-        nv.r(x, y, w, .5, '#d95f92')
-        nv.r(x, y + .5, w, .5, '#8f2f5c')
+        p.r(x, y, w, .5, '#d95f92')
+        p.r(x, y + .5, w, .5, '#8f2f5c')
 
     def ratinho(t):
         t.el(100, 91.5, 3.6, 2.2, '#9aa0b8')
@@ -310,29 +298,20 @@ def luna():
         t.el(98, 89.8, 1.2, 1.2, '#e59ab8')
         t.r(96.5, 91.5, .5, .5, '#140d1c')
         t.r(103.5, 91.5, 3.5, .5, '#d95f92')
-    rt = D()
-    rt.prop(ratinho)
+    p.prop(ratinho)
 
     vidro = np.ones((H, W))
     vidro[11 * U:54 * U, 88 * U:142 * U] = 0
     luzes = [(ponto(70, 57, 36, 32), (1.0, .7, .32), .85), (feixe([(96, 57), (140, 57), (128, 100), (50, 100)], 1, .7), (.5, .58, 1.0), .34), (vinheta(), (1, 1, 1), -.3)]
     amb = (.8, .82, .98)
-    k = [salva(ilumina(f.im, amb, luzes, vidro), 'luna-f'), salva(ilumina(m.im, amb, luzes), 'luna-m'), salva(ilumina(p.im, amb, luzes), 'luna-p'),
-         salva(ilumina(nv.im, amb, luzes), 'luna-novelo'), salva(ilumina(rt.im, amb, luzes), 'luna-rato')]
+    k = [salva(ilumina(f.im, amb, luzes, vidro), 'luna-f'), salva(ilumina(m.im, amb, luzes), 'luna-m'), salva(ilumina(p.im, amb, luzes), 'luna-p')]
     est = ''.join(f'<rect x="{x}" y="{y}" width=".9" height=".9" fill="#fff" class="st" style="animation-delay:-{i * .41 % 2.4:.2f}s"/>' for i, (x, y) in enumerate(((92, 16), (104, 14), (108, 27), (95, 36), (137, 15), (138, 34), (111, 19), (100, 42), (131, 38))))
     sv = dict(
         f='<defs><radialGradient id="g-lua"><stop offset="0" stop-color="#f3efcf" stop-opacity=".42"/><stop offset=".5" stop-color="#f3efcf" stop-opacity=".12"/><stop offset="1" stop-color="#f3efcf" stop-opacity="0"/></radialGradient></defs><circle cx="124" cy="25" r="13" fill="url(#g-lua)" class="brilho" shape-rendering="auto"/>' + est,
-        m='<defs><radialGradient id="g-abajur"><stop offset="0" stop-color="#ffd98a" stop-opacity=".5"/><stop offset=".5" stop-color="#f6c860" stop-opacity=".14"/><stop offset="1" stop-color="#f6c860" stop-opacity="0"/></radialGradient></defs><circle cx="70" cy="57" r="17" fill="url(#g-abajur)" class="brilho luz-abajur" shape-rendering="auto"/>'
-          '<polygon points="65.5,61 74.5,61 72.5,52.5 67.5,52.5" fill="#3b3466" class="abajur-off" opacity="0"/>'
-,
+        m='<defs><radialGradient id="g-abajur"><stop offset="0" stop-color="#ffd98a" stop-opacity=".5"/><stop offset=".5" stop-color="#f6c860" stop-opacity=".14"/><stop offset="1" stop-color="#f6c860" stop-opacity="0"/></radialGradient></defs><circle cx="70" cy="57" r="17" fill="url(#g-abajur)" class="brilho" shape-rendering="auto"/>'
+          + ''.join(f'<text x="{x}" y="{y}" font-size="{t}" text-anchor="middle" fill="#cfd4ff" font-family="Pixelify Sans, monospace" class="zz zz{i}">z</text>' for i, (x, y, t) in enumerate(((56, 68, 4.5), (60, 61, 5.5), (65, 53, 7)))),
         p='')
-    sv['f'] += '<g class="cadente" opacity="0"><polygon points="0,0 9,-4.5 9.4,-3.6 .6,.9" fill="#fff8d8" shape-rendering="auto"/><rect x="-.6" y="-.6" width="1.6" height="1.6" fill="#fff"/></g>'
-    ex = dict(
-        f=alvo('janela', 88, 11, 54, 44, 'olhar<br>a lua', 'Olhar a lua'),
-        m=alvo('abajur', 61, 50, 18, 27, 'mexer no<br>abajur', 'Mexer no abajur'),
-        p=objeto('luna-novelo', 'novelo') + objeto('luna-rato', 'rato')
-          + alvo('novelo', 125, 78, 18, 17, 'rolar o<br>novelo', 'Rolar o novelo') + alvo('rato', 93, 86, 15, 9, 'apertar o<br>ratinho', 'Apertar o ratinho'))
-    return 'luna', sv, (42, 86), k, ex
+    return 'luna', sv, (42, 86), k
 
 
 # ================= Zoro: depósito =================
@@ -467,6 +446,7 @@ def zoro():
     f.prop(luminaria)
 
     # meio: sombra da caixa dele, pegadas e fita
+    m.el(52, 89.5, 25, 3.2, '#211b17')
     for x, y in ((20, 83), (27, 86.5), (34, 83.5), (40, 87)):
         m.el(x, y, 1.3, 1, '#574b41')
         for dx in (-1.2, 0, 1.2):
@@ -480,8 +460,7 @@ def zoro():
         t.r(85, 81, 2, .5, '#fff6dc')
         t.r(91.5, 87.5, 9, 1, '#ecdcb8')
         t.r(91.5, 88, 9, .5, '#bfae84')
-    ft = D()
-    ft.prop(fita)
+    m.prop(fita)
 
     def aberta(t):
         t.poly([(118, 83), (112, 79.5), (114.5, 78), (120, 81.5)], '#dcb27a')
@@ -504,19 +483,12 @@ def zoro():
 
     luzes = [(feixe([(55, 17), (72, 17), (118, 100), (24, 100)], 1, .62), (1.0, .86, .55), .78), (ponto(63.5, 20, 30, 24), (1.0, .85, .55), .4), (vinheta(), (1, 1, 1), -.3)]
     amb = (.66, .64, .64)
-    k = [salva(ilumina(f.im, amb, luzes), 'zoro-f'), salva(ilumina(m.im, amb, luzes), 'zoro-m'), salva(ilumina(p.im, amb, luzes), 'zoro-p'),
-         salva(ilumina(ft.im, amb, luzes), 'zoro-fita')]
+    k = [salva(ilumina(f.im, amb, luzes), 'zoro-f'), salva(ilumina(m.im, amb, luzes), 'zoro-m'), salva(ilumina(p.im, amb, luzes), 'zoro-p')]
     sv = dict(
         f='<text x="108" y="43.6" font-size="3.6" text-anchor="middle" fill="#15120f" font-family="Pixelify Sans, monospace">PINGOS</text><rect width="160" height="100" fill="#0c0806" class="apaga"/>',
         m='',
-        p='<g class="pingo"><circle cx="108" cy="92" r="2.7" fill="#140d1c"/><circle cx="108" cy="92" r="2.1" fill="#f4efe7"/><rect x="106.6" y="90.6" width="1" height="1" fill="#fff"/></g>'
-          + ''.join(f'<g class="pingo-cai" opacity="0"><circle cx="{x}" cy="44" r="1.9" fill="#140d1c"/><circle cx="{x}" cy="44" r="1.4" fill="#f4efe7"/></g>' for x in (103, 108, 113)))
-    ex = dict(
-        f=alvo('luz', 50, 8, 28, 13, 'apagar<br>a luz', 'Apagar a luz') + alvo('pingos', 96, 32, 24, 17, 'derrubar<br>os pingos', 'Derrubar os pingos')
-          + alvo('caixinha', 36, 58, 17, 18, 'caixa<br>nova', 'Caixa nova'),
-        m=objeto('zoro-fita', 'fita') + alvo('fita', 82, 78, 21, 12, 'rolar<br>a fita', 'Rolar a fita'),
-        p=alvo('caixa', 116, 76, 32, 22, 'bater na<br>caixa', 'Bater na caixa') + alvo('pingo', 102, 87, 11, 9, 'chutar<br>o pingo', 'Chutar o pingo'))
-    return 'zoro', sv, (132, 97), k, ex
+        p='<g class="rola"><circle cx="108" cy="92" r="2.7" fill="#140d1c"/><circle cx="108" cy="92" r="2.1" fill="#f4efe7"/><rect x="106.6" y="90.6" width="1" height="1" fill="#fff"/></g>')
+    return 'zoro', sv, (52, 89), k
 
 
 # ================= Nacho: cozinha de manhã =================
@@ -756,19 +728,14 @@ def nacho():
     k = [salva(ilumina(f.im, amb, luzes), 'nacho-f'), salva(ilumina(m.im, amb, luzes), 'nacho-m'), salva(ilumina(p.im, amb, luzes), 'nacho-p')]
     po = ''.join(f'<rect x="{x}" y="{y}" width=".8" height=".8" fill="#fff" class="po" style="animation-delay:-{i * 1.1:.1f}s"/>' for i, (x, y) in enumerate(((40, 62), (52, 72), (60, 84), (48, 90), (68, 94), (30, 70))))
     sv = dict(
-        f='<defs><clipPath id="c-torr"><rect x="100" y="0" width="16" height="52"/></clipPath><radialGradient id="g-sol"><stop offset="0" stop-color="#fffbe0" stop-opacity=".8"/><stop offset=".5" stop-color="#fffbe0" stop-opacity=".2"/><stop offset="1" stop-color="#fffbe0" stop-opacity="0"/></radialGradient></defs>'
+        f='<defs><clipPath id="c-torr"><rect x="100" y="40" width="16" height="12"/></clipPath><radialGradient id="g-sol"><stop offset="0" stop-color="#fffbe0" stop-opacity=".8"/><stop offset=".5" stop-color="#fffbe0" stop-opacity=".2"/><stop offset="1" stop-color="#fffbe0" stop-opacity="0"/></radialGradient></defs>'
           '<circle cx="41" cy="22" r="12" fill="url(#g-sol)" class="brilho" shape-rendering="auto"/>'
           '<g clip-path="url(#c-torr)"><g class="torrada"><rect x="102.5" y="47.5" width="4" height="6" fill="#d99a4a"/><rect x="102.5" y="47.5" width="4" height="1" fill="#b87a2e"/><rect x="109.5" y="47.5" width="4" height="6" fill="#d99a4a"/><rect x="109.5" y="47.5" width="4" height="1" fill="#b87a2e"/></g></g>'
           '<g class="pont"><rect x="83.6" y="13.6" width=".9" height="6.8" fill="#d9432f"/></g><rect x="83.3" y="19.3" width="1.5" height="1.5" fill="#2b1705"/>'
           '<text x="70.5" y="51.1" font-size="3.1" text-anchor="middle" fill="#2b1705" font-family="Pixelify Sans, monospace">RAÇÃO</text>' + po,
         m='',
-        p='<g class="monte" opacity="0">' + ''.join(f'<rect x="{x}" y="{y}" width="2" height="1.5" fill="#c7651c"/><rect x="{x}" y="{y}" width="2" height=".5" fill="#e58a3a"/>' for x, y in ((97, 82.4), (100, 81.6), (103, 82), (106, 81.4), (109, 82.2), (111.5, 82.6), (101.5, 80.4), (105, 80), (108, 80.6), (103.5, 78.9), (106.5, 79.1))) + '</g>'
-          '<g class="voa"></g><text x="105" y="90.3" font-size="3.3" text-anchor="middle" fill="#fff" font-family="Pixelify Sans, monospace">NACHO</text>')
-    ex = dict(
-        f=alvo('racao', 61, 39, 19, 22, 'servir<br>ração', 'Servir ração') + alvo('torradeira', 97, 49, 21, 12, 'fazer<br>torrada', 'Fazer torrada')
-          + alvo('relogio', 72, 8, 23, 24, 'ver<br>a hora', 'Ver a hora'),
-        p=alvo('tigela', 89, 79, 32, 16, 'olhar a<br>tigela', 'Olhar a tigela'))
-    return 'nacho', sv, (46, 93), k, ex
+        p='<text x="105" y="90.3" font-size="3.3" text-anchor="middle" fill="#fff" font-family="Pixelify Sans, monospace">NACHO</text>')
+    return 'nacho', sv, (46, 93), k
 
 
 # cargo, nome, frase principal e nota. Cada texto é uma frase curta: a hierarquia é cargo < nome > frase > nota.
@@ -785,12 +752,12 @@ def sem_orfa(t):
     return '&nbsp;'.join(p) if len(p) == 2 else t
 html = ''
 for fn in (luna, zoro, nacho):
-    nome, sv, (ax, ay), k, ex = fn()
+    nome, sv, (ax, ay), k = fn()
     print(nome, 'KB', k)
     s, b, t, nota = TXT[nome]
     cam = lambda c, extra='': f'<div class="cam {c}"><img src="assets/cenas/{nome}-{c}.webp" alt="" width="1280" height="800" loading="lazy">' + (f'<svg viewBox="0 0 160 100" shape-rendering="crispEdges" aria-hidden="true">{sv[c]}</svg>' if sv[c] else '') + extra + '</div>'
     html += f'''    <article class="sup-c s-{nome}" data-sobe>
-      <div class="cena">{cam('f', ex.get('f', ''))}{cam('m', ex.get('m', '') + f'<span class="sup-g" style="left:{ax / 1.6:.2f}%;top:{ay}%"></span>')}{cam('p', ex.get('p', ''))}</div>
+      <div class="cena">{cam('f')}{cam('m', f'<span class="sup-g" style="left:{ax / 1.6:.2f}%;top:{ay}%"></span>')}{cam('p')}</div>
       <div class="sup-tx"><small>{s}</small><b>{b}</b><p class="sup-f">{sem_orfa(t)}</p><p class="sup-n">{sem_orfa(nota)}</p></div>
     </article>
 '''

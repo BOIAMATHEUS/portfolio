@@ -1098,16 +1098,3 @@ img { color: transparent; }
 .nav::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .3s; background: rgba(244, 239, 231, .86); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 1px 0 rgba(21, 18, 15, .1); pointer-events: none; }
 .nav.claro::before { background: rgba(18, 15, 13, .66); box-shadow: 0 1px 0 rgba(244, 239, 231, .12); }
 .nav.rolou::before { opacity: 1; }
-
-/* Supervisão: objetos que a pessoa toca e o gato vem ver (17/11) */
-.cena .cam { pointer-events: none; }
-.sup-i { position: absolute; pointer-events: auto; background: none; border: 0; padding: 0; margin: 0; border-radius: 14px; -webkit-tap-highlight-color: transparent; transition: translate .9s cubic-bezier(.2, .7, .3, 1); }
-.sup-i:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.sup-i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 12px rgba(255, 255, 255, .55); opacity: 0; pointer-events: none; }
-.sup-i.dica::after { animation: sup-dica 1.5s ease-out; }
-@keyframes sup-dica { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: .95; } 100% { opacity: 0; transform: scale(1.7); } }
-.sup-o { transform-origin: 50% 50%; }
-.sup-o[data-o="novelo"] { transform-origin: 83.75% 87%; }
-.sup-o[data-o="rato"] { transform-origin: 62.5% 91%; }
-.cena .pingo-cai, .cena .cadente { transform-box: view-box; }
-@media (prefers-reduced-motion: reduce) { .sup-i.dica::after { animation: none; } }
