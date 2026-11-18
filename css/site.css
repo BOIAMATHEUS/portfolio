@@ -1125,3 +1125,9 @@ img { color: transparent; }
 
 /* imagens largas dos cases com limite de largura */
 .cs figure.zoom.larga { max-width: 860px; margin-inline: auto; }
+/* grades de telas de computador nos cases: mesma largura máxima das imagens largas */
+@media (min-width: 701px) {
+  .cs .grade { max-width: 1120px; margin-inline: auto; }
+  .cs .grade.g3 figure { height: clamp(260px, 28vw, 440px); }
+  .cs > figure.zoom { max-width: 1120px; margin-inline: auto; }
+}
