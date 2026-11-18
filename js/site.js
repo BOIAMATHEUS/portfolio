@@ -274,7 +274,7 @@
       .add(() => $('#rast-b').classList.add('ok'), '+=.15').add(() => $('#rast-b').classList.remove('ok'), '+=.25')
       .to('#rast-p', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' })
       .to('#rast-l', { opacity: 1, y: 0, duration: .35, ease: 'power2.out' }, '-=.15');
-    /* a previsão e a etapa atual andam juntas com a linha do tempo: nunca "chega amanhã" com o pedido já entregue (print dele, 16/11) */
+    /* a previsão e a etapa atual andam juntas com a linha do tempo: nunca "chega amanhã" com o pedido já entregue */
     const prev = $('#rast-p'), prevT = $('#rast-p b'), prevS = $('#rast-p small');
     const PREV = [['Previsão de entrega', 'Em até 5 dias úteis'], ['Previsão de entrega', 'Em até 4 dias úteis'], ['Previsão de entrega', 'Em até 3 dias úteis'], ['Previsão de entrega', 'Chega amanhã'], ['Pedido entregue', 'Chegou hoje, 14:32']];
     const marca = (i) => {
@@ -305,7 +305,7 @@
     mm.add('(min-width: 901px)', () => { gsap.set('.sobre', { marginTop: '-100vh' }); return () => gsap.set('.sobre', { clearProps: 'marginTop' }); });
     if (!G || G.calmo) return;
     /* os três sobem para os cartões da Supervisão */
-    /* cada um tem uma rotina de poses (pose, milissegundos) que roda sozinha, e uma reação quando o mouse entra no cartão (pedido dele, 16/11) */
+    /* cada um tem uma rotina de poses (pose, milissegundos) que roda sozinha, e uma reação quando o mouse entra no cartão */
     const ROTINA = {
       luna: [['x1', 2600], ['5', 2200], ['x1', 1800], ['x6', 1400], ['n6', 700], ['x6', 1200], ['x4', 1500], ['n5', 900], ['x6', 900], ['5', 2400]],
       zoro: [['x8', 1800], ['x9', 520], ['x8', 380], ['x9', 520], ['x8', 2200], ['x9', 900], ['x8', 1600]],
@@ -394,7 +394,7 @@
       });
       aps.forEach((a, i) => gsap.from(a, { y: 90 + (i % 2) * 40, opacity: 0, duration: 1, delay: i * .07, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 82%' } }));
     });
-    /* site de verdade dentro da janela e do celular (pedido dele, 16/11): a página não prende mais. Rolar em cima da janela
+    /* site de verdade dentro da janela e do celular: a página não prende mais. Rolar em cima da janela
        ou do celular percorre o site; rolar fora deles segue o case. O número mostra até onde a pessoa foi no site. */
     $$('.vitrine').forEach((v) => {
       const rot = $('.vitrine-p', v), barra = $('.barra-r i', v);
@@ -408,7 +408,7 @@
         }, { passive: true });
       });
     });
-    /* rolar dentro do celular (pedido dele, 16/11): quem rola com o cursor ou o dedo em cima da tela do aparelho
+    /* rolar dentro do celular: quem rola com o cursor ou o dedo em cima da tela do aparelho
        assume o controle dela. A animação presa à página sai, a tela rola livre e, no fim dela, a rolagem volta para a página. */
     $$('.fone-v, .tela-a, .janela-v').forEach((caixa) => {
       const img = $('img', caixa); if (!img) return;

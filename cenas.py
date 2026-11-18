@@ -445,7 +445,7 @@ def zoro():
         t.el(63.5, 17.5, 3.4, 1.7, '#fff6c8')
     f.prop(luminaria)
 
-    # meio: sombra da caixa dele, pegadas e fita
+    # meio: sombra da caixa, pegadas e fita
     m.el(52, 89.5, 25, 3.2, '#211b17')
     for x, y in ((20, 83), (27, 86.5), (34, 83.5), (40, 87)):
         m.el(x, y, 1.3, 1, '#574b41')
