@@ -1122,3 +1122,6 @@ img { color: transparent; }
   .t-renova .ch h1 { font-size: clamp(50px, 8vw, 146px); }
   .ch-d { font-size: clamp(17px, 1.5vw, 23px); }
 }
+
+/* imagens largas dos cases com limite de largura */
+.cs figure.zoom.larga { max-width: 860px; margin-inline: auto; }
