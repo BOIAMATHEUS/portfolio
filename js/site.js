@@ -441,7 +441,7 @@
       const ajusta = () => { if (!fr) return; const k = v.clientWidth / 390; fr.style.transform = `scale(${k})`; fr.style.height = (v.clientHeight / k) + 'px'; };
       b.addEventListener('click', () => {
         fr = document.createElement('iframe'); fr.src = v.dataset.src; fr.title = v.dataset.nome; fr.loading = 'lazy';
-        fr.allow = 'clipboard-write'; v.appendChild(fr); v.classList.add('on'); ajusta();
+        fr.allow = v.dataset.allow || 'clipboard-write'; v.appendChild(fr); v.classList.add('on'); ajusta();
       });
       new ResizeObserver(ajusta).observe(v);
     });

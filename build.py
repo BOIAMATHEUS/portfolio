@@ -105,13 +105,13 @@ def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
 </section>'''
 
 
-def prototipo(rot, titulo, textos, url, nome, cls=''):
+def prototipo(rot, titulo, textos, url, nome, cls='', fora=True, permite=''):
     """protótipo de verdade dentro de um celular: carrega só quando a pessoa toca (js/site.js, "protótipo")"""
     ps = ''.join(f'<p>{t}</p>' for t in textos)
     return f'''<section class="proto {cls}" data-nav="{'claro' if 'escuro' in cls else 'escuro'}">
   <div class="proto-txt"><span class="rot" data-sobe>{rot}</span><h2 data-linhas>{titulo}</h2><div class="proto-p" data-sobe>{ps}</div>
-    <a class="proto-fora" href="{url}" target="_blank" rel="noopener">Abrir em outra aba {SETA}</a></div>
-  <div class="fone proto-fone"><div class="fone-t"><div class="proto-v" data-src="{url}" data-nome="{nome}"><button class="proto-b" type="button"><span class="px">toque para usar</span><b>Abrir o protótipo</b></button></div></div></div>
+    {f'<a class="proto-fora" href="{url}" target="_blank" rel="noopener">Abrir em outra aba {SETA}</a>' if fora else ''}</div>
+  <div class="fone proto-fone"><div class="fone-t"><div class="proto-v" data-src="{url}" data-nome="{nome}" data-allow="{permite}"><button class="proto-b" type="button"><span class="px">toque para usar</span><b>Abrir o protótipo</b></button></div></div></div>
 </section>'''
 
 
@@ -424,6 +424,7 @@ vira = dict(
             ['Quem usa OBS está no computador. O painel mostra as 5 câmeras lado a lado: a câmera livre mostra o próprio QR, então basta apontar o celular para ela.',
              'Cada câmera tem o link pronto para colar no OBS, um passo a passo de como ligar, e um clique abre a imagem grande sem pedir outro vídeo ao celular.'],
             grade([fig(VC + 'd-painel.webp', 'Painel com as cinco câmeras, três conectadas e duas com QR', 'fig-p', 'Câmeras'), fig(VC + 'd-foco.webp', 'Câmera aberta em tamanho grande no painel', 'fig-p', 'Câmera grande'), fig(VC + 'd-obs.webp', 'Passo a passo para ligar a câmera no OBS', 'fig-p', 'Ligar no OBS'), fig(VC + 'd-conta.webp', 'Tela de entrar na conta no computador', 'fig-p', 'Conta')], '2 iguais')),
+        prototipo('Teste você', 'Use o app<br>aqui mesmo.', ['É o app de verdade rodando dentro do celular. Toque em Abrir, permita a câmera e escolha o número dela: a câmera do aparelho que você está usando vira uma câmera do Vira Cam.', 'Sem um OBS conectado, a câmera só liga e mostra o visor. Passe pelo tutorial, pelos ajustes e pelas telas de erro.'], APP, 'Vira Cam funcionando', 'escuro', fora=False, permite='camera; microphone; clipboard-write'),
         cap('05 · Decisões', 'O que pesou<br>no desenho.', [],
             regras([('Equipe', 'Uma chave por equipe', 'Ela vai junto no QR e no link do OBS. Nenhuma outra tela consegue puxar a câmera de quem está ao vivo.'),
                     ('Zoom', 'O zoom acontece no OBS', 'O celular manda a imagem inteira e o OBS aplica o zoom e o enquadramento. A prévia no celular é igual ao que vai ao ar.'),
