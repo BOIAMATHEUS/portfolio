@@ -101,7 +101,17 @@ def banda(src, rot, titulo, texto, cls=''):
 </section>'''
 
 
-def vitrine(rot, titulo, texto, nome, src_d, src_m, cls=''):
+def vitrine(rot, titulo, texto, nome, src_d, src_m, cls='', url=None):
+    if url:
+        # o site de verdade dentro da janela (largura de computador) e do celular (largura de celular)
+        cel = f'<div class="fone tela vitrine-cel"><div class="fone-t web">{SB}<div class="fone-v vivo-c"><iframe data-src="{url}" data-base="390" title="{nome} no celular" loading="lazy"></iframe></div></div></div>'
+        return f'''<section class="vitrine ao-vivo {cls}" data-nav="claro">
+  <div class="vitrine-topo"><div><span class="rot">{rot}</span><h2>{titulo}</h2></div><p>{texto}</p></div>
+  <div class="vitrine-palco">
+    <div class="janela"><div class="janela-b"><i></i><i></i><i></i><span>{nome}</span></div><div class="janela-v vivo-c"><iframe data-src="{url}" data-base="1440" title="{nome} no computador" loading="lazy"></iframe></div></div>
+    {cel}
+  </div>
+</section>'''
     cel = f'<div class="fone tela vitrine-cel"><div class="fone-t web">{SB}<div class="fone-v"><img src="{src_m}" alt="{nome} no celular" loading="lazy"></div></div></div>' if src_m else ''
     return f'''<section class="vitrine {cls}" data-nav="claro">
   <div class="vitrine-topo"><div><span class="rot">{rot}</span><h2>{titulo}</h2></div><p>{texto}</p></div>
@@ -338,7 +348,7 @@ gg = dict(
              'O site precisava fazer duas coisas ao mesmo tempo: explicar o produto para quem nunca ouviu falar dele e parecer gostoso antes de parecer saudável.'],
             cards([dict(t='Dor primeiro, produto depois', p='O quiz mostra só as dores que a pessoa marcou, a causa e um dado com fonte. A Good Green entra depois, como solução.', dest=True),
                    dict(t='Figma antes do código', p='Cada tela nasce no Figma, em desktop e celular, e só depois vira página. Site e Figma andam iguais.')])),
-        vitrine('02 · Solução · O site', 'A home, do topo ao rodapé.', 'Role em cima da janela ou do celular para ver o site do topo ao rodapé. Fora deles, o case continua.', 'Good Green · home', GG + 'home-d.webp', GG + 'home-m.webp'),
+        vitrine('02 · Solução · O site', 'O site, funcionando.', 'É o site de verdade. Role, passe o mouse e clique em tudo, do quiz à página de produto e ao carrinho, no computador e no celular.', 'Good Green', GG + 'home-d.webp', GG + 'home-m.webp', url='https://good-green-br.pages.dev/'),
         frase('A bebida tem que parecer <em>gostosa</em> antes de parecer saudável.', 'f-gg'),
         cap('03 · Solução · O quiz', 'O quiz monta<br>o diagnóstico.',
             ['São quatro perguntas seguidas, sem tela educativa no meio.', 'O pop-up da roleta e o carrinho seguem a mesma linguagem: vidro, foto real e pouco texto.'],
@@ -347,7 +357,6 @@ gg = dict(
         cap('04 · Solução · Lançamento', 'Antes de a loja abrir,<br>a marca precisa de lista.',
             ['Desenhei as páginas de entrada do pré-lançamento: captação para o grupo, calculadora de fibras e as páginas de apoio do site.'],
             grade([fig(GG + 'capt-d.webp', 'Página de captação do lançamento', '', 'Captação'), fig(GG + 'fibras-d.webp', 'Calculadora de fibras', '', 'Calculadora de fibras')], 2)),
-        prototipo('O site funcionando', 'Navegue pelo<br>site inteiro.', ['A versão de celular do site, com quiz, roleta, carrinho e página de produto. É o mesmo site que aparece nos prints acima.'], 'https://good-green-br.pages.dev/', 'Site da Good Green', 'escuro'),
         cap('05 · Validação', 'Metade achou<br>que era suco.',
             ['As mesmas 4 mulheres olharam o topo do site por 5 segundos, sem rolar, e disseram o que a marca vendia. Depois navegaram por 2 minutos e explicaram o produto com as próprias palavras.'],
             numeros([('2 de 4', 'disseram “suco” no teste de 5 segundos'), ('4 de 4', 'entenderam que é suplemento depois de navegar'), ('0 de 4', 'fizeram o quiz')])

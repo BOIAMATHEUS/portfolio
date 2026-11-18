@@ -366,33 +366,15 @@
     /* cartões e figuras entram em escada */
     $$('.cards, .grade, .regras, .versoes, .numeros').forEach((gr) => gsap.from(gr.children, { y: 54, opacity: 0, duration: .9, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: gr, start: 'top 84%' } }));
     $$('.fig-p').forEach((f) => gsap.fromTo(f, { y: 70, scale: .96 }, { y: -30, scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .5 } }));
-    /* fita de celulares: passam de lado com a rolagem; o do meio vem para a frente e os dos lados recuam e giram */
-    const mm = gsap.matchMedia();
-    $$('.fita').forEach((ft) => {
-      const tr = $('.fita-t', ft), aps = $$('.aparelho', ft), corpos = aps.map((a) => a.firstElementChild);
-      const info = document.createElement('div'); info.className = 'fita-i px'; info.innerHTML = `<span>01</span><i><b></b></i><span>${String(aps.length).padStart(2, '0')}</span>`; ft.insertBefore(info, tr);
-      const num = info.firstChild, barra = $('b', info);
-      const foco = (prog) => {
-        const meio = innerWidth / 2, larg = innerWidth < 900 ? innerWidth * .62 : innerWidth * .5, peq = innerWidth < 900; let perto = 0, menor = 9;
-        aps.forEach((a, i) => {
-          const r = a.getBoundingClientRect(), d = Math.max(-1.3, Math.min(1.3, (r.left + r.width / 2 - meio) / larg)), k = Math.min(1, Math.abs(d));
-          if (Math.abs(d) < menor) { menor = Math.abs(d); perto = i; }
-          gsap.set(corpos[i], { scale: 1 - k * (peq ? .1 : .13), rotation: d * (peq ? 3 : 5), y: k * k * (peq ? 14 : 44), transformOrigin: '50% 62%' });
-          a.style.setProperty('--f', (1 - k * .6).toFixed(2));
-        });
-        num.textContent = String(perto + 1).padStart(2, '0'); barra.style.transform = `scaleX(${Math.max(.04, prog).toFixed(3)})`;
-      };
-      mm.add('(min-width: 901px)', () => {
-        const d = () => -(tr.scrollWidth - ft.clientWidth + parseFloat(getComputedStyle(ft).paddingLeft) * 2);
-        gsap.to(tr, { x: d, ease: 'none', onUpdate() { foco(this.progress()); }, scrollTrigger: { trigger: ft, start: 'center center', end: () => '+=' + Math.abs(d()) * 1.15, pin: true, scrub: .9, invalidateOnRefresh: true, anticipatePin: 1, onRefresh: () => foco(0) } });
-        foco(0);
-      });
-      mm.add('(max-width: 900px)', () => {
-        const rola = () => foco(ft.scrollLeft / Math.max(1, ft.scrollWidth - ft.clientWidth));
-        ft.addEventListener('scroll', rola, { passive: true }); rola(); addEventListener('load', rola);
-        return () => ft.removeEventListener('scroll', rola);
-      });
-      aps.forEach((a, i) => gsap.from(a, { y: 90 + (i % 2) * 40, opacity: 0, duration: 1, delay: i * .07, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 82%' } }));
+    /* telas de celular: retas, lado a lado, sobem em escada ao entrar */
+    $$('.fita').forEach((ft) => gsap.from($$('.aparelho', ft), { y: 50, opacity: 0, duration: .9, stagger: .08, ease: 'power3.out', scrollTrigger: { trigger: ft, start: 'top 85%' } }));
+    /* site ao vivo (Good Green): o iframe carrega perto da tela e é desenhado na largura real do aparelho, reduzido para caber */
+    $$('.vivo-c iframe').forEach((fr) => {
+      const caixa = fr.parentElement, base = +fr.dataset.base || 1440;
+      const ajusta = () => { const k = caixa.clientWidth / base; if (!k) return; fr.style.width = base + 'px'; fr.style.height = (caixa.clientHeight / k) + 'px'; fr.style.transform = `scale(${k})`; };
+      new ResizeObserver(ajusta).observe(caixa); ajusta();
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { fr.src = fr.dataset.src; io.disconnect(); } }, { rootMargin: '600px 0px' });
+      io.observe(caixa);
     });
     /* site de verdade dentro da janela e do celular: a página não prende mais. Rolar em cima da janela
        ou do celular percorre o site; rolar fora deles segue o case. O número mostra até onde a pessoa foi no site. */

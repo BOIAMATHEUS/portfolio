@@ -1131,3 +1131,21 @@ img { color: transparent; }
   .cs .grade.g3 figure { height: clamp(260px, 28vw, 440px); }
   .cs > figure.zoom { max-width: 1120px; margin-inline: auto; }
 }
+
+/* telas de celular dos cases: grade reta e alinhada, sem rolagem de lado nem celular torto */
+.fita, .fita.escuro { overflow: visible; padding-block: clamp(20px, 3vw, 40px) clamp(56px, 7vw, 96px); }
+.fita-t { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 220px)); justify-content: center; gap: clamp(16px, 2vw, 32px); width: auto; max-width: 1120px; margin-inline: auto; padding: 0; will-change: auto; }
+.fita .aparelho, .fita .aparelho.alta { width: auto; margin-top: 0; }
+.fita .aparelho > :first-child { will-change: auto; transform: none; }
+.fita .aparelho figcaption { opacity: 1; }
+.fita::before, .fita-i { display: none; }
+@media (max-width: 700px) {
+  .fita, .fita.escuro { overflow: visible; scroll-snap-type: none; }
+  .fita-t { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
+}
+
+/* site ao vivo dentro da janela e do celular */
+.vivo-c { position: relative; overflow: hidden; background: #fff; }
+.vivo-c iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #fff; }
+.vitrine.ao-vivo .janela-v { position: absolute; inset: 0; top: 34px; }
+.vitrine.ao-vivo .vitrine-cel .fone-v { position: relative; height: 100%; }
