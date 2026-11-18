@@ -123,13 +123,13 @@ def vitrine(rot, titulo, texto, nome, src_d, src_m, cls='', url=None):
 </section>'''
 
 
-def prototipo(rot, titulo, textos, url, nome, cls='', fora=True, permite=''):
+def prototipo(rot, titulo, textos, url, nome, cls='', fora=True, permite='', capa=''):
     """protótipo de verdade dentro de um celular: carrega só quando a pessoa toca (js/site.js, "protótipo")"""
     ps = ''.join(f'<p>{t}</p>' for t in textos)
     return f'''<section class="proto {cls}" data-nav="{'claro' if 'escuro' in cls else 'escuro'}">
   <div class="proto-txt"><span class="rot" data-sobe>{rot}</span><h2 data-linhas>{titulo}</h2><div class="proto-p" data-sobe>{ps}</div>
     {f'<a class="proto-fora" href="{url}" target="_blank" rel="noopener">Abrir em outra aba {SETA}</a>' if fora else ''}</div>
-  <div class="fone proto-fone"><div class="fone-t"><div class="proto-v" data-src="{url}" data-nome="{nome}" data-allow="{permite}"><button class="proto-b" type="button"><span class="px">toque para usar</span><b>Abrir o protótipo</b></button></div></div></div>
+  <div class="fone proto-fone"><div class="fone-t"><div class="proto-v" data-src="{url}" data-nome="{nome}" data-allow="{permite}"><button class="proto-b{' com-capa' if capa else ''}" type="button"{f' style="background-image:linear-gradient(rgba(21,18,15,.38),rgba(21,18,15,.58)),url({capa})"' if capa else ''}><span class="px">toque para usar</span><b>Abrir o protótipo</b></button></div></div></div>
 </section>'''
 
 
@@ -308,7 +308,7 @@ renova = dict(
              'Os jogos ficam na área Ganhe e rendem saldo para usar na loja. A rotina do tratamento nunca rende moeda.'],
             '', 'escuro'),
         fita([aparelho(RN + 'g01-mapa.webp', 'Mapa do Match'), aparelho(RN + 'g02-partida.webp', 'Partida'), aparelho(RN + 'g04-toctoc-partida.webp', 'Toc Toc'), aparelho(RN + 'a07-saldo.webp', 'Saldo Renova')], 'escuro'),
-        prototipo('Protótipo', 'Use o app<br>aqui mesmo.', ['É o mesmo protótipo que as usuárias testaram. Jogue uma fase, marque a dose do dia ou monte um kit até o botão de pagar.', 'Nada é comprado: o botão de finalizar leva para a loja e para aí.'], 'https://renova-prototipo-rn.renova-black-preview.workers.dev/?teste=1', 'Protótipo do app Renova Be'),
+        prototipo('Protótipo', 'Use o app<br>aqui mesmo.', ['É o mesmo protótipo que as usuárias testaram. Jogue uma fase, marque a dose do dia ou monte um kit até o botão de pagar.', 'Nada é comprado: o botão de finalizar leva para a loja e para aí.'], 'https://renova-prototipo-rn.renova-black-preview.workers.dev/?teste=1', 'Protótipo do app Renova Be', capa=RN + 'a01-home.webp'),
         cap('09 · Validação', 'Quatro mulheres,<br>três tarefas.',
             ['Pedi para 4 mulheres de 27 a 61 anos, que tomam ou já tomaram suplemento, usarem o protótipo sozinhas no próprio celular. Nenhuma era cliente da marca. Elas tentaram jogar uma fase, marcar a dose do dia e escolher colágeno para 3 meses até o botão de pagar, e deram uma nota de 1 (muito difícil) a 7 (muito fácil) para cada tarefa.',
              'Todas concluíram as três tarefas. As duas mais velhas concluíram com dificuldade.'],
@@ -402,8 +402,8 @@ nhv = dict(
             cards([dict(t='A busca por CPF existe', p='A plataforma de pedidos busca por documento: dá para listar todos os pedidos de uma pessoa, filtrando pelo CPF exato.'),
                    dict(t='O rastreio detalhado ainda não chega', p='Os eventos da transportadora não vêm pela API hoje. A linha do tempo foi desenhada para recebê-los quando a integração existir.'),
                    dict(t='O Pix pendente é uma oportunidade', p='O pedido traz o código copia e cola e a validade. A tela vira um lugar para concluir o pagamento, não só para acompanhar.', dest=True)])),
-        cap('Dado de caixa', 'Por que o Pix<br>entrou no rastreio.',
-            ['Enquanto analisava o rastreio, fui olhar também os pagamentos. Revisitei os dados de quem comprava e de quem não comprava, pelo caixa da Yampi e não pelo pixel: 9.882 pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
+        cap('Processo · Dado de caixa', 'Por que o Pix<br>entrou no rastreio.',
+            ['Enquanto analisava o rastreio, fui olhar também os pagamentos. Revisitei os dados de quem comprava e de quem não comprava, pelo caixa da Yampi e não pelo pixel: os pedidos de agosto a novembro de 2026, separados por forma de pagamento.',
              'Com cartão, quase todo pedido vira pagamento. Com Pix, que é metade dos pedidos, mais de 4 em cada 10 nunca são pagos. O problema não estava na tela do checkout, e sim no Pix que fica para depois. Levei esse dado para a equipe.'],
             '<div class="pgx" data-sobe role="img" aria-label="Pedidos pagos por forma de pagamento: Visa 98,8%, Mastercard 98,6%, Elo 96,6%, Pix 57,4%">'
             + ''.join(f'<div class="pgx-l{" alerta" if n == "Pix" else ""}"><span class="pgx-n">{n}</span><span class="pgx-t"><i style="width:{v}%"></i></span><b>{str(v).replace(".", ",")}%</b></div>' for n, v in [('Visa', 98.8), ('Mastercard', 98.6), ('Elo', 96.6), ('Pix', 57.4)])
@@ -423,7 +423,7 @@ nhv = dict(
         cap('06 · Solução · Desktop e sistema', 'No desktop, o título<br>ao lado da busca.',
             ['Na tela larga, o pedido aberto ganha duas colunas: a linha do tempo à esquerda, o código e os detalhes à direita.', 'Cada peça é um componente com variantes no Figma, com os mesmos nomes e cores usados no desenvolvimento: pílula de status nos 5 estados do pedido, botões (incluindo o estado “copiado”), etapa da linha do tempo feita, atual e pendente, cartão do pedido, faixa de atendimento e 22 ícones no desenho do Lucide.'],
             grade([fig(NH + 't-desktop.webp', 'Tela de rastreio em desktop', 'fig-p', 'Desktop'), fig(NH + 't-componentes.webp', 'Componentes do design system do rastreio', 'fig-p', 'Componentes')], '2 iguais')),
-        prototipo('Teste você', 'Busque um<br>pedido.', ['A tela no ar, em modo de demonstração: escolha um cenário (Pix pendente, a caminho, entregue) e busque. Os dados são fictícios, nenhum pedido real aparece.'], 'https://www.newhair.com.br/rastreio?demo=1', 'Rastreio da New Hair em demonstração'),
+        prototipo('Teste você', 'Busque um<br>pedido.', ['A tela no ar, em modo de demonstração: escolha um cenário (Pix pendente, a caminho, entregue) e busque. Os dados são fictícios, nenhum pedido real aparece.'], 'https://www.newhair.com.br/rastreio?demo=1', 'Rastreio da New Hair em demonstração', capa=NH + 't-busca.webp'),
         cap('07 · Validação', 'Entenderam<br>sem explicação.',
             ['Mostrei a tela no ar para as mesmas 4 mulheres, duas delas clientes da New Hair, e perguntei o que precisavam fazer ali, só olhando.'],
             numeros([('4 de 4', 'entenderam na hora que é para digitar o CPF'), ('6,3', 'facilidade média (de 1 a 7)'), ('4 de 4', 'já perguntaram “cadê meu pedido?” a alguma loja')])
@@ -487,7 +487,7 @@ vira = dict(
             ['Quem usa OBS está no computador. O painel mostra as 5 câmeras lado a lado: a câmera livre mostra o próprio QR, então basta apontar o celular para ela.',
              'Cada câmera tem o link pronto para colar no OBS, um passo a passo de como ligar, e um clique abre a imagem grande sem pedir outro vídeo ao celular.'],
             grade([fig(VC + 'd-painel.webp', 'Painel com as cinco câmeras, três conectadas e duas com QR', 'fig-p', 'Câmeras'), fig(VC + 'd-foco.webp', 'Câmera aberta em tamanho grande no painel', 'fig-p', 'Câmera grande'), fig(VC + 'd-obs.webp', 'Passo a passo para ligar a câmera no OBS', 'fig-p', 'Ligar no OBS'), fig(VC + 'd-conta.webp', 'Tela de entrar na conta no computador', 'fig-p', 'Conta')], '2 iguais')),
-        prototipo('Teste você', 'Use o app<br>aqui mesmo.', ['É o app de verdade rodando dentro do celular. Toque em Abrir, permita a câmera e escolha o número dela: a câmera do aparelho que você está usando vira uma câmera do Vira Cam.', 'Sem um OBS conectado, a câmera só liga e mostra o visor. Passe pelo tutorial, pelos ajustes e pelas telas de erro.'], APP, 'Vira Cam funcionando', 'escuro', fora=False, permite='camera; microphone; clipboard-write'),
+        prototipo('Teste você', 'Use o app<br>aqui mesmo.', ['É o app de verdade rodando dentro do celular. Toque em Abrir, permita a câmera e escolha o número dela: a câmera do aparelho que você está usando vira uma câmera do Vira Cam.', 'Sem um OBS conectado, a câmera só liga e mostra o visor. Passe pelo tutorial, pelos ajustes e pelas telas de erro.'], APP, 'Vira Cam funcionando', 'escuro', fora=False, permite='camera; microphone; clipboard-write', capa=VC + 'c-entrada.webp'),
         cap('06 · Solução · Decisões', 'O que pesou<br>no desenho.', [],
             regras([('Equipe', 'Uma chave por equipe', 'Ela vai junto no QR e no link do OBS. Nenhuma outra tela consegue puxar a câmera de quem está ao vivo.'),
                     ('Zoom', 'O zoom acontece no OBS', 'O celular manda a imagem inteira e o OBS aplica o zoom e o enquadramento. A prévia no celular é igual ao que vai ao ar.'),
